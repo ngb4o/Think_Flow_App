@@ -9,7 +9,6 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  
   @override
   void initState() {
     moveToOnboarding();
@@ -18,11 +17,11 @@ class _SplashScreenState extends State<SplashScreen> {
 
   moveToOnboarding() async {
     await Future.delayed(Duration(seconds: 2), () {
+      if (!mounted) return;
       AutoRouter.of(context).push(OnboardingScreenRoute());
-    },);
+    });
   }
-  
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
