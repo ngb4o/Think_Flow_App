@@ -1,10 +1,20 @@
 part of 'widget_imports.dart';
 
-class TTermsAndConditionCheckbox extends StatelessWidget {
+class TTermsAndConditionCheckbox extends StatefulWidget {
   const TTermsAndConditionCheckbox({
     super.key,
+    required this.value,
+    required this.onChanged,
   });
 
+  final bool value;
+  final ValueChanged<bool> onChanged;
+
+  @override
+  State<TTermsAndConditionCheckbox> createState() => _TTermsAndConditionCheckboxState();
+}
+
+class _TTermsAndConditionCheckboxState extends State<TTermsAndConditionCheckbox> {
   @override
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
@@ -15,8 +25,9 @@ class TTermsAndConditionCheckbox extends StatelessWidget {
             width: 24,
             height: 24,
             child: Checkbox(
-              value: true,
+              value: widget.value,
               onChanged: (value) {
+                widget.onChanged(value!);
               },
             ),
           ),

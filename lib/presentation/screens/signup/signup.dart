@@ -6,33 +6,41 @@ class SignUpScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: true,
-        iconTheme: IconThemeData(color: Theme.of(context).primaryColor),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(TSizes.defaultSpace),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Title
-            Text(TTexts.signupTitle, style: Theme.of(context).textTheme.headlineMedium),
+    return BlocListener<SignupBloc, SignupState>(
+      listenWhen: (previous, current) => current is SignupLoadingState,
+      listener: (context, state) {
+        if (state is SignupLoadingState) {
+          TFullScreenLoader.openLoadingDialog(context, 'Creating account, please wait a moment...', Assets.animations141594AnimationOfDocer);
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: true,
+          iconTheme: IconThemeData(color: Theme.of(context).primaryColor),
+        ),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(TSizes.defaultSpace),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Title
+              Text(TTexts.signupTitle, style: Theme.of(context).textTheme.headlineMedium),
 
-            const SizedBox(height: TSizes.spaceBtwSections),
+              const SizedBox(height: TSizes.spaceBtwSections),
 
-            // Form
-            const TSignupForm(),
+              // Form
+              const TSignupForm(),
 
-            const SizedBox(height: TSizes.spaceBtwSections),
+              const SizedBox(height: TSizes.spaceBtwSections),
 
-            // Divider
-            TFormDivider(dividerText: TTexts.orSignUpWith.capitalize!),
-            const SizedBox(height: TSizes.spaceBtwItems),
+              // Divider
+              TFormDivider(dividerText: TTexts.orSignUpWith.capitalize!),
+              const SizedBox(height: TSizes.spaceBtwItems),
 
-            //Social Buttons
-            const TSocialButtons(),
-          ],
+              //Social Buttons
+              const TSocialButtons(),
+            ],
+          ),
         ),
       ),
     );

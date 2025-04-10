@@ -1,31 +1,30 @@
 import 'dart:async';
-import 'package:get/get.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../popups/loaders.dart';
 
-
 /// Manages the network connectivity status and provides methods to check and handle connectivity changes.
-class NetworkManager extends GetxController {
-  static NetworkManager get instance => Get.find();
+class NetworkManager {
+  static final NetworkManager _instance = NetworkManager._internal();
+  factory NetworkManager() => _instance;
+  NetworkManager._internal();
 
   final Connectivity _connectivity = Connectivity();
-  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
-  final RxList<ConnectivityResult> _connectionStatus = <ConnectivityResult>[].obs;
+  StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
+  List<ConnectivityResult> _connectionStatus = [];
 
   /// Initialize the network manager and set up a stream to continually check the connection status.
-  @override
-  void onInit() {
-    super.onInit();
-    _connectivitySubscription = _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+  void initialize(BuildContext context) {
+    _connectivitySubscription = _connectivity.onConnectivityChanged.listen((result) => _updateConnectionStatus(result, context));
   }
 
   /// Update the connection status based on changes in connectivity and show a relevant popup for no internet connection.
-  Future<void> _updateConnectionStatus(List<ConnectivityResult> result) async {
-    _connectionStatus.value = result;
+  Future<void> _updateConnectionStatus(List<ConnectivityResult> result, BuildContext context) async {
+    _connectionStatus = result;
     if (result.contains(ConnectivityResult.none)) {
-      TLoaders.customToast(message: 'No Internet Connection');
+      TLoaders.customToast(context, message: 'No Internet Connection');
     }
   }
 
@@ -34,20 +33,14 @@ class NetworkManager extends GetxController {
   Future<bool> isConnected() async {
     try {
       final result = await _connectivity.checkConnectivity();
-      if (result.any((element) => element == ConnectivityResult.none)) {
-        return false;
-      } else {
-        return true;
-      }
+      return !result.contains(ConnectivityResult.none);
     } on PlatformException catch (_) {
       return false;
     }
   }
 
   /// Dispose or close the active connectivity stream.
-  @override
-  void onClose() {
-    super.onClose();
-    _connectivitySubscription.cancel();
+  void dispose() {
+    _connectivitySubscription?.cancel();
   }
 }

@@ -14,6 +14,13 @@ class AppRouter extends $AppRouter {
     AutoRoute(page: SignUpScreenRoute.page),
     AutoRoute(page: ForgetPasswordScreenRoute.page),
     // AutoRoute(page: ResetPasswordScreenRoute())
+    AutoRoute(page: NavigationMenuRoute.page),
+    AutoRoute(page: HomeScreenRoute.page),
+    AutoRoute(page: SettingsScreenRoute.page),
+    AutoRoute(page: SummaryScreenRoute.page),
+    AutoRoute(page: ProfileScreenRoute.page),
+    AutoRoute(page: VerifyEmailScreenRoute.page),
+    AutoRoute(page: SuccessScreenRoute.page),
   ];
 
 }
