@@ -23,13 +23,15 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     try {
       var loginData = await authRepo.loginWithEmailAndPassword(event.email, event.password);
       if (loginData.data != null) {
-        emit(LoginSuccessState(dataModel: loginData));
-        emit(LoginNavigationToNavigationMenuActionState());
+        emit(LoginSuccessState());
+        await Future.delayed(const Duration(milliseconds: 100));
+        emit(LoginSuccessActionState());
       }
     } on ApiException catch (e) {
       emit(LoginErrorState());
       emit(LoginErrorActionState(message: e.message));
     } catch (e) {
+      emit(LoginErrorState());
       emit(LoginErrorActionState(message: 'An unexpected error occurred'));
     }
   }

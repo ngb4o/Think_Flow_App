@@ -9,5 +9,6 @@ import 'package:think_flow/utils/constants/colors.dart';
 import 'package:think_flow/utils/constants/image_strings.dart';
 import 'package:think_flow/utils/constants/text_strings.dart';
 import 'package:think_flow/utils/theme/widget_themes/text_theme.dart';
+import 'package:think_flow/utils/utils.dart';
 
 part 'splash.dart';

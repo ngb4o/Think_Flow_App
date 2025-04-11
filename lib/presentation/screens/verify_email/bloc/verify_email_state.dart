@@ -26,9 +26,12 @@ class VerifyEmailErrorActionState extends VerifyEmailActionState {
 class ResendVerifyEmailLoadingState extends VerifyEmailState {}
 
 class ResendVerifyEmailSuccessState extends VerifyEmailState {
+}
+
+class ResendVerifyEmailSuccessActionState extends VerifyEmailActionState {
   final DataModel dataModel;
 
-  ResendVerifyEmailSuccessState({required this.dataModel});
+  ResendVerifyEmailSuccessActionState({required this.dataModel});
 }
 
 class ResendVerifyEmailErrorState extends VerifyEmailState {}

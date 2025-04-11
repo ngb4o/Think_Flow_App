@@ -2,7 +2,9 @@ part of 'profile_imports.dart';
 
 @RoutePage()
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+  const ProfileScreen({super.key, required this.userModel});
+
+  final UserModel userModel;
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -88,13 +90,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
               TProfileMenu(
                   title: 'Name',
-                  value: 'Nguyen Gia Bao',
+                  value: '${widget.userModel.data?.lastName} ${widget.userModel.data?.firstName}',
                   // onTap: () => Get.to(() => const UpdateNameScreen()),),
                   onTap: () {
 
                   }
               ),
-              TProfileMenu(title: 'Username', value: 'B4o', onTap: () {}),
+              TProfileMenu(title: 'Username', value: '${widget.userModel.data?.firstName}', onTap: () {}),
 
               const SizedBox(height: TSizes.spaceBtwItems),
               const Divider(),
@@ -105,11 +107,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(height: TSizes.spaceBtwItems),
 
               TProfileMenu(
-                  title: 'User ID', value: 'UBADHJONN0812BJj', onTap: () {}, icon: Iconsax.copy),
-              TProfileMenu(title: 'E-mail', value: 'ngbao08052003@gmai.com', onTap: () {}),
-              TProfileMenu(title: 'Phone', value: '0962492787', onTap: () {}),
-              TProfileMenu(title: 'Gender', value: 'Male', onTap: () {}),
-              TProfileMenu(title: 'Date of Birth', value: '8 May, 2003', onTap: () {}),
+                  title: 'User ID', value: '${widget.userModel.data?.id}', onTap: () {}, icon: Iconsax.copy),
+              TProfileMenu(title: 'E-mail', value: '${widget.userModel.data?.email}', onTap: () {}),
+              TProfileMenu(title: 'Phone', value: '${widget.userModel.data?.phone}', onTap: () {}),
+              TProfileMenu(title: 'Gender', value: '${widget.userModel.data?.gender}', onTap: () {}),
+              TProfileMenu(title: 'Status', value: '${widget.userModel.data?.status}', onTap: () {}),
               const Divider(),
               const SizedBox(height: TSizes.spaceBtwItems),
 

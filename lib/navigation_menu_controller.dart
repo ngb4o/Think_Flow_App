@@ -2,7 +2,7 @@
 import 'package:mobx/mobx.dart';
 import 'package:think_flow/presentation/screens/home/home_imports.dart';
 import 'package:think_flow/presentation/screens/settings/settings_imports.dart';
-import 'package:think_flow/presentation/summary/summary_imports.dart';
+import 'package:think_flow/presentation/screens/summary/summary_imports.dart';
 
 part 'navigation_menu_controller.g.dart';
 

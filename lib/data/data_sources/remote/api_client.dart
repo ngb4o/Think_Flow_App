@@ -1,69 +1,40 @@
 import 'package:dio/dio.dart';
-import 'package:dio_cookie_manager/dio_cookie_manager.dart';
-import 'package:cookie_jar/cookie_jar.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../../utils/utils.dart';
 import 'api_constant.dart';
 import 'api_exception.dart';
 
 class ApiClient {
   late Dio dio;
   late BaseOptions baseOptions;
-  late PersistCookieJar cookieJar;
-  BuildContext? _context;
 
   ApiClient() {
     baseOptions = BaseOptions(baseUrl: ApiConstant.mainUrl);
     dio = Dio(baseOptions);
-    _initCookieJar();
+
+    dio.interceptors.add(InterceptorsWrapper(
+      onRequest: (options, handler) async {
+        final cookie = await Utils.getCookie();
+        if (cookie != null) {
+          options.headers["Cookie"] = cookie;
+        }
+        return handler.next(options);
+      },
+      onResponse: (response, handler) async {
+        final cookies = response.headers.map['set-cookie'];
+        if (cookies != null && cookies.isNotEmpty) {
+          await Utils.saveCookie(cookies.join("; "));
+        }
+        return handler.next(response);
+      },
+      onError: (e, handler) {
+        return handler.next(e);
+      },
+    ));
   }
 
-  Future<void> _initCookieJar() async {
-    final appDocDir = await getApplicationDocumentsDirectory();
-    final appDocPath = appDocDir.path;
-    cookieJar = PersistCookieJar(
-      ignoreExpires: true,
-      storage: FileStorage("$appDocPath/.cookies/"),
-    );
-    dio.interceptors.add(CookieManager(cookieJar));
-  }
-
-  Options options = Options();
-
-  // GET REQUEST với Cookie
-  Future<Response> getRequest({required String path}) async {
-    try {
-      debugPrint('🚀 ========== API REQUEST ========= 🚀');
-      debugPrint('Request url: ${baseOptions.baseUrl + path}');
-
-      // Lấy cookie đã lưu và gán vào header
-      List<Cookie> cookies = await cookieJar.loadForRequest(Uri.parse(ApiConstant.mainUrl));
-      String cookieHeader = cookies.map((cookie) => '${cookie.name}=${cookie.value}').join('; ');
-
-      options.headers = {
-        'Cookie': cookieHeader // Gửi cookie
-      };
-
-      var response = await dio.get(path, options: options);
-
-      debugPrint('🔥 ========== API RESPONSE ========= 🔥');
-      debugPrint('Status code: ${response.statusCode.toString()}');
-      return response;
-    } on DioException catch (e) {
-      if (e.response != null) {
-        debugPrint(e.response!.data.toString());
-        debugPrint(e.response!.headers.toString());
-        debugPrint(e.response!.requestOptions.toString());
-        throw ApiException.fromDioError(e);
-      } else {
-        debugPrint(e.requestOptions.toString());
-        debugPrint(e.message);
-        throw ApiException(message: e.message ?? 'Something went wrong');
-      }
-    }
-  }
-
-  // POST REQUEST với Cookie
+  //POST REQUEST
   Future<Response> postRequest({
     required String path,
     dynamic body,
@@ -73,24 +44,13 @@ class ApiClient {
       debugPrint('Request url: ${baseOptions.baseUrl + path}');
       debugPrint('Body: $body');
 
-      // Lấy cookie đã lưu và gán vào header
-      List<Cookie> cookies = await cookieJar.loadForRequest(Uri.parse(ApiConstant.mainUrl));
-      String cookieHeader = cookies.map((cookie) => '${cookie.name}=${cookie.value}').join('; ');
-
-      options.headers = {
-        'Cookie': cookieHeader, // Gửi cookie
-      };
-
-      var response = await dio.post(
-        path,
-        data: body,
-        options: options,
-      );
+      var response = await dio.post(path, data: body);
 
       debugPrint('🔥 ========== API RESPONSE ========= 🔥');
       debugPrint('Status code: ${response.statusCode.toString()}');
       debugPrint('Response data: ${response.data.toString()}');
       debugPrint('Response headers: ${response.headers.toString()}');
+
       return response;
     } on DioException catch (e) {
       if (e.response != null) {
@@ -107,6 +67,45 @@ class ApiClient {
         debugPrint(e.message);
         throw ApiException(message: e.message ?? 'Something went wrong');
       }
+    }
+  }
+
+  //GET REQUEST
+  Future<Response> getRequest({required String path}) async {
+    try {
+      debugPrint('🚀 ========== API REQUEST ========= 🚀');
+      debugPrint('Request url: ${baseOptions.baseUrl + path}');
+
+      var response = await dio.get(path);
+
+      debugPrint('🔥 ========== API RESPONSE ========= 🔥');
+      debugPrint('Status code: ${response.statusCode.toString()}');
+
+      return response;
+    } on DioException catch (e) {
+      if (e.response != null) {
+        debugPrint(e.response!.data.toString());
+        debugPrint(e.response!.headers.toString());
+        debugPrint(e.response!.requestOptions.toString());
+        throw ApiException.fromDioError(e);
+      } else {
+        debugPrint(e.requestOptions.toString());
+        debugPrint(e.message);
+        throw ApiException(message: e.message ?? 'Something went wrong');
+      }
+    }
+  }
+
+  void _handleDioException(DioException e) {
+    if (e.response != null) {
+      debugPrint(e.response!.data.toString());
+      debugPrint(e.response!.headers.toString());
+      debugPrint(e.response!.requestOptions.toString());
+      throw ApiException(message: e.message.toString());
+    } else {
+      debugPrint(e.requestOptions.toString());
+      debugPrint(e.message);
+      throw ApiException(message: e.message.toString());
     }
   }
 }

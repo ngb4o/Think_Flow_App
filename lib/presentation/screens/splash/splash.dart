@@ -18,7 +18,7 @@ class _SplashScreenState extends State<SplashScreen> {
   moveToOnboarding() async {
     await Future.delayed(Duration(seconds: 2), () {
       if (!mounted) return;
-      AutoRouter.of(context).push(OnboardingScreenRoute());
+      Utils.screenRedirect(context);
     });
   }
 

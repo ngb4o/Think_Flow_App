@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:think_flow/data/repositories/auth_repo.dart';
+import 'package:think_flow/data/repositories/user_repo.dart';
 import 'package:think_flow/presentation/router/router_imports.dart';
 import 'package:think_flow/presentation/screens/login/bloc/login_bloc.dart';
+import 'package:think_flow/presentation/screens/profile/bloc/profile_bloc.dart';
+import 'package:think_flow/presentation/screens/settings/bloc/settings_bloc.dart';
 import 'package:think_flow/presentation/screens/signup/bloc/signup_bloc.dart';
 import 'package:think_flow/presentation/screens/verify_email/bloc/verify_email_bloc.dart';
 import 'package:think_flow/utils/theme/theme.dart';
@@ -14,9 +17,13 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final LoginBloc loginBloc = LoginBloc(AuthRepo());
-    final SignupBloc signupBloc = SignupBloc(AuthRepo());
-    final VerifyEmailBloc verifyEmailBloc = VerifyEmailBloc(AuthRepo());
+    final AuthRepo authRepo = AuthRepo();
+    final UserRepo userRepo = UserRepo();
+
+    final LoginBloc loginBloc = LoginBloc(authRepo);
+    final SignupBloc signupBloc = SignupBloc(authRepo);
+    final VerifyEmailBloc verifyEmailBloc = VerifyEmailBloc(authRepo);
+    final SettingsBloc settingsBloc = SettingsBloc(authRepo, userRepo);
     return MultiBlocProvider(
       providers: [
         // Login
@@ -25,6 +32,8 @@ class App extends StatelessWidget {
         BlocProvider(create: (context) => signupBloc),
         // Verify Email
         BlocProvider(create: (context) => verifyEmailBloc),
+        // Settings
+        BlocProvider(create: (context) => settingsBloc),
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,

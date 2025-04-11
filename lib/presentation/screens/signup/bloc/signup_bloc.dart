@@ -39,7 +39,6 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
     } catch (e) {
       emit(SignupErrorState());
       emit(SignupErrorActionState(message: 'An unexpected error occurred'));
-
     }
   }
 }

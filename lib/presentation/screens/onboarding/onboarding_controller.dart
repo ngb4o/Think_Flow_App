@@ -3,6 +3,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:mobx/mobx.dart';
 import 'package:think_flow/presentation/router/router_imports.gr.dart';
+import 'package:think_flow/utils/utils.dart';
 
 part 'onboarding_controller.g.dart';
 
@@ -24,6 +25,7 @@ abstract class _OnboardingController with Store {
   @action
   void nextPage(BuildContext context) {
     if (currentPageIndex == 2) {
+      Utils.setIsFirstTime(false);
       AutoRouter.of(context).push(LoginScreenRoute());
     }
     currentPageIndex++;

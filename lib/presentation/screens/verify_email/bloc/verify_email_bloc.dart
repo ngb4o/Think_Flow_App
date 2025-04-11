@@ -41,7 +41,8 @@ class VerifyEmailBloc extends Bloc<VerifyEmailEvent, VerifyEmailState> {
     try {
       var resendVerifyEmailData = await authRepo.resendVerifyEmail(event.email);
       if (resendVerifyEmailData.data != null) {
-        emit(ResendVerifyEmailSuccessState(dataModel: resendVerifyEmailData));
+        emit(ResendVerifyEmailSuccessState());
+        emit(ResendVerifyEmailSuccessActionState(dataModel: resendVerifyEmailData));
       }
     } on ApiException catch (e) {
       emit(ResendVerifyEmailErrorState());

@@ -9,10 +9,11 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:auto_route/auto_route.dart' as _i13;
-import 'package:flutter/cupertino.dart' as _i14;
-import 'package:flutter/material.dart' as _i15;
+import 'package:flutter/cupertino.dart' as _i16;
+import 'package:flutter/material.dart' as _i14;
 import 'package:think_flow/common/screens/success_screen/success_screen.dart'
     as _i10;
+import 'package:think_flow/data/models/user_model.dart' as _i15;
 import 'package:think_flow/navigation_menu.dart' as _i4;
 import 'package:think_flow/presentation/screens/home/home_imports.dart' as _i2;
 import 'package:think_flow/presentation/screens/login/login_imports.dart'
@@ -29,9 +30,10 @@ import 'package:think_flow/presentation/screens/signup/signup_imports.dart'
     as _i8;
 import 'package:think_flow/presentation/screens/splash/splash_imports.dart'
     as _i9;
+import 'package:think_flow/presentation/screens/summary/summary_imports.dart'
+    as _i11;
 import 'package:think_flow/presentation/screens/verify_email/verify_email_imports.dart'
     as _i12;
-import 'package:think_flow/presentation/summary/summary_imports.dart' as _i11;
 
 abstract class $AppRouter extends _i13.RootStackRouter {
   $AppRouter({super.navigatorKey});
@@ -69,9 +71,13 @@ abstract class $AppRouter extends _i13.RootStackRouter {
       );
     },
     ProfileScreenRoute.name: (routeData) {
+      final args = routeData.argsAs<ProfileScreenRouteArgs>();
       return _i13.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i6.ProfileScreen(),
+        child: _i6.ProfileScreen(
+          key: args.key,
+          userModel: args.userModel,
+        ),
       );
     },
     ResetPasswordScreenRoute.name: (routeData) {
@@ -207,16 +213,40 @@ class OnboardingScreenRoute extends _i13.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i6.ProfileScreen]
-class ProfileScreenRoute extends _i13.PageRouteInfo<void> {
-  const ProfileScreenRoute({List<_i13.PageRouteInfo>? children})
-      : super(
+class ProfileScreenRoute extends _i13.PageRouteInfo<ProfileScreenRouteArgs> {
+  ProfileScreenRoute({
+    _i14.Key? key,
+    required _i15.UserModel userModel,
+    List<_i13.PageRouteInfo>? children,
+  }) : super(
           ProfileScreenRoute.name,
+          args: ProfileScreenRouteArgs(
+            key: key,
+            userModel: userModel,
+          ),
           initialChildren: children,
         );
 
   static const String name = 'ProfileScreenRoute';
 
-  static const _i13.PageInfo<void> page = _i13.PageInfo<void>(name);
+  static const _i13.PageInfo<ProfileScreenRouteArgs> page =
+      _i13.PageInfo<ProfileScreenRouteArgs>(name);
+}
+
+class ProfileScreenRouteArgs {
+  const ProfileScreenRouteArgs({
+    this.key,
+    required this.userModel,
+  });
+
+  final _i14.Key? key;
+
+  final _i15.UserModel userModel;
+
+  @override
+  String toString() {
+    return 'ProfileScreenRouteArgs{key: $key, userModel: $userModel}';
+  }
 }
 
 /// generated route for
@@ -224,7 +254,7 @@ class ProfileScreenRoute extends _i13.PageRouteInfo<void> {
 class ResetPasswordScreenRoute
     extends _i13.PageRouteInfo<ResetPasswordScreenRouteArgs> {
   ResetPasswordScreenRoute({
-    _i14.Key? key,
+    _i16.Key? key,
     required String email,
     List<_i13.PageRouteInfo>? children,
   }) : super(
@@ -248,7 +278,7 @@ class ResetPasswordScreenRouteArgs {
     required this.email,
   });
 
-  final _i14.Key? key;
+  final _i16.Key? key;
 
   final String email;
 
@@ -304,7 +334,7 @@ class SplashScreenRoute extends _i13.PageRouteInfo<void> {
 /// [_i10.SuccessScreen]
 class SuccessScreenRoute extends _i13.PageRouteInfo<SuccessScreenRouteArgs> {
   SuccessScreenRoute({
-    _i15.Key? key,
+    _i14.Key? key,
     required String title,
     required String subTitle,
     required void Function() onPressed,
@@ -337,7 +367,7 @@ class SuccessScreenRouteArgs {
     required this.animation,
   });
 
-  final _i15.Key? key;
+  final _i14.Key? key;
 
   final String title;
 
@@ -372,7 +402,7 @@ class SummaryScreenRoute extends _i13.PageRouteInfo<void> {
 class VerifyEmailScreenRoute
     extends _i13.PageRouteInfo<VerifyEmailScreenRouteArgs> {
   VerifyEmailScreenRoute({
-    _i14.Key? key,
+    _i16.Key? key,
     String? email,
     List<_i13.PageRouteInfo>? children,
   }) : super(
@@ -396,7 +426,7 @@ class VerifyEmailScreenRouteArgs {
     this.email,
   });
 
-  final _i14.Key? key;
+  final _i16.Key? key;
 
   final String? email;
 

@@ -35,18 +35,18 @@ class _TLoginFormState extends State<TLoginForm> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<LoginBloc, LoginState>(
-      listenWhen: (previous, current) => current is LoginActionSate,
+      listenWhen: (previous, current) => current is LoginActionSate || current is LoginSuccessState,
       buildWhen: (previous, current) => current is! LoginActionSate,
       listener: (context, state) {
         if (state is LoginSuccessState) {
-
+          rememberMe ? Utils.setIsLoggedIn(true) : Utils.setIsLoggedIn(false);
         } else if (state is LoginErrorActionState) {
           TLoaders.errorSnackBar(context, title: 'Login failed', message: state.message);
         } else if (state is LoginNavigationToSignupPageActionState) {
           AutoRouter.of(context).push(SignUpScreenRoute());
         } else if (state is LoginNavigationToForgetPasswordPageActionState) {
           AutoRouter.of(context).push(ForgetPasswordScreenRoute());
-        } else if (state is LoginNavigationToNavigationMenuActionState) {
+        } else if (state is LoginSuccessActionState) {
           AutoRouter.of(context).pushAndPopUntil(
             const NavigationMenuRoute(),
             predicate: (_) => false,

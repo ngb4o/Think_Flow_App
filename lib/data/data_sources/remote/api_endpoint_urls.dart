@@ -8,4 +8,5 @@ class ApiEndpointUrls {
   static const String forgotPassword = "/auth/v1/forgot-password";
   static const String resetPassword = "/auth/v1/reset-password";
   static const String logout = "/auth/v1/logout";
+  static const String userProfile = "/user/v1/users/profile";
 }

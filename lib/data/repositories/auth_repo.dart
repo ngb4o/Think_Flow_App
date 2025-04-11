@@ -4,6 +4,8 @@ import 'package:think_flow/data/data_sources/remote/api_client.dart';
 import 'package:think_flow/data/data_sources/remote/api_endpoint_urls.dart';
 import 'package:think_flow/data/models/data_model.dart';
 import 'package:think_flow/data/data_sources/remote/api_exception.dart';
+import 'package:flutter/foundation.dart';
+import 'package:think_flow/data/data_sources/remote/api_constant.dart';
 
 class AuthRepo extends ApiClient {
   AuthRepo();
@@ -34,10 +36,12 @@ class AuthRepo extends ApiClient {
   // Login with facebook
 
   // Signup with email and password
-  Future<bool> signupWithEmailAndPassword(String firstName,
-      String lastName,
-      String email,
-      String password,) async {
+  Future<bool> signupWithEmailAndPassword(
+    String firstName,
+    String lastName,
+    String email,
+    String password,
+  ) async {
     Map body = {
       "email": email,
       "password": password,
@@ -47,7 +51,6 @@ class AuthRepo extends ApiClient {
     try {
       final response = await postRequest(path: ApiEndpointUrls.signupWithEmailAndPassword, body: body);
       if (response.statusCode == 200) {
-        // Parse response and check if data is true
         final Map<String, dynamic> responseMap = response.data;
         return responseMap['data'] == true;
       } else {
@@ -68,7 +71,7 @@ class AuthRepo extends ApiClient {
     };
     try {
       final response = await postRequest(path: ApiEndpointUrls.verifyEmail, body: body);
-      if(response.statusCode == 200) {
+      if (response.statusCode == 200) {
         // Parse response and check if data is true
         final responseData = dataModelFromJson(jsonEncode(response.data));
         return responseData;
@@ -77,7 +80,7 @@ class AuthRepo extends ApiClient {
       }
     } on ApiException {
       rethrow;
-    } catch(e) {
+    } catch (e) {
       throw ApiException(message: 'An unexpected error occurred');
     }
   }
@@ -89,7 +92,7 @@ class AuthRepo extends ApiClient {
     };
     try {
       final response = await postRequest(path: ApiEndpointUrls.resendVerifyEmail, body: body);
-      if(response.statusCode == 200) {
+      if (response.statusCode == 200) {
         // Parse response and check if data is true
         final responseData = dataModelFromJson(jsonEncode(response.data));
         return responseData;
@@ -98,7 +101,7 @@ class AuthRepo extends ApiClient {
       }
     } on ApiException {
       rethrow;
-    } catch(e) {
+    } catch (e) {
       throw ApiException(message: 'An unexpected error occurred');
     }
   }

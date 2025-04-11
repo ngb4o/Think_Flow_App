@@ -49,8 +49,10 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
 
         } else if (state is VerifyEmailErrorActionState) {
           TLoaders.errorSnackBar(context, title: 'Verify email failed', message: state.message);
-        } else if (state is ResendVerifyEmailErrorActionState) {
-          TLoaders.errorSnackBar(context, title: 'Verify email failed', message: state.message);
+        } else if (state is ResendVerifyEmailSuccessActionState){
+          TLoaders.successSnackBar(context, title: 'Resend verify successfully', message: state.dataModel.data);
+        }else if (state is ResendVerifyEmailErrorActionState) {
+          TLoaders.errorSnackBar(context, title: 'Resend verify email failed', message: state.message);
         } else if(state is VerifyEmailNavigationToSuccessPageActionState) {
           AutoRouter.of(context).push(
             SuccessScreenRoute(
