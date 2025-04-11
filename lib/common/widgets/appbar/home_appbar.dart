@@ -35,7 +35,7 @@ class THomeAppBar extends StatelessWidget {
       title: Row(
         mainAxisAlignment: centerAppbar ? MainAxisAlignment.center : MainAxisAlignment.start,
         children: [
-          Image.asset(width: 60, height: 75, TImages.logo),
+          Image.asset(width: 60, height: 40, TImages.logo),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -55,7 +55,7 @@ class THomeAppBar extends StatelessWidget {
           ? [
               TActionAppbarIcon(
                 icon: iconSecurityActionAppbar ? Icons.security : Iconsax.notification5,
-                iconColor: dark ? TColors.grey : TColors.black.withOpacity(0.7),
+                iconColor: TColors.primary,
                 onPressed: () {},
               ),
               if (showIconFilter)
