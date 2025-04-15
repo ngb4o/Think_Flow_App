@@ -9,7 +9,6 @@ import '../../../../data/data_sources/remote/api_exception.dart';
 import '../../../../data/models/user_model.dart';
 
 part 'settings_event.dart';
-
 part 'settings_state.dart';
 
 class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
@@ -17,7 +16,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   final UserRepo userRepo;
   SettingsBloc(this.authRepo, this.userRepo) : super(SettingsInitial()) {
     on<SettingInitialFetchDataEvent>(settingInitialFetchDataEvent);
-    on<SettingLogoutButtonClickEvent>(settingLogoutButtonClickEvent);
+    on<SettingClickButtonLogoutEvent>(settingLogoutButtonClickEvent);
     on<SettingClickButtonNavigationToProfilePageEvent>(settingClickButtonNavigationToProfilePageEvent);
   }
 
@@ -37,8 +36,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     }
   }
 
-
-  FutureOr<void> settingLogoutButtonClickEvent(SettingLogoutButtonClickEvent event, Emitter<SettingsState> emit) async {
+  FutureOr<void> settingLogoutButtonClickEvent(SettingClickButtonLogoutEvent event, Emitter<SettingsState> emit) async {
     emit(SettingLogoutLoadingState());
     try {
       var logoutData = await authRepo.logout();
@@ -58,8 +56,9 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     }
   }
 
-  FutureOr<void> settingClickButtonNavigationToProfilePageEvent(SettingClickButtonNavigationToProfilePageEvent event, Emitter<SettingsState> emit) async {
-    if(state is SettingSuccessState) {
+  FutureOr<void> settingClickButtonNavigationToProfilePageEvent(
+      SettingClickButtonNavigationToProfilePageEvent event, Emitter<SettingsState> emit) async {
+    if (state is SettingSuccessState) {
       final currentState = state as SettingSuccessState;
       emit(SettingNavigationToProfilePageActionState(userModel: currentState.userModel));
     }

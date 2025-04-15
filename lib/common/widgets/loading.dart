@@ -2,7 +2,6 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import '../../utils/constants/colors.dart';
 
-
 class LoadingSpinkit {
   //Loading Page
   static const loadingPage = SpinKitFadingCube(

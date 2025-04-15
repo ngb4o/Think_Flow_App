@@ -10,7 +10,7 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   void _logout() {
-    context.read<SettingsBloc>().add(SettingLogoutButtonClickEvent());
+    context.read<SettingsBloc>().add(SettingClickButtonLogoutEvent());
   }
 
   @override
@@ -26,6 +26,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
       buildWhen: (previous, current) => current is! SettingsActionState,
       listener: (context, state) {
         if (state is SettingErrorActionState) {
+          if (state.message == 'missing access token in cookie') {
+            Utils.clearAllSavedData();
+            AutoRouter.of(context).replace(LoginScreenRoute());
+          }
           TLoaders.errorSnackBar(context, title: 'Error', message: state.message);
         } else if (state is SettingLogoutSuccessActionState) {
           TLoaders.successSnackBar(context, title: 'Logout Success');

@@ -5,6 +5,6 @@ sealed class SettingsEvent {}
 
 class SettingInitialFetchDataEvent extends SettingsEvent {}
 
-class SettingLogoutButtonClickEvent extends SettingsEvent {}
+class SettingClickButtonLogoutEvent extends SettingsEvent {}
 
 class SettingClickButtonNavigationToProfilePageEvent extends SettingsEvent {}

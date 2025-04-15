@@ -2,9 +2,8 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:think_flow/data/models/data_model.dart';
-import 'package:think_flow/data/repositories/auth_repo.dart';
 import 'package:think_flow/data/data_sources/remote/api_exception.dart';
+import 'package:think_flow/data/repositories/auth_repo.dart';
 
 part 'login_event.dart';
 part 'login_state.dart';
@@ -24,7 +23,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       var loginData = await authRepo.loginWithEmailAndPassword(event.email, event.password);
       if (loginData.data != null) {
         emit(LoginSuccessState());
-        await Future.delayed(const Duration(milliseconds: 100));
         emit(LoginSuccessActionState());
       }
     } on ApiException catch (e) {
@@ -36,11 +34,13 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     }
   }
 
-  FutureOr<void> loginClickButtonNavigateToSignupPageEvent(LoginClickButtonNavigationToSignupPageEvent event, Emitter<LoginState> emit) async {
+  FutureOr<void> loginClickButtonNavigateToSignupPageEvent(
+      LoginClickButtonNavigationToSignupPageEvent event, Emitter<LoginState> emit) async {
     emit(LoginNavigationToSignupPageActionState());
   }
 
-  FutureOr<void> loginClickButtonNavigateToForgetPasswordPageEvent(LoginClickButtonNavigationToForgetPasswordPageEvent event, Emitter<LoginState> emit) async {
+  FutureOr<void> loginClickButtonNavigateToForgetPasswordPageEvent(
+      LoginClickButtonNavigationToForgetPasswordPageEvent event, Emitter<LoginState> emit) async {
     emit(LoginNavigationToForgetPasswordPageActionState());
   }
 }

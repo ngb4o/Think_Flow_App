@@ -1,7 +1,5 @@
-
 /// This class contains all the App Text in String formats.
 class TTexts {
-
   // -- GLOBAL Texts
   static const String and = "and";
   static const String skip = "Skip";
@@ -10,15 +8,17 @@ class TTexts {
   static const String appName = "ThinkFlow";
   static const String tContinue = "Continue";
 
-
 // -- OnBoarding Texts
   static const String onBoardingTitle1 = "Record, Capture & Type";
   static const String onBoardingTitle2 = "Smart Summarization";
   static const String onBoardingTitle3 = "Effective Study Support";
 
-  static const String onBoardingSubTitle1 = "Easily record lectures, capture documents, or type notes anytime, anywhere!";
-  static const String onBoardingSubTitle2 = "AI-powered summarization for quick, concise, and easy-to-understand content!";
-  static const String onBoardingSubTitle3 = "Store important information and enhance your learning with a powerful study tool!";
+  static const String onBoardingSubTitle1 =
+      "Easily record lectures, capture documents, or type notes anytime, anywhere!";
+  static const String onBoardingSubTitle2 =
+      "AI-powered summarization for quick, concise, and easy-to-understand content!";
+  static const String onBoardingSubTitle3 =
+      "Store important information and enhance your learning with a powerful study tool!";
 
   // -- Authentication Forms
   static const String firstName = "First Name";
@@ -40,22 +40,25 @@ class TTexts {
   static const String verificationCode = "verificationCode";
   static const String resendEmail = "Resend Email";
   static const String resendEmailIn = "Resend email in";
-
+  static const String title = "New note";
 
   // -- Authentication Headings
   static const String loginTitle = "Welcome back,";
   static const String loginSubTitle = "Discover Limitless Choices and Unmatched Convenience.";
   static const String signupTitle = "Let’s create your account";
   static const String forgetPasswordTitle = "Forget password";
-  static const String forgetPasswordSubTitle = "Don’t worry sometimes people can forget too, enter your email and we will send you a password reset link.";
+  static const String forgetPasswordSubTitle =
+      "Don’t worry sometimes people can forget too, enter your email and we will send you a password reset link.";
   static const String changeYourPasswordTitle = "Password Reset Email Sent";
-  static const String changeYourPasswordSubTitle = "Your Account Security is Our Priority! We've Sent You a Secure Link to Safely Change Your Password and Keep Your Account Protected.";
+  static const String changeYourPasswordSubTitle =
+      "Your Account Security is Our Priority! We've Sent You a Secure Link to Safely Change Your Password and Keep Your Account Protected.";
   static const String confirmEmail = "Verify your email address!";
-  static const String confirmEmailSubTitle = "You're almost there! Verify your email to unlock smart note-taking, AI-powered summaries, and a better learning experience.";
+  static const String confirmEmailSubTitle =
+      "You're almost there! Verify your email to unlock smart note-taking, AI-powered summaries, and a better learning experience.";
   static const String emailNotReceivedMessage = "Didn’t get the email? Check your junk/spam or resend it.";
   static const String yourAccountCreatedTitle = "Your account successfully created!";
-  static const String yourAccountCreatedSubTitle = "Welcome to your smart learning journey with your personal AI assistant.";
-
+  static const String yourAccountCreatedSubTitle =
+      "Welcome to your smart learning journey with your personal AI assistant.";
 
   // -- Product
   static const String popularProducts = "Popular Products";
@@ -63,7 +66,4 @@ class TTexts {
   // -- Home
   static const String homeAppbarTitle = "Let AI help you summarize";
   static const String homeAppbarSubTitle = "Taimoor Sikander";
-
-
 }
-

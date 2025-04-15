@@ -7,10 +7,13 @@ class SignUpScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocListener<SignupBloc, SignupState>(
-      listenWhen: (previous, current) => current is SignupLoadingState,
+      listenWhen: (previous, current) => current is SignupLoadingState || current is SignupErrorActionState,
       listener: (context, state) {
         if (state is SignupLoadingState) {
           TFullScreenLoader.openLoadingDialog(context, 'Creating account, please wait a moment...', Assets.animations141594AnimationOfDocer);
+        } else if (state is SignupErrorActionState) {
+          TFullScreenLoader.stopLoading(context);
+          TLoaders.errorSnackBar(context, title: 'Error', message: state.message);
         }
       },
       child: Scaffold(

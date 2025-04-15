@@ -21,6 +21,8 @@ class AppRouter extends $AppRouter {
     AutoRoute(page: ProfileScreenRoute.page),
     AutoRoute(page: VerifyEmailScreenRoute.page),
     AutoRoute(page: SuccessScreenRoute.page),
+    AutoRoute(page: TextNotesPageRoute.page),
+    AutoRoute(page: AudioNotesPageRoute.page),
   ];
 
 }

@@ -1,5 +1,5 @@
 class ApiConstant {
   ApiConstant._();
 
-  static const String mainUrl = "http://localhost:8080";
+  static const String mainUrl = "https://api.carehub-us.click";
 }

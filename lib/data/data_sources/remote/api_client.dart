@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../../utils/utils.dart';
 import 'api_constant.dart';
 import 'api_exception.dart';
@@ -28,13 +28,42 @@ class ApiClient {
         }
         return handler.next(response);
       },
-      onError: (e, handler) {
-        return handler.next(e);
-      },
     ));
   }
 
-  //POST REQUEST
+  // GET REQUEST
+  Future<Response> getRequest({
+    required String path,
+    dynamic params,
+  }) async {
+    try {
+      debugPrint('🚀 ========== API REQUEST ========= 🚀');
+      debugPrint('Request url: ${baseOptions.baseUrl + path}');
+      debugPrint('Query parameters: $params');
+
+      var response = await dio.get(
+        path
+      );
+
+      debugPrint('🔥 ========== API RESPONSE ========= 🔥');
+      debugPrint('Status code: ${response.statusCode.toString()}');
+
+      return response;
+    } on DioException catch (e) {
+      if (e.response != null) {
+        debugPrint(e.response!.data.toString());
+        debugPrint(e.response!.headers.toString());
+        debugPrint(e.response!.requestOptions.toString());
+        throw ApiException.fromDioError(e);
+      } else {
+        debugPrint(e.requestOptions.toString());
+        debugPrint(e.message);
+        throw ApiException(message: e.message ?? 'Something went wrong');
+      }
+    }
+  }
+
+  // POST REQUEST
   Future<Response> postRequest({
     required String path,
     dynamic body,
@@ -70,20 +99,29 @@ class ApiClient {
     }
   }
 
-  //GET REQUEST
-  Future<Response> getRequest({required String path}) async {
+  // DELETE REQUEST
+  //POST REQUEST
+  Future<Response> deleteRequest({
+    required String path,
+  }) async {
     try {
       debugPrint('🚀 ========== API REQUEST ========= 🚀');
       debugPrint('Request url: ${baseOptions.baseUrl + path}');
 
-      var response = await dio.get(path);
+      var response = await dio.delete(path);
 
       debugPrint('🔥 ========== API RESPONSE ========= 🔥');
       debugPrint('Status code: ${response.statusCode.toString()}');
+      debugPrint('Response data: ${response.data.toString()}');
+      debugPrint('Response headers: ${response.headers.toString()}');
 
       return response;
     } on DioException catch (e) {
       if (e.response != null) {
+        debugPrint('❌ ========== API ERROR RESPONSE ========= ❌');
+        debugPrint('Error Status code: ${e.response?.statusCode}');
+        debugPrint('Error Data: ${e.response?.data}');
+        debugPrint('Error Headers: ${e.response?.headers}');
         debugPrint(e.response!.data.toString());
         debugPrint(e.response!.headers.toString());
         debugPrint(e.response!.requestOptions.toString());
@@ -96,16 +134,4 @@ class ApiClient {
     }
   }
 
-  void _handleDioException(DioException e) {
-    if (e.response != null) {
-      debugPrint(e.response!.data.toString());
-      debugPrint(e.response!.headers.toString());
-      debugPrint(e.response!.requestOptions.toString());
-      throw ApiException(message: e.message.toString());
-    } else {
-      debugPrint(e.requestOptions.toString());
-      debugPrint(e.message);
-      throw ApiException(message: e.message.toString());
-    }
-  }
 }

@@ -62,9 +62,9 @@ class _SummaryScreenState extends State<SummaryScreen> {
               // Tab
               bottom: TTabBar(
                 tabs: [
-                  Tab(text: 'Record Notes'),
-                  Tab(text: 'Image Notes'),
-                  Tab(text: 'Text Notes'),
+                  Tab(text: 'Audio Summary'),
+                  Tab(text: 'Image Summary'),
+                  Tab(text: 'Text Summary'),
                 ],
                 currentIndex: currentTab,
                 onTap: (value) {

@@ -54,10 +54,19 @@ dependencies:
   animation_wrappers: ^3.0.0
   shimmer: ^3.0.0
   flutter_spinkit: ^5.2.1
+  flutter_speed_dial: ^7.0.0
+  flutter_quill: ^11.2.0
+  speech_to_text: ^7.0.0
+  avatar_glow: ^3.0.1
 
 
   # Dependency Injection
   get_it: ^7.6.7
+  flutter_sound: ^9.28.0
+  just_audio: ^0.9.46
+  audio_session: ^0.1.25
+  permission_handler: ^12.0.0+1
+  record: ^6.0.0
 
 #--------------- ./ PACKAGES END ------------------#
 
@@ -76,12 +85,7 @@ flutter:
   #--------------- LOCAL ASSETS ------------------#
   assets:
     - assets/logos/
-    - assets/icons/brands/
     - assets/images/content/
-    - assets/images/banners/
-    - assets/images/reviews/
-    - assets/images/products/
-    - assets/icons/categories/
     - assets/images/animations/
     - assets/icons/payment_methods/
     - assets/images/on_boarding_images/
