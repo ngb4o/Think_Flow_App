@@ -9,6 +9,8 @@ final class SignupInitial extends SignupState {}
 
 class SignupLoadingState extends SignupState {}
 
+class SignupLoadingActionState extends SignupActionState {}
+
 class SignupSuccessState extends SignupState {}
 
 class SignupErrorState extends SignupState {}

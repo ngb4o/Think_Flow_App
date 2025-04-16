@@ -14,7 +14,7 @@ class _TLoginFormState extends State<TLoginForm> {
   bool rememberMe = true;
   bool hidePassword = true;
 
-  void _login() {
+  _login() {
     if (formKey.currentState!.validate()) {
       context.read<LoginBloc>().add(
             LoginButtonClickEvent(
@@ -51,6 +51,8 @@ class _TLoginFormState extends State<TLoginForm> {
             const NavigationMenuRoute(),
             predicate: (_) => false,
           );
+        } else if(state is LoginNavigationToVerifyEmailPage) {
+          AutoRouter.of(context).push(VerifyEmailScreenRoute(email: state.email));
         }
       },
       builder: (context, state) {

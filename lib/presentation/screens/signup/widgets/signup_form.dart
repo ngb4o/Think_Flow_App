@@ -53,9 +53,7 @@ class _TSignupFormState extends State<TSignupForm> {
       listenWhen:  (previous, current) => current is SignupActionState,
       buildWhen: (previous, current) => current is !SignupActionState,
       listener: (context, state) {
-        if (state is SignupErrorActionState) {
-          TLoaders.errorSnackBar(context, title: 'Signup Failed', message: state.message);
-        } else if (state is SignupNavigationToVerifyEmailScreenActionState) {
+        if (state is SignupNavigationToVerifyEmailScreenActionState) {
           AutoRouter.of(context).push(VerifyEmailScreenRoute(email: emailController.text.trim()));
         }
       },

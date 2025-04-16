@@ -22,7 +22,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
     return '${otpController1.text}${otpController2.text}${otpController3.text}${otpController4.text}${otpController5.text}${otpController6.text}';
   }
 
-  void _verifyEmail() {
+  _verifyEmail() {
     context.read<VerifyEmailBloc>().add(
           VerifyEmailButtonClickEvent(
             email: widget.email.toString(),
@@ -31,7 +31,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
         );
   }
 
-  void _resendEmailVerify() {
+  _resendEmailVerify() {
     context.read<VerifyEmailBloc>().add(
           ResendVerifyEmailButtonClickEvent(
             email: widget.email.toString(),
@@ -39,32 +39,52 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
         );
   }
 
+  _navigationToLoginPage() {
+    context.read<VerifyEmailBloc>().add(
+          VerifyEmailButtonClickNavigationToLoginPageEvent(),
+        );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.email != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _resendEmailVerify();
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<VerifyEmailBloc, VerifyEmailState>(
       listenWhen: (previous, current) => current is VerifyEmailActionState,
-      buildWhen: (previous, current) => current is !VerifyEmailActionState,
+      buildWhen: (previous, current) => current is! VerifyEmailActionState,
       listener: (context, state) {
-        if (state is VerifyEmailSuccessState) {
-
-        } else if (state is VerifyEmailErrorActionState) {
+        if (state is VerifyEmailErrorActionState) {
           TLoaders.errorSnackBar(context, title: 'Verify email failed', message: state.message);
-        } else if (state is ResendVerifyEmailSuccessActionState){
+        } else if (state is ResendVerifyEmailSuccessActionState) {
           TLoaders.successSnackBar(context, title: 'Resend verify successfully', message: state.dataModel.data);
-        }else if (state is ResendVerifyEmailErrorActionState) {
+        } else if (state is ResendVerifyEmailErrorActionState) {
           TLoaders.errorSnackBar(context, title: 'Resend verify email failed', message: state.message);
-        } else if(state is VerifyEmailNavigationToSuccessPageActionState) {
+        } else if (state is VerifyEmailNavigationToSuccessPageActionState) {
           AutoRouter.of(context).push(
             SuccessScreenRoute(
-                animation: Assets.animations72462CheckRegister,
-                title: TTexts.yourAccountCreatedTitle,
-                subTitle: TTexts.yourAccountCreatedSubTitle,
-                onPressed: () => AutoRouter.of(context).pushAndPopUntil(
+              animation: Assets.animations72462CheckRegister,
+              title: TTexts.yourAccountCreatedTitle,
+              subTitle: TTexts.yourAccountCreatedSubTitle,
+              onPressed: () {
+                TLoaders.successSnackBar(context,
+                    title: 'Verify email successfully', message: 'Please login to continue');
+                AutoRouter.of(context).pushAndPopUntil(
                   LoginScreenRoute(),
                   predicate: (_) => false,
-                )
+                );
+              },
             ),
           );
+        } else if (state is VerifyEmailNavigationToLoginPageActionState) {
+          AutoRouter.of(context).pushAndPopUntil(LoginScreenRoute(), predicate: (_) => false);
         }
       },
       builder: (context, state) {
@@ -73,7 +93,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
             automaticallyImplyLeading: false,
             actions: [
               IconButton(
-                onPressed: () => context.read<VerifyEmailBloc>().add(VerifyEmailButtonClickNavigationToLoginPageEvent()),
+                onPressed: () => _navigationToLoginPage(),
                 icon: const Icon(
                   CupertinoIcons.clear,
                   color: TColors.primary,

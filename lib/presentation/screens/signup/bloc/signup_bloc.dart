@@ -19,6 +19,7 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
 
   FutureOr<void> signupButtonClickEvent(SignupButtonClickEvent event, Emitter<SignupState> emit) async {
     emit(SignupLoadingState());
+    emit(SignupLoadingActionState());
     try {
       var signupData = await authRepo.signupWithEmailAndPassword(
         event.firstName,

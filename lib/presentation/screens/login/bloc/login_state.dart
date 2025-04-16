@@ -24,3 +24,9 @@ class LoginErrorActionState extends LoginActionSate {
 
   LoginErrorActionState({required this.message});
 }
+
+class LoginNavigationToVerifyEmailPage extends LoginActionSate {
+  final String email;
+
+  LoginNavigationToVerifyEmailPage({required this.email});
+}

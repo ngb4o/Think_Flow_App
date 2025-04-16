@@ -26,6 +26,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         emit(LoginSuccessActionState());
       }
     } on ApiException catch (e) {
+      if(e.code == 403) {
+        emit(LoginNavigationToVerifyEmailPage(email: event.email));
+      }
       emit(LoginErrorState());
       emit(LoginErrorActionState(message: e.message));
     } catch (e) {
