@@ -18,8 +18,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   HomeBloc(this.noteRepo) : super(HomeInitial()) {
     on<HomeInitialFetchDataEvent>(homeInitialFetchDataEvent);
     on<HomeLoadMoreDataEvent>(homeLoadMoreDataEvent);
-    on<HomeClickButtonNavigationToCreateTextNotePageEvent>(homeClickButtonNavigationToCreateTextNotePageEvent);
-    on<HomeClickButtonNavigationToCreateRecordNotePageEvent>(homeClickButtonNavigationToCreateAudioNotePageEvent);
+    on<HomeClickButtonNavigationToCreateNotesPageEvent>(homeClickButtonNavigationToNotesPageEvent);
+    on<HomeClickButtonNavigationToShareNotePageEvent>(homeClickButtonNavigationToShareNotePageEvent);
   }
 
   FutureOr<void> homeInitialFetchDataEvent(HomeInitialFetchDataEvent event, Emitter<HomeState> emit) async {
@@ -57,13 +57,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  FutureOr<void> homeClickButtonNavigationToCreateTextNotePageEvent(
-      HomeClickButtonNavigationToCreateTextNotePageEvent event, Emitter<HomeState> emit) {
-    emit(HomeNavigationToCreateTextNotePageActionState());
+  FutureOr<void> homeClickButtonNavigationToNotesPageEvent(
+      HomeClickButtonNavigationToCreateNotesPageEvent event, Emitter<HomeState> emit) {
+    emit(HomeNavigationToCreateNotesPageActionState());
   }
 
-  FutureOr<void> homeClickButtonNavigationToCreateAudioNotePageEvent(
-      HomeClickButtonNavigationToCreateRecordNotePageEvent event, Emitter<HomeState> emit) {
-    emit(HomeNavigationToCreateAudioNotePageActionState());
+  FutureOr<void> homeClickButtonNavigationToShareNotePageEvent(
+      HomeClickButtonNavigationToShareNotePageEvent event, Emitter<HomeState> emit) {
+    emit(HomeNavigationToShareNotePageActionState());
   }
 }

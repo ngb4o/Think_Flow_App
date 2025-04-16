@@ -7,7 +7,7 @@ import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:think_flow/utils/constants/colors.dart';
 import 'package:think_flow/utils/constants/sizes.dart';
 
-import '../../../../common/widgets/appbar.dart';
-import '../../../../utils/constants/text_strings.dart';
+import '../../../../../common/widgets/appbar.dart';
+import '../../../../../utils/constants/text_strings.dart';
 
 part 'audio_notes.dart';

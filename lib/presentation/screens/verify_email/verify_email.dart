@@ -46,16 +46,6 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    if (widget.email != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _resendEmailVerify();
-      });
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     return BlocConsumer<VerifyEmailBloc, VerifyEmailState>(
       listenWhen: (previous, current) => current is VerifyEmailActionState,

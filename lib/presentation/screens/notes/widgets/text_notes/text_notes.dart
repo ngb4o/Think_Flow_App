@@ -108,32 +108,10 @@ class _TextNotesPageState extends State<TextNotesPage> {
         }
       },
       builder: (context, state) {
-        return Scaffold(
-          appBar: TAppbar(
-            showBackArrow: true,
-            title: Text('Text Note'),
-            actions: [
-              if (state is TextNotesCreateNewLoadingState)
-                LoadingSpinkit.loadingButton
-              else
-                IconButton(
-                  onPressed: () => _createNewNote(),
-                  icon: Icon(Iconsax.tick_square4),
-                ),
-            ],
-          ),
-          body: Padding(
-            padding: EdgeInsets.all(TSizes.defaultSpace),
+        return SizedBox.expand(
+          child: SingleChildScrollView(
             child: Column(
               children: [
-                TextFormField(
-                  controller: _titleController,
-                  decoration: const InputDecoration(
-                    prefixIcon: Icon(Iconsax.direct_right),
-                    labelText: TTexts.title,
-                  ),
-                ),
-                SizedBox(height: TSizes.spaceBtwInputFields),
                 QuillSimpleToolbar(
                   controller: _quillController,
                   config: QuillSimpleToolbarConfig(
@@ -176,20 +154,19 @@ class _TextNotesPageState extends State<TextNotesPage> {
                     showSuperscript: false,
                   ),
                 ),
-                Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.grey.shade300,
-                        width: 1.0,
-                      ),
-                      borderRadius: BorderRadius.circular(8),
+                Container(
+                  height: 300,
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.grey.shade300,
+                      width: 1.0,
                     ),
-                    child: QuillEditor.basic(
-                      controller: _quillController,
-                      config: QuillEditorConfig(
-                        padding: EdgeInsets.all(TSizes.spaceBtwItems),
-                      ),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: QuillEditor.basic(
+                    controller: _quillController,
+                    config: QuillEditorConfig(
+                      padding: EdgeInsets.all(TSizes.spaceBtwItems),
                     ),
                   ),
                 )

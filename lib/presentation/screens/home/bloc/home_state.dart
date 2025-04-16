@@ -23,9 +23,9 @@ class HomeErrorActionState extends HomeActionState {
   HomeErrorActionState({required this.message});
 }
 
-class HomeNavigationToCreateTextNotePageActionState extends HomeActionState {}
+class HomeNavigationToCreateNotesPageActionState extends HomeActionState {}
 
-class HomeNavigationToCreateAudioNotePageActionState extends HomeActionState {}
+class HomeNavigationToShareNotePageActionState extends HomeActionState {}
 
 class HomeDeleteNoteLoadingState extends HomeState {}
 

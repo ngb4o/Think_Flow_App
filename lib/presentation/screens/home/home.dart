@@ -33,10 +33,10 @@ class _HomeScreenState extends State<HomeScreen> {
       listenWhen: (previous, current) => current is HomeActionState,
       buildWhen: (previous, current) => current is! HomeActionState,
       listener: (context, state) {
-        if (state is HomeNavigationToCreateTextNotePageActionState) {
-          AutoRouter.of(context).push(TextNotesPageRoute());
-        } else if (state is HomeNavigationToCreateAudioNotePageActionState) {
-          AutoRouter.of(context).push(AudioNotesPageRoute());
+        if (state is HomeNavigationToCreateNotesPageActionState) {
+          AutoRouter.of(context).push(NotesPageRoute());
+        } else if (state is HomeNavigationToShareNotePageActionState) {
+
         } else if (state is HomeErrorActionState) {
           TLoaders.errorSnackBar(context, title: 'Error', message: state.message);
         }
@@ -114,26 +114,26 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
           floatingActionButton: SpeedDial(
-            icon: Iconsax.note_add5,
+            icon: Iconsax.note_15,
             activeIcon: Iconsax.close_square,
-            iconTheme: IconThemeData(color: TColors.primary, size: 35),
+            iconTheme: IconThemeData(color: TColors.primary, size: 40),
             backgroundColor: Colors.transparent,
             elevation: 0,
             spacing: 10,
             spaceBetweenChildren: 10,
             children: [
               SpeedDialChild(
-                child: Icon(Iconsax.microphone),
-                label: 'Audio Notes',
+                child: Icon(Iconsax.share),
+                label: 'Share with me',
                 onTap: () {
-                  context.read<HomeBloc>().add(HomeClickButtonNavigationToCreateRecordNotePageEvent());
+                  context.read<HomeBloc>().add(HomeClickButtonNavigationToShareNotePageEvent());
                 },
               ),
               SpeedDialChild(
                 child: Icon(Iconsax.note_21),
-                label: 'Text Notes',
+                label: 'Notes',
                 onTap: () {
-                  context.read<HomeBloc>().add(HomeClickButtonNavigationToCreateTextNotePageEvent());
+                  context.read<HomeBloc>().add(HomeClickButtonNavigationToCreateNotesPageEvent());
                 },
               ),
             ],

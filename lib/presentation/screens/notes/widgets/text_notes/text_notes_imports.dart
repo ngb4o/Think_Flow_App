@@ -7,9 +7,10 @@ import 'package:iconsax/iconsax.dart';
 import 'package:think_flow/common/widgets/appbar.dart';
 import 'package:think_flow/common/widgets/loading.dart';
 import 'package:think_flow/presentation/screens/home/bloc/home_bloc.dart';
-import 'package:think_flow/presentation/screens/notes/text_notes/bloc/text_notes_bloc.dart';
 import 'package:think_flow/utils/constants/sizes.dart';
 import 'package:think_flow/utils/constants/text_strings.dart';
 import 'package:think_flow/utils/popups/loaders.dart';
+
+import 'bloc/text_notes_bloc.dart';
 
 part 'text_notes.dart';

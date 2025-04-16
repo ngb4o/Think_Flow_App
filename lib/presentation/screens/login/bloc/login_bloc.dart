@@ -6,6 +6,7 @@ import 'package:think_flow/data/data_sources/remote/api_exception.dart';
 import 'package:think_flow/data/repositories/auth_repo.dart';
 
 part 'login_event.dart';
+
 part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
@@ -26,7 +27,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         emit(LoginSuccessActionState());
       }
     } on ApiException catch (e) {
-      if(e.code == 403) {
+      if (e.code == 403) {
+        await authRepo.resendVerifyEmail(event.email);
         emit(LoginNavigationToVerifyEmailPage(email: event.email));
       }
       emit(LoginErrorState());

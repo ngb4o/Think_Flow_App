@@ -7,9 +7,9 @@ class HomeInitialFetchDataEvent extends HomeEvent {}
 
 class HomeLoadMoreDataEvent extends HomeEvent {}
 
-class HomeClickButtonNavigationToCreateTextNotePageEvent extends HomeEvent {}
+class HomeClickButtonNavigationToCreateNotesPageEvent extends HomeEvent {}
 
-class HomeClickButtonNavigationToCreateRecordNotePageEvent extends HomeEvent {}
+class HomeClickButtonNavigationToShareNotePageEvent extends HomeEvent {}
 
 class HomeClickButtonDeleteNoteEvent extends HomeEvent {
   final String noteId;

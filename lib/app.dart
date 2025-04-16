@@ -8,7 +8,7 @@ import 'package:think_flow/data/repositories/user_repo.dart';
 import 'package:think_flow/presentation/router/router_imports.dart';
 import 'package:think_flow/presentation/screens/home/bloc/home_bloc.dart';
 import 'package:think_flow/presentation/screens/login/bloc/login_bloc.dart';
-import 'package:think_flow/presentation/screens/notes/text_notes/bloc/text_notes_bloc.dart';
+import 'package:think_flow/presentation/screens/notes/widgets/text_notes/bloc/text_notes_bloc.dart';
 import 'package:think_flow/presentation/screens/settings/bloc/settings_bloc.dart';
 import 'package:think_flow/presentation/screens/signup/bloc/signup_bloc.dart';
 import 'package:think_flow/presentation/screens/verify_email/bloc/verify_email_bloc.dart';
