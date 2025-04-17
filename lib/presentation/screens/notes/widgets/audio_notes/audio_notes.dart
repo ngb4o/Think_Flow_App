@@ -75,31 +75,7 @@ class _AudioNotesPageState extends State<AudioNotesPage> {
           QuillSimpleToolbar(
             controller: _quillController,
             config: QuillSimpleToolbarConfig(
-              // Text formatting
-              showHeaderStyle: true,
-              showBoldButton: true,
-              showItalicButton: true,
-              showUnderLineButton: true,
-              showStrikeThrough: true,
-
-              // Alignment
               showAlignmentButtons: true,
-              showLeftAlignment: true,
-              showCenterAlignment: true,
-              showRightAlignment: true,
-              showJustifyAlignment: true,
-
-              // Lists
-              showListBullets: true,
-              showListNumbers: true,
-
-              // Other tools
-              showQuote: true,
-              showLink: true,
-              showUndo: true,
-              showRedo: true,
-
-              // Disable everything else
               showFontFamily: false,
               showFontSize: false,
               showInlineCode: false,
