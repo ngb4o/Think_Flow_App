@@ -16,6 +16,10 @@ class NoteDetailScreen extends StatefulWidget {
 }
 
 class _NoteDetailScreenState extends State<NoteDetailScreen> {
+  final tabs = ["Text", "Audio"];
+
+  int currentTabIndex = 0;
+
   @override
   void initState() {
     context.read<NoteDetailBloc>().add(NoteDetailInitialFetchDataEvent(noteId: widget.noteId));
@@ -47,18 +51,24 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
 
             return Scaffold(
               appBar: TAppbar(showBackArrow: true),
-              body: SingleChildScrollView(
+              body: DefaultTabController(
+                length: tabs.length,
+                initialIndex: currentTabIndex,
                 child: Padding(
                   padding: EdgeInsets.all(TSizes.defaultSpace),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(widget.title, style: Theme.of(context).textTheme.headlineMedium),
-                      SizedBox(height: TSizes.spaceBtwItems),
+                      SizedBox(height: TSizes.sm),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Icon(Iconsax.calendar_1, size: 20),
+                          Icon(
+                            Iconsax.calendar_1,
+                            size: 20,
+                            color: TColors.darkerGrey,
+                          ),
                           SizedBox(width: TSizes.xs),
                           Text.rich(
                             TextSpan(
@@ -77,8 +87,34 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                         ],
                       ),
                       SizedBox(height: TSizes.spaceBtwItems),
-                      if (textContent?.content != null)
-                        ...textContent!.content!.map((paragraph) => TFormattedText(content: paragraph)),
+                      TTabBar(
+                        tabs: [
+                          Tab(text: 'Text'),
+                          Tab(text: 'Audio'),
+                        ],
+                        currentIndex: currentTabIndex,
+                        onTap: (value) {
+                          setState(() {
+                            currentTabIndex = value;
+                          });
+                        },
+                        selectedColor: TColors.primary,
+                        unselectedColor: Colors.grey.shade200,
+                        selectedTextColor: Colors.white,
+                        unselectedTextColor: Colors.black,
+                        width: MediaQuery.of(context).size.width - (TSizes.defaultSpace * 2),
+                        fullWidth: true,
+                        paddingBetweenTabs: true,
+                      ),
+                      SizedBox(height: TSizes.spaceBtwItems),
+                      Expanded(
+                        child: TabBarView(
+                          children: [
+                            TextDetailTab(textContent: textContent),
+                            AudioDetailTab(),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),

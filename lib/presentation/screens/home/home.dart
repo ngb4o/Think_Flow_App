@@ -36,109 +36,153 @@ class _HomeScreenState extends State<HomeScreen> {
         if (state is HomeNavigationToCreateNotesPageActionState) {
           AutoRouter.of(context).push(NotesPageRoute());
         } else if (state is HomeNavigationToShareNotePageActionState) {
-
         } else if (state is HomeErrorActionState) {
           TLoaders.errorSnackBar(context, title: 'Error', message: state.message);
+        } else if (state is HomeNavigationToNoteDetailPageActionState) {
+          AutoRouter.of(context).push(NoteDetailScreenRoute(noteId: state.noteId, title: state.title));
+        } else if (state is HomeDeleteNoteSuccessActionState) {
+          TLoaders.successSnackBar(context, title: 'Delete successfully');
+          context.read<HomeBloc>().add(HomeInitialFetchDataEvent());
+        } else if (state is HomeDeleteNoteErrorActionState) {
+          TLoaders.errorSnackBar(context, title: 'Delete failed', message: state.message);
         }
       },
       builder: (context, state) {
-        return Scaffold(
-          body: Column(
-            children: [
-              // Appbar
-              THomeAppBar(),
+        switch (state.runtimeType) {
+          case HomeLoadingState:
+            return Scaffold(
+              body: Column(
+                children: [
+                  THomeAppBar(),
+                  const Expanded(
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
+                ],
+              ),
+            );
+          case HomeSuccessState:
+            final successState = state as HomeSuccessState;
+            return Scaffold(
+              body: Column(
+                children: [
+                  // Appbar
+                  THomeAppBar(),
 
-              // Body
-              Expanded(
-                child: state is HomeLoadingState
-                    ? const Center(child: CircularProgressIndicator())
-                    : state is HomeSuccessState
-                        ? RefreshIndicator(
-                            onRefresh: () async {
-                              context.read<HomeBloc>().add(HomeInitialFetchDataEvent());
-                            },
-                            child: ListView.builder(
-                              controller: null,
-                              padding: EdgeInsets.all(TSizes.defaultSpace),
-                              itemCount: state.noteModel.data.length,
-                              itemBuilder: (context, index) {
-                                final note = state.noteModel.data[index];
-                                return Padding(
-                                  padding: EdgeInsets.only(bottom: TSizes.spaceBtwItems),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(color: TColors.grey, width: 2),
+                  // Body
+                  Expanded(
+                    child: RefreshIndicator(
+                      onRefresh: () async {
+                        context.read<HomeBloc>().add(HomeInitialFetchDataEvent());
+                      },
+                      child: ListView.builder(
+                        controller: null,
+                        padding: EdgeInsets.all(TSizes.defaultSpace),
+                        itemCount: successState.noteModel.data.length,
+                        itemBuilder: (context, index) {
+                          final note = successState.noteModel.data[index];
+                          return GestureDetector(
+                            onTap: () => context.read<HomeBloc>().add(
+                                HomeClickNavigationToNoteDetailPageEvent(noteId: note.id, title: note.title)),
+                            child: Padding(
+                              padding: EdgeInsets.only(bottom: TSizes.spaceBtwItems),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(color: TColors.grey, width: 2),
+                                ),
+                                padding: EdgeInsets.all(TSizes.spaceBtwItems),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      note.title,
+                                      style: Theme.of(context).textTheme.titleMedium,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
                                     ),
-                                    padding: EdgeInsets.all(TSizes.spaceBtwItems),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                    SizedBox(height: TSizes.spaceBtwItems),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
-                                          note.title,
-                                          style: Theme.of(context).textTheme.titleMedium,
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 1,
+                                          note.createdAt,
+                                          style: Theme.of(context).textTheme.bodySmall,
                                         ),
-                                        SizedBox(height: TSizes.spaceBtwItems),
                                         Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Text(
-                                              note.createdAt,
-                                              style: Theme.of(context).textTheme.bodySmall,
-                                            ),
-                                            Row(
-                                              children: [
-                                                Icon(Iconsax.archive_tick),
-                                                SizedBox(width: TSizes.spaceBtwItems),
-                                                Icon(Iconsax.trash),
-                                              ],
-                                            )
+                                            Icon(Iconsax.archive_tick),
+                                            SizedBox(width: TSizes.spaceBtwItems),
+                                            if (state is HomeDeleteNoteLoadingState)
+                                              LoadingSpinkit.loadingButton
+                                            else
+                                              GestureDetector(
+                                                onTap: () {
+                                                  context
+                                                      .read<HomeBloc>()
+                                                      .add(HomeClickButtonDeleteNoteEvent(noteId: note.id));
+                                                },
+                                                child: Icon(Iconsax.trash),
+                                              ),
                                           ],
                                         )
                                       ],
-                                    ),
-                                  ),
-                                );
-                              },
+                                    )
+                                  ],
+                                ),
+                              ),
                             ),
-                          )
-                        : Center(
-                            child: Text(
-                              'You don\'t have any notes yet',
-                              style: Theme.of(context).textTheme.bodyLarge,
-                            ),
-                          ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-          floatingActionButton: SpeedDial(
-            icon: Iconsax.note_15,
-            activeIcon: Iconsax.close_square,
-            iconTheme: IconThemeData(color: TColors.primary, size: 40),
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            spacing: 10,
-            spaceBetweenChildren: 10,
-            children: [
-              SpeedDialChild(
-                child: Icon(Iconsax.share),
-                label: 'Share with me',
-                onTap: () {
-                  context.read<HomeBloc>().add(HomeClickButtonNavigationToShareNotePageEvent());
-                },
+              floatingActionButton: SpeedDial(
+                icon: Iconsax.note_15,
+                activeIcon: Iconsax.close_square,
+                iconTheme: IconThemeData(color: TColors.primary, size: 40),
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                spacing: 10,
+                spaceBetweenChildren: 10,
+                children: [
+                  SpeedDialChild(
+                    child: Icon(Iconsax.share),
+                    label: 'Share with me',
+                    onTap: () {
+                      context.read<HomeBloc>().add(HomeClickButtonNavigationToShareNotePageEvent());
+                    },
+                  ),
+                  SpeedDialChild(
+                    child: Icon(Iconsax.note_21),
+                    label: 'Notes',
+                    onTap: () {
+                      context.read<HomeBloc>().add(HomeClickButtonNavigationToCreateNotesPageEvent());
+                    },
+                  ),
+                ],
               ),
-              SpeedDialChild(
-                child: Icon(Iconsax.note_21),
-                label: 'Notes',
-                onTap: () {
-                  context.read<HomeBloc>().add(HomeClickButtonNavigationToCreateNotesPageEvent());
-                },
+            );
+          case HomeErrorState:
+            return Scaffold(
+              body: Column(
+                children: [
+                  THomeAppBar(),
+                  Expanded(
+                    child: Center(
+                      child: Text(
+                        'You don\'t have any notes yet',
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        );
+            );
+          default:
+            return const SizedBox();
+        }
       },
     );
   }

@@ -9,8 +9,6 @@ class ApiEndpointUrls {
   static const String resetPassword = "/auth/v1/reset-password";
   static const String logout = "/auth/v1/logout";
   static const String userProfile = "/user/v1/users/profile";
-  static const String createNewNote = "/note/v1/notes";
-  static const String createTextNote = "/note/v1/texts/note";
-  static const String getListNotes = "/note/v1/notes";
-  static const String deleteNote = "/note/v1/notes";
+  static const String note = "/note/v1/notes";
+  static const String textNote = "/note/v1/texts/note";
 }

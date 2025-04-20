@@ -5,5 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:think_flow/presentation/screens/notes/bloc/notes_bloc.dart';
 import 'package:think_flow/utils/constants/sizes.dart';
+import 'package:think_flow/utils/utils.dart';
 
 part 'text_notes.dart';

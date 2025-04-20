@@ -37,3 +37,10 @@ class HomeDeleteNoteErrorActionState extends HomeActionState {
   HomeDeleteNoteErrorActionState({required this.message});
 }
 
+class HomeNavigationToNoteDetailPageActionState extends HomeActionState {
+  final String noteId;
+  final String title;
+
+  HomeNavigationToNoteDetailPageActionState({required this.noteId, required this.title});
+}
+

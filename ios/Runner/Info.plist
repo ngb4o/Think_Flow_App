@@ -45,9 +45,7 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
-	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>Recognize and display speech input</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Detect speech input</string>
+    <string>Think Flow needs access to your microphone to record audio notes. Your recordings will be stored locally on your device.</string>
 </dict>
 </plist>

@@ -7,6 +7,7 @@ import 'package:think_flow/data/models/note_model.dart';
 import 'package:think_flow/data/repositories/note_repo.dart';
 
 part 'home_event.dart';
+
 part 'home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
@@ -20,6 +21,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<HomeLoadMoreDataEvent>(homeLoadMoreDataEvent);
     on<HomeClickButtonNavigationToCreateNotesPageEvent>(homeClickButtonNavigationToNotesPageEvent);
     on<HomeClickButtonNavigationToShareNotePageEvent>(homeClickButtonNavigationToShareNotePageEvent);
+    on<HomeClickNavigationToNoteDetailPageEvent>(homeClickNavigationToNoteDetailPageEvent);
+    on<HomeClickButtonDeleteNoteEvent>(homeClickButtonDeleteNoteEvent);
   }
 
   FutureOr<void> homeInitialFetchDataEvent(HomeInitialFetchDataEvent event, Emitter<HomeState> emit) async {
@@ -43,13 +46,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     try {
       final noteData = await noteRepo.getListNotes(cursor: nextCursor);
       nextCursor = noteData.paging.nextCursor;
-
-      emit(HomeSuccessState(
+      emit(
+        HomeSuccessState(
           noteModel: NoteModel(
-        data: notes,
-        paging: noteData.paging,
-        extra: noteData.extra,
-      )));
+            data: notes,
+            paging: noteData.paging,
+            extra: noteData.extra,
+          ),
+        ),
+      );
     } on ApiException catch (e) {
       emit(HomeErrorActionState(message: e.message));
     } catch (e) {
@@ -65,5 +70,25 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   FutureOr<void> homeClickButtonNavigationToShareNotePageEvent(
       HomeClickButtonNavigationToShareNotePageEvent event, Emitter<HomeState> emit) {
     emit(HomeNavigationToShareNotePageActionState());
+  }
+
+  FutureOr<void> homeClickNavigationToNoteDetailPageEvent(
+      HomeClickNavigationToNoteDetailPageEvent event, Emitter<HomeState> emit) {
+    emit(HomeNavigationToNoteDetailPageActionState(noteId: event.noteId, title: event.title));
+  }
+
+  FutureOr<void> homeClickButtonDeleteNoteEvent(
+      HomeClickButtonDeleteNoteEvent event, Emitter<HomeState> emit) async {
+    emit(HomeDeleteNoteLoadingState());
+    try {
+      final deleteNoteData = await noteRepo.deleteRequest(path: event.noteId);
+      if(deleteNoteData.data) {
+        emit(HomeDeleteNoteSuccessActionState());
+      }
+    } on ApiException catch (e) {
+      emit(HomeDeleteNoteErrorActionState(message: e.message));
+    } catch(e) {
+      emit(HomeDeleteNoteErrorActionState(message: 'An unexpected error occurred'));
+    }
   }
 }

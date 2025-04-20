@@ -14,6 +14,9 @@ class TTabBar extends StatelessWidget implements PreferredSizeWidget {
     this.unselectedColor,
     this.selectedTextColor,
     this.unselectedTextColor,
+    this.width,
+    this.fullWidth = false,
+    this.paddingBetweenTabs = false,
   });
 
   final List<Widget> tabs;
@@ -23,7 +26,9 @@ class TTabBar extends StatelessWidget implements PreferredSizeWidget {
   final Color? unselectedColor;
   final Color? selectedTextColor;
   final Color? unselectedTextColor;
-
+  final double? width;
+  final bool fullWidth;
+  final bool paddingBetweenTabs;
   @override
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
@@ -31,35 +36,39 @@ class TTabBar extends StatelessWidget implements PreferredSizeWidget {
       color: dark ? TColors.black : TColors.white,
       child: SizedBox(
         height: 40,
-        width: MediaQuery.of(context).size.width,
+        width: width ?? MediaQuery.of(context).size.width,
         child: TabBar(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
+          padding: fullWidth ? EdgeInsets.zero : const EdgeInsets.symmetric(horizontal: 10),
           dividerColor: Colors.transparent,
           labelColor: TColors.black,
-          indicatorWeight: 3,
-          isScrollable: true,
-          tabAlignment: TabAlignment.center,
+          indicatorWeight: 1,
+          isScrollable: !fullWidth,
+          tabAlignment: fullWidth ? TabAlignment.fill : TabAlignment.center,
           unselectedLabelColor: TColors.black,
           indicatorPadding: EdgeInsets.zero,
-          labelPadding: const EdgeInsets.symmetric(horizontal: 3),
+          labelPadding: fullWidth ? EdgeInsets.zero : const EdgeInsets.symmetric(horizontal: 3),
           indicator: const BoxDecoration(),
           enableFeedback: false,
           overlayColor: WidgetStateProperty.all(Colors.transparent),
           onTap: onTap,
           tabs: List.generate(tabs.length, (index) {
             final bool isSelected = currentIndex == index;
-            return Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              decoration: BoxDecoration(
-                color: isSelected ? (selectedColor ?? TColors.primary) : (unselectedColor ?? Colors.grey.shade200),
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: Tab(
-                child: Text(
-                  (tabs[index] as Tab).text ?? '',
-                  style: isSelected
-                      ? Theme.of(context).textTheme.bodyLarge?.copyWith(color: selectedTextColor ?? Colors.white)
-                      : Theme.of(context).textTheme.bodyLarge?.copyWith(color: unselectedTextColor ?? Colors.black),
+            return Padding(
+              padding: paddingBetweenTabs ? EdgeInsets.symmetric(horizontal: 2) : EdgeInsets.symmetric(horizontal: 0),
+              child: Container(
+                width: fullWidth ? (width ?? MediaQuery.of(context).size.width) / tabs.length : null,
+                padding: fullWidth ? EdgeInsets.zero : const EdgeInsets.symmetric(horizontal: 20),
+                decoration: BoxDecoration(
+                  color: isSelected ? (selectedColor ?? TColors.primary) : (unselectedColor ?? Colors.grey.shade200),
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: Tab(
+                  child: Text(
+                    (tabs[index] as Tab).text ?? '',
+                    style: isSelected
+                        ? Theme.of(context).textTheme.bodyLarge?.copyWith(color: selectedTextColor ?? Colors.white)
+                        : Theme.of(context).textTheme.bodyLarge?.copyWith(color: unselectedTextColor ?? Colors.black),
+                  ),
                 ),
               ),
             );

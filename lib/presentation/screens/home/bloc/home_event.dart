@@ -16,3 +16,9 @@ class HomeClickButtonDeleteNoteEvent extends HomeEvent {
 
   HomeClickButtonDeleteNoteEvent({required this.noteId});
 }
+
+class HomeClickNavigationToNoteDetailPageEvent extends HomeEvent {
+  final String noteId;
+  final String title;
+  HomeClickNavigationToNoteDetailPageEvent({required this.noteId, required this.title});
+}

@@ -100,7 +100,6 @@ class ApiClient {
   }
 
   // DELETE REQUEST
-  //POST REQUEST
   Future<Response> deleteRequest({
     required String path,
   }) async {

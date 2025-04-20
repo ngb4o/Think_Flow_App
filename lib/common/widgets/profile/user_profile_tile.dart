@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:think_flow/common/widgets/t_circular_image.dart';
+import 'package:think_flow/common/widgets/profile/t_circular_image.dart';
 
 import '../../../utils/constants/colors.dart';
 import '../../../utils/constants/image_strings.dart';

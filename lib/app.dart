@@ -8,7 +8,8 @@ import 'package:think_flow/data/repositories/user_repo.dart';
 import 'package:think_flow/presentation/router/router_imports.dart';
 import 'package:think_flow/presentation/screens/home/bloc/home_bloc.dart';
 import 'package:think_flow/presentation/screens/login/bloc/login_bloc.dart';
-import 'package:think_flow/presentation/screens/notes/widgets/text_notes/bloc/text_notes_bloc.dart';
+import 'package:think_flow/presentation/screens/note_detail_screen/bloc/note_detail_bloc.dart';
+import 'package:think_flow/presentation/screens/notes/bloc/notes_bloc.dart';
 import 'package:think_flow/presentation/screens/settings/bloc/settings_bloc.dart';
 import 'package:think_flow/presentation/screens/signup/bloc/signup_bloc.dart';
 import 'package:think_flow/presentation/screens/verify_email/bloc/verify_email_bloc.dart';
@@ -30,7 +31,8 @@ class App extends StatelessWidget {
     final VerifyEmailBloc verifyEmailBloc = VerifyEmailBloc(authRepo);
     final SettingsBloc settingsBloc = SettingsBloc(authRepo, userRepo);
     final HomeBloc homeBloc = HomeBloc(noteRepo);
-    final TextNotesBloc textNotesBloc = TextNotesBloc(noteRepo);
+    final NotesBloc notesBloc = NotesBloc(noteRepo);
+    final NoteDetailBloc noteDetailBloc = NoteDetailBloc(noteRepo);
     return MultiBlocProvider(
       providers: [
         // Login
@@ -43,8 +45,10 @@ class App extends StatelessWidget {
         BlocProvider(create: (context) => settingsBloc),
         // Home
         BlocProvider(create: (context) => homeBloc),
-        // Text note
-        BlocProvider(create: (context) => textNotesBloc),
+        // Notes
+        BlocProvider(create: (context) => notesBloc),
+        // Note detail
+        BlocProvider(create: (context) => noteDetailBloc),
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,

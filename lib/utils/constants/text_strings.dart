@@ -40,7 +40,7 @@ class TTexts {
   static const String verificationCode = "verificationCode";
   static const String resendEmail = "Resend Email";
   static const String resendEmailIn = "Resend email in";
-  static const String title = "New note";
+  static const String title = "Title";
 
   // -- Authentication Headings
   static const String loginTitle = "Welcome back,";
