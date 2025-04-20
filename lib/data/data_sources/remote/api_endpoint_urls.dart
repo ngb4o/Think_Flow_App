@@ -11,4 +11,5 @@ class ApiEndpointUrls {
   static const String userProfile = "/user/v1/users/profile";
   static const String note = "/note/v1/notes";
   static const String textNote = "/note/v1/texts/note";
+  static const String audio = "/media/v1/media/audios";
 }

@@ -88,6 +88,24 @@ class NoteRepo extends ApiClient {
     }
   }
 
+  // Create audio note
+  // Future<DataModel> createAudiNote(String id, File) async {
+  //   Map body = {"text_content": content};
+  //   try {
+  //     final response = await postRequest(path: '${ApiEndpointUrls.textNote}/$id', body: body);
+  //     if (response.statusCode == 200) {
+  //       final responseData = dataModelFromJson(jsonEncode(response.data));
+  //       return responseData;
+  //     } else {
+  //       throw ApiException(message: 'Create failed');
+  //     }
+  //   } on ApiException {
+  //     rethrow;
+  //   } catch (e) {
+  //     throw ApiException(message: 'An unexpected error occurred');
+  //   }
+  // }
+
   // Delete note
   Future<DataModel> deleteNote(String noteId) async {
     try {
