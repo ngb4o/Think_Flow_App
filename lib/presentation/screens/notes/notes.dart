@@ -8,11 +8,10 @@ class NotesPage extends StatefulWidget {
   State<NotesPage> createState() => _NotesPageState();
 }
 
-class _NotesPageState extends State<NotesPage> {
+class _NotesPageState extends State<NotesPage> with SingleTickerProviderStateMixin {
   final tabs = ["Text", "Audio"];
-
+  late TabController _tabController;
   int currentTabIndex = 0;
-
   final TextEditingController titleController = TextEditingController();
 
   _createNote(String title) {
@@ -20,8 +19,20 @@ class _NotesPageState extends State<NotesPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: tabs.length, vsync: this);
+    _tabController.addListener(() {
+      setState(() {
+        currentTabIndex = _tabController.index;
+      });
+    });
+  }
+
+  @override
   void dispose() {
     titleController.dispose();
+    _tabController.dispose();
     super.dispose();
   }
 
@@ -60,70 +71,80 @@ class _NotesPageState extends State<NotesPage> {
                 ),
             ],
           ),
-          body: DefaultTabController(
-            length: tabs.length,
-            initialIndex: currentTabIndex,
-            child: SizedBox.expand(
-              child: Padding(
-                padding: EdgeInsets.all(TSizes.defaultSpace),
-                child: Column(
-                  children: [
-                    TextFormField(
-                      controller: titleController,
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Iconsax.direct_right),
-                        labelText: TTexts.title,
-                      ),
+          body: SizedBox.expand(
+            child: Padding(
+              padding: EdgeInsets.all(TSizes.defaultSpace),
+              child: Column(
+                children: [
+                  TextFormField(
+                    controller: titleController,
+                    decoration: const InputDecoration(
+                      prefixIcon: Icon(Iconsax.direct_right),
+                      labelText: TTexts.title,
                     ),
-                    SizedBox(height: TSizes.spaceBtwItems),
-                    Expanded(
-                      child: Column(
-                        children: [
-                          Divider(),
-                          // Tabs bar
-                          Material(
-                            color: dark ? TColors.black : TColors.white,
-                            child: TabBar(
-                              tabs: tabs.map((tab) =>
-                                  Tab(
-                                    child: SizedBox(
-                                      width: double.infinity,
-                                      child: Text(tab, textAlign: TextAlign.center,),
-                                    ),
-                                  )
-                              ).toList(),
-                              tabAlignment: TabAlignment.fill,
-                              indicatorColor: TColors.primary,
-                              labelColor: dark ? TColors.white : TColors.primary,
-                              unselectedLabelColor: TColors.darkerGrey,
-                              dividerColor: Colors.transparent,
-                              onTap: (value) {
-                                setState(() {
-                                  currentTabIndex = value;
-                                });
-                              },
-                            ),
+                  ),
+                  SizedBox(height: TSizes.spaceBtwItems),
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Divider(),
+                        // Tabs bar
+                        Material(
+                          color: dark ? TColors.black : TColors.white,
+                          child: TabBar(
+                            controller: _tabController,
+                            tabs: tabs.map((tab) =>
+                                Tab(
+                                  child: SizedBox(
+                                    width: double.infinity,
+                                    child: Text(tab, textAlign: TextAlign.center,),
+                                  ),
+                                )
+                            ).toList(),
+                            tabAlignment: TabAlignment.fill,
+                            indicatorColor: TColors.primary,
+                            labelColor: dark ? TColors.white : TColors.primary,
+                            unselectedLabelColor: TColors.darkerGrey,
+                            dividerColor: Colors.transparent,
                           ),
-
-
-                          Expanded(
-                            child: TabBarView(
-                              children: [
-                                TextNotesPage(),
-                                AudioNotesPage(),
-                              ],
-                            ),
+                        ),
+                        Expanded(
+                          child: TabBarView(
+                            controller: _tabController,
+                            children: [
+                              KeepAliveWrapper(child: TextNotesPage()),
+                              KeepAliveWrapper(child: AudioNotesPage()),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
         );
       },
     );
+  }
+}
+
+class KeepAliveWrapper extends StatefulWidget {
+  final Widget child;
+  const KeepAliveWrapper({Key? key, required this.child}) : super(key: key);
+
+  @override
+  State<KeepAliveWrapper> createState() => _KeepAliveWrapperState();
+}
+
+class _KeepAliveWrapperState extends State<KeepAliveWrapper> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    return widget.child;
   }
 }
