@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,6 +16,7 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
   NotesBloc(this.noteRepo) : super(NotesInitial()) {
     on<NotesClickButtonCreateEvent>(notesClickButtonCreateEvent);
     on<NoteCreateTextEvent>(noteCreateTextEvent);
+    on<NoteCreateAudioEvent>(noteCreateAudioEvent);
     on<NotesNotifyHomeUpdateEvent>(notesNotifyHomeUpdateEvent);
   }
 
@@ -24,8 +26,8 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
     try {
       var createNoteData = await noteRepo.createNewNote(event.title);
       if(createNoteData.data != null) {
-        emit(NotesCreateTextActionState(id:  createNoteData.data));
-        emit(NotesCreateSuccessActionSate());
+        emit(NotesCreateSuccessActionSate(id: createNoteData.data));
+        emit(NotesNotifyHomeUpdateActionState());
       }
     } on ApiException catch (e) {
       emit(NotesCreateErrorActionState(message: e.message));
@@ -40,12 +42,26 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
       var createTextData = await noteRepo.createTextNote(event.id, event.content);
       if(createTextData.data != null) {
         emit(NotesCreateTextSuccessActionState());
-        emit(NotesNotifyHomeUpdateActionState());
       }
     } on ApiException catch (e) {
       emit(NotesCreateTextErrorActionState(message: e.message));
     } catch (e) {
       emit(NotesCreateTextErrorActionState(message: 'An unexpected error occurred'));
+    }
+  }
+
+  FutureOr<void> noteCreateAudioEvent(NoteCreateAudioEvent event, Emitter<NotesState> emit) async {
+    emit(NotesCreateAudioLoadingState());
+    try {
+      var createAudioData = await noteRepo.createAudiNote(event.id, event.audioFile);
+      if(createAudioData.data != null) {
+        emit(NotesCreateAudioSuccessActionState());
+        emit(NotesNotifyHomeUpdateActionState());
+      }
+    } on ApiException catch (e) {
+      emit(NotesCreateAudioErrorActionState(message: e.message));
+    } catch (e) {
+      emit(NotesCreateAudioErrorActionState(message: 'An unexpected error occurred'));
     }
   }
 

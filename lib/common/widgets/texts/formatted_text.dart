@@ -56,8 +56,8 @@ class TFormattedText extends StatelessWidget {
           }
           if (i < parts.length - 1) {
             widgets.add(
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              Wrap(
+                crossAxisAlignment: WrapCrossAlignment.start,
                 children: [...currentLine],
               ),
             );
@@ -76,8 +76,8 @@ class TFormattedText extends StatelessWidget {
 
     if (currentLine.isNotEmpty) {
       widgets.add(
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        Wrap(
+          crossAxisAlignment: WrapCrossAlignment.start,
           children: currentLine,
         ),
       );

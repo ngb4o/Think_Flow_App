@@ -3,66 +3,66 @@ part of 'widget_imports.dart';
 class TextDetailTab extends StatefulWidget {
   const TextDetailTab({
     super.key,
-    required this.textContent,
+    required this.noteId,
   });
 
-  final TextContent? textContent;
+  final String noteId;
 
   @override
   State<TextDetailTab> createState() => _TextDetailTabState();
 }
 
-class _TextDetailTabState extends State<TextDetailTab> {
+class _TextDetailTabState extends State<TextDetailTab> with AutomaticKeepAliveClientMixin {
   late QuillController _quillController;
   bool _isEditing = false;
+  TextNoteModel? _cachedTextNoteModel;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
     super.initState();
     _quillController = QuillController.basic();
-    if (widget.textContent != null) {
-      _loadContent();
-    }
+    _loadTextContent();
   }
 
-  void _loadContent() {
-    if (widget.textContent?.content == null) return;
+  void _loadTextContent() {
+    context.read<NoteDetailBloc>().add(NoteTextDetailInitialFetchDataEvent(noteId: widget.noteId));
+  }
 
-    List<Map<String, dynamic>> delta = [];
-    for (var paragraph in widget.textContent!.content!) {
-      if (paragraph.content == null) continue;
-      
-      for (var content in paragraph.content!) {
-        Map<String, dynamic> op = {'insert': content.text ?? ''};
-        
-        if (content.marks != null && content.marks!.isNotEmpty) {
-          Map<String, dynamic> attributes = {};
-          for (var mark in content.marks!) {
-            switch (mark.type) {
-              case 'bold':
-                attributes['bold'] = true;
-                break;
-              case 'italic':
-                attributes['italic'] = true;
-                break;
-              case 'underline':
-                attributes['underline'] = true;
-                break;
-            }
-          }
-          if (attributes.isNotEmpty) {
-            op['attributes'] = attributes;
-          }
-        }
-        
-        delta.add(op);
-      }
-      
-      // Add newline after each paragraph
-      delta.add({'insert': '\n'});
+  void _enterEditMode() {
+    if (_cachedTextNoteModel?.data?.textContent?.content == null) {
+      setState(() {
+        _isEditing = true;
+      });
+      return;
     }
 
-    _quillController.document = Document.fromJson(delta);
+    final content = _cachedTextNoteModel!.data!.textContent!.content!;
+    final jsonContent = content.map((paragraph) {
+      final text = paragraph.content?.firstOrNull?.text ?? '';
+      return {
+        "insert": text,
+        "attributes": {"align": "left"}
+      };
+    }).toList();
+
+    // Add an empty line at the end
+    jsonContent.add({
+      "insert": "\n",
+      "attributes": {"align": "left"}
+    });
+
+    final document = Document.fromJson(jsonContent);
+
+    setState(() {
+      _isEditing = true;
+      _quillController = QuillController(
+        document: document,
+        selection: const TextSelection.collapsed(offset: 0),
+      );
+    });
   }
 
   @override
@@ -73,58 +73,81 @@ class _TextDetailTabState extends State<TextDetailTab> {
 
   @override
   Widget build(BuildContext context) {
-    if (!_isEditing) {
-      return SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: TSizes.spaceBtwItems),
-            if (widget.textContent?.content != null)
-              ...widget.textContent!.content!.map(
-                (paragraph) => GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _isEditing = true;
-                    });
-                  },
-                  child: Padding(
-                    padding: EdgeInsets.only(bottom: TSizes.spaceBtwItems),
-                    child: TFormattedText(content: paragraph),
+    super.build(context);
+    return BlocBuilder<NoteDetailBloc, NoteDetailState>(
+      buildWhen: (previous, current) => current is! NoteDetailActionState,
+      builder: (context, state) {
+        if (state is NoteTextDetailLoadingState && _cachedTextNoteModel == null) {
+          return const Center(child: LoadingSpinkit.loadingPage);
+        }
+
+        if (state is NoteTextDetailSuccessState) {
+          _cachedTextNoteModel = state.textNoteModel;
+        }
+
+        final textContent = _cachedTextNoteModel?.data?.textContent;
+        
+        if (!_isEditing) {
+          return SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: TSizes.spaceBtwItems),
+                if (textContent == null || textContent.content == null || textContent.content!.isEmpty)
+                  Column(
+                    children: [
+                      SizedBox(height: TSizes.spaceBtwSections * 2),
+                      Center(
+                        child: TEmpty(subTitle: 'Tap anywhere to start editing'),
+                      ),
+                    ],
+                  )
+                else
+                  ...textContent.content!.map(
+                    (paragraph) => GestureDetector(
+                      onTap: _enterEditMode,
+                      child: Padding(
+                        padding: EdgeInsets.only(bottom: TSizes.spaceBtwItems),
+                        child: TFormattedText(content: paragraph),
+                      ),
+                    ),
                   ),
+              ],
+            ),
+          );
+        }
+
+        return SingleChildScrollView(
+          child: Column(
+            children: [
+              QuillSimpleToolbar(
+                controller: _quillController,
+                config: QuillSimpleToolbarConfig(
+                  color: Colors.transparent,
+                  multiRowsDisplay: false,
+                  showAlignmentButtons: true,
+                  showFontFamily: false,
+                  showFontSize: false,
+                  showInlineCode: false,
+                  showColorButton: false,
+                  showBackgroundColorButton: false,
+                  showClearFormat: false,
+                  showListCheck: false,
+                  showCodeBlock: false,
+                  showIndent: false,
+                  showSearchButton: false,
+                  showSubscript: false,
+                  showSuperscript: false,
                 ),
               ),
-          ],
-        ),
-      );
-    }
-
-    return Column(
-      children: [
-        QuillSimpleToolbar(
-          controller: _quillController,
-          config: QuillSimpleToolbarConfig(
-            color: Colors.transparent,
-            multiRowsDisplay: false,
-            showAlignmentButtons: true,
-            showFontFamily: false,
-            showFontSize: false,
-            showInlineCode: false,
-            showColorButton: false,
-            showBackgroundColorButton: false,
-            showClearFormat: false,
-            showListCheck: false,
-            showCodeBlock: false,
-            showIndent: false,
-            showSearchButton: false,
-            showSubscript: false,
-            showSuperscript: false,
+              QuillEditor.basic(
+                controller: _quillController,
+                config: QuillEditorConfig(),
+              ),
+            ],
           ),
-        ),
-        QuillEditor.basic(
-          controller: _quillController,
-          config: QuillEditorConfig(),
-        ),
-      ],
+        );
+      },
     );
   }
 }

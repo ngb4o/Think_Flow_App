@@ -16,4 +16,11 @@ class NoteCreateTextEvent extends NotesEvent {
   NoteCreateTextEvent({required this.id, required this.content});
 }
 
+class NoteCreateAudioEvent extends NotesEvent {
+  final String id;
+  final File audioFile;
+
+  NoteCreateAudioEvent({required this.id, required this.audioFile});
+}
+
 class NotesNotifyHomeUpdateEvent extends NotesEvent {}

@@ -18,6 +18,6 @@ class LoadingSpinkit {
   //Loading Button
   static const loadingButton = SpinKitRing(
     color: TColors.primary,
-    size: 35.0,
+    size: 30.0,
   );
 }

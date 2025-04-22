@@ -16,6 +16,7 @@ import 'package:think_flow/presentation/screens/notes/widgets/text_notes/text_no
 import 'package:think_flow/utils/helpers/helper_functions.dart';
 import 'package:think_flow/utils/popups/loaders.dart';
 import '../../../common/widgets/appbar/appbar.dart';
+import '../../../common/widgets/keep_alive_wrapper.dart';
 import '../../../common/widgets/loading/loading.dart';
 import '../../../utils/constants/colors.dart';
 import '../../../utils/constants/sizes.dart';

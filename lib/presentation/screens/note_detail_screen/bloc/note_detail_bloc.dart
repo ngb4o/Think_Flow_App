@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:think_flow/data/data_sources/remote/api_exception.dart';
+import 'package:think_flow/data/models/audio_note_model.dart';
 import 'package:think_flow/data/models/text_note_model.dart';
 import 'package:think_flow/data/repositories/note_repo.dart';
 
@@ -14,27 +15,41 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
   final NoteRepo noteRepo;
 
   NoteDetailBloc(this.noteRepo) : super(NoteDetailInitial()) {
-    on<NoteDetailInitialFetchDataEvent>(noteDetailInitialFetchDataEvent);
+    on<NoteTextDetailInitialFetchDataEvent>(_onTextDetailInitialFetch);
+    on<NoteAudioDetailInitialFetchDataEvent>(_onAudioDetailInitialFetch);
   }
 
-  FutureOr<void> noteDetailInitialFetchDataEvent(
-      NoteDetailInitialFetchDataEvent event, Emitter<NoteDetailState> emit) async {
-    emit(NoteDetailLoadingState());
+  FutureOr<void> _onTextDetailInitialFetch(
+      NoteTextDetailInitialFetchDataEvent event, Emitter<NoteDetailState> emit) async {
+    emit(NoteTextDetailLoadingState());
     try {
-      var noteDetailData = await noteRepo.getTextNote(event.noteId);
-      if (noteDetailData.data != null) {
-        emit(
-          NoteDetailSuccessState(
-            textNoteModel: TextNoteModel(data: noteDetailData.data),
-          ),
-        );
+      var noteTextDetailData = await noteRepo.getTextNote(event.noteId);
+      if (noteTextDetailData.data != null) {
+        emit(NoteTextDetailSuccessState(textNoteModel: noteTextDetailData));
       }
     } on ApiException catch (e) {
-      emit(NoteDetailErrorState());
-      emit(NoteDetailErrorActionState(message: e.message));
+      emit(NoteTextDetailErrorState());
+      emit(NoteTextDetailErrorActionState(message: e.message));
     } catch (e) {
-      emit(NoteDetailErrorState());
-      emit(NoteDetailErrorActionState(message: 'An unexpected error occurred'));
+      emit(NoteTextDetailErrorState());
+      emit(NoteTextDetailErrorActionState(message: 'An unexpected error occurred'));
+    }
+  }
+
+  FutureOr<void> _onAudioDetailInitialFetch(
+      NoteAudioDetailInitialFetchDataEvent event, Emitter<NoteDetailState> emit) async {
+    emit(NoteAudioDetailLoadingState());
+    try {
+      var noteAudioDetailData = await noteRepo.getListAudioNote(event.noteId);
+      if (noteAudioDetailData.data != null) {
+        emit(NoteAudioDetailSuccessState(audioNoteModel: noteAudioDetailData));
+      }
+    } on ApiException catch (e) {
+      emit(NoteAudioDetailErrorState());
+      emit(NoteAudioDetailErrorActionState(message: e.message));
+    } catch (e) {
+      emit(NoteAudioDetailErrorState());
+      emit(NoteAudioDetailErrorActionState(message: 'An unexpected error occurred'));
     }
   }
 }

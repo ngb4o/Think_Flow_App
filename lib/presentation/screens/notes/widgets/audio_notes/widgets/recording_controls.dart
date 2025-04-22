@@ -89,10 +89,10 @@ class RecordingControls extends StatelessWidget {
               ),
               const SizedBox(width: TSizes.spaceBtwItems),
               SizedBox(
-                height: 80,
-                width: 80,
+                height: 65,
+                width: 65,
                 child: FloatingActionButton(
-                  backgroundColor: Colors.red,
+                  backgroundColor: Colors.pink,
                   heroTag: 'stop',
                   onPressed: onStop,
                   child: const Icon(Iconsax.stop, color: TColors.white, size: 35),

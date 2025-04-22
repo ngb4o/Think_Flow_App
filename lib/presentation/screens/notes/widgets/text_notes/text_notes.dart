@@ -29,13 +29,14 @@ class _TextNotesPageState extends State<TextNotesPage> {
       listenWhen: (previous, current) => current is NotesActionState,
       buildWhen: (previous, current) => current is! NotesActionState,
       listener: (context, state) {
-        if (state is NotesCreateTextActionState) {
+        if (state is NotesCreateSuccessActionSate) {
           context.read<NotesBloc>().add(
                 NoteCreateTextEvent(
                   id: state.id,
                   content: Utils.convertDeltaToWebFormat(_quillController.document.toDelta().toJson()),
                 ),
               );
+          TLoaders.successSnackBar(context, title: 'Create success');
         }
       },
       builder: (context, state) {
@@ -44,7 +45,6 @@ class _TextNotesPageState extends State<TextNotesPage> {
             child: Column(
               children: [
                 SizedBox(height: TSizes.spaceBtwItems),
-
                 QuillSimpleToolbar(
                   controller: _quillController,
                   config: QuillSimpleToolbarConfig(
@@ -65,15 +65,8 @@ class _TextNotesPageState extends State<TextNotesPage> {
                     showSuperscript: false,
                   ),
                 ),
-                Container(
-                  height: 300,
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Colors.grey.shade300,
-                      width: 1.0,
-                    ),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+                SizedBox(
+                  height: THelperFunctions.screenHeight(context),
                   child: QuillEditor.basic(
                     controller: _quillController,
                     config: QuillEditorConfig(

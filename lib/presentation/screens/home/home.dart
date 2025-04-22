@@ -39,7 +39,11 @@ class _HomeScreenState extends State<HomeScreen> {
         } else if (state is HomeErrorActionState) {
           TLoaders.errorSnackBar(context, title: 'Error', message: state.message);
         } else if (state is HomeNavigationToNoteDetailPageActionState) {
-          AutoRouter.of(context).push(NoteDetailScreenRoute(noteId: state.noteId, title: state.title));
+          AutoRouter.of(context).push(NoteDetailScreenRoute(
+            noteId: state.noteId,
+            title: state.title,
+            createAt: state.createAt,
+          ));
         } else if (state is HomeDeleteNoteSuccessActionState) {
           TLoaders.successSnackBar(context, title: 'Delete successfully');
           context.read<HomeBloc>().add(HomeInitialFetchDataEvent());
@@ -81,8 +85,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         itemBuilder: (context, index) {
                           final note = successState.noteModel.data[index];
                           return GestureDetector(
-                            onTap: () => context.read<HomeBloc>().add(
-                                HomeClickNavigationToNoteDetailPageEvent(noteId: note.id, title: note.title)),
+                            onTap: () => context.read<HomeBloc>().add(HomeClickNavigationToNoteDetailPageEvent(
+                                  noteId: note.id,
+                                  title: note.title,
+                                  createAt: note.createdAt,
+                                )),
                             child: Padding(
                               padding: EdgeInsets.only(bottom: TSizes.spaceBtwItems),
                               child: Container(

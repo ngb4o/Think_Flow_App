@@ -9,18 +9,16 @@ abstract class NotesActionState extends NotesState {}
 
 class NotesCreateLoadingState extends NotesState {}
 
-class NotesCreateSuccessActionSate extends NotesActionState {}
+class NotesCreateSuccessActionSate extends NotesActionState {
+  final String id;
+
+  NotesCreateSuccessActionSate({required this.id});
+}
 
 class NotesCreateErrorActionState extends NotesActionState {
   final String message;
 
   NotesCreateErrorActionState({required this.message});
-}
-
-class NotesCreateTextActionState extends NotesActionState {
-  final String id;
-
-  NotesCreateTextActionState({required this.id});
 }
 
 class NotesCreateTextLoadingState extends NotesState {}
@@ -31,6 +29,16 @@ class NotesCreateTextErrorActionState extends NotesActionState {
   final String message;
 
   NotesCreateTextErrorActionState({required this.message});
+}
+
+class NotesCreateAudioLoadingState extends NotesState {}
+
+class NotesCreateAudioSuccessActionState extends NotesActionState {}
+
+class NotesCreateAudioErrorActionState extends NotesActionState {
+  final String message;
+
+  NotesCreateAudioErrorActionState({required this.message});
 }
 
 class NotesNotifyHomeUpdateActionState extends NotesActionState {}

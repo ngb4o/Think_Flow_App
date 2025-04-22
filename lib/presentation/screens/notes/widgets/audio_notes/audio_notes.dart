@@ -13,7 +13,7 @@ class _AudioNotesPageState extends State<AudioNotesPage> {
   final AudioPlayer audioPlayer = AudioPlayer();
   final List<AudioRecording> recordings = [];
   late final RecorderController recorderController;
-  
+
   String? currentRecordingPath;
   bool isRecording = false;
   bool isPaused = false;
@@ -23,7 +23,7 @@ class _AudioNotesPageState extends State<AudioNotesPage> {
   Duration totalDuration = Duration.zero;
   Timer? recordingTimer;
   int? currentlyPlayingIndex;
-  
+
   double playbackSpeed = 1.0;
   final List<double> availableSpeeds = [0.5, 0.75, 1.0, 1.25, 1.5, 2.0];
 
@@ -61,9 +61,9 @@ class _AudioNotesPageState extends State<AudioNotesPage> {
     try {
       final Directory appDocumentsDir = await getApplicationDocumentsDirectory();
       final List<FileSystemEntity> files = await appDocumentsDir.list().toList();
-      
+
       final List<AudioRecording> loadedRecordings = [];
-      
+
       for (var file in files) {
         if (file.path.endsWith('.wav')) {
           final fileExists = await File(file.path).exists();
@@ -71,7 +71,7 @@ class _AudioNotesPageState extends State<AudioNotesPage> {
 
           try {
             final estimatedDuration = await AudioUtils.estimateAudioDuration(file.path);
-            
+
             loadedRecordings.add(AudioRecording(
               path: file.path,
               name: AudioUtils.getFileNameFromPath(file.path),
@@ -84,7 +84,7 @@ class _AudioNotesPageState extends State<AudioNotesPage> {
           }
         }
       }
-      
+
       if (mounted) {
         setState(() {
           recordings.clear();
@@ -121,7 +121,7 @@ class _AudioNotesPageState extends State<AudioNotesPage> {
 
       // Start recording with RecorderController
       await recorderController.record();
-      
+
       // Start recording with AudioRecorder
       await audioRecorder.start(
         const RecordConfig(
@@ -340,82 +340,112 @@ class _AudioNotesPageState extends State<AudioNotesPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: [
-          SizedBox(height: TSizes.spaceBtwItems),
-          Expanded(
-            child: ListView.builder(
-              itemCount: recordings.length,
-              itemBuilder: (context, index) {
-                final recording = recordings[index];
-                return RecordingListItem(
-                  name: recording.name,
-                  duration: recording.formattedDuration,
-                  isPlaying: currentlyPlayingIndex == index && isPlaying,
-                  onPlayPause: () => _playRecording(index),
-                  onDelete: () => _deleteRecording(index),
+    return BlocConsumer<NotesBloc, NotesState>(
+      listenWhen: (previous, current) => current is NotesActionState,
+      buildWhen: (previous, current) => current is! NotesActionState,
+      listener: (context, state) {
+        if (state is NotesCreateSuccessActionSate) {
+          // Upload all recordings when note is created
+          for (var recording in recordings) {
+            context.read<NotesBloc>().add(
+                  NoteCreateAudioEvent(
+                    id: state.id,
+                    audioFile: File(recording.path),
+                  ),
                 );
-              },
-            ),
-          ),
-        ],
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: isRecording
-          ? RecordingControls(
-              isRecording: isRecording,
-              isPaused: isPaused,
-              recordingDuration: recordingDuration,
-              recorderController: recorderController,
-              onCancel: _cancelRecording,
-              onStop: _stopRecording,
-              onPauseResume: isPaused ? _resumeRecording : _pauseRecording,
-            )
-          : currentlyPlayingIndex != null
-              ? AudioPlayerControls(
-                  fileName: recordings[currentlyPlayingIndex!].name,
-                  currentPosition: currentPosition,
-                  totalDuration: totalDuration,
-                  playbackSpeed: playbackSpeed,
-                  availableSpeeds: availableSpeeds,
-                  isPlaying: isPlaying,
-                  onSpeedChanged: (double speed) async {
-                    setState(() {
-                      playbackSpeed = speed;
-                    });
-                    await audioPlayer.setSpeed(speed);
-                  },
-                  onClose: () {
-                    audioPlayer.stop();
-                    setState(() {
-                      currentlyPlayingIndex = null;
-                      isPlaying = false;
-                      currentPosition = Duration.zero;
-                    });
-                  },
-                  onPlayPause: () => _playRecording(currentlyPlayingIndex!),
-                  onSeek: _seekTo,
-                  onBackward: () {
-                    final newPosition = currentPosition - const Duration(seconds: 15);
-                    _seekTo(newPosition.isNegative ? Duration.zero : newPosition);
-                  },
-                  onForward: () {
-                    final newPosition = currentPosition + const Duration(seconds: 15);
-                    _seekTo(newPosition > totalDuration ? totalDuration : newPosition);
-                  },
-                )
-              : AvatarGlow(
-                  animate: true,
-                  glowColor: TColors.primary,
-                  duration: const Duration(milliseconds: 2000),
-                  repeat: true,
-                  child: FloatingActionButton(
-                    shape: const CircleBorder(),
-                    onPressed: _startRecording,
-                    child: const Icon(Iconsax.microphone),
+          }
+        }else if(state is NotesCreateAudioSuccessActionState) {
+          TLoaders.successSnackBar(context, title: 'Audio uploaded successfully');
+        } else if(state is NotesCreateAudioErrorActionState) {
+          TLoaders.successSnackBar(context, title: 'Error uploaded audio', message: state.message);
+
+        }
+      },
+      builder: (context, state) {
+        return Scaffold(
+          body: Column(
+            children: [
+              SizedBox(height: TSizes.spaceBtwItems),
+              if(recordings.isEmpty)
+                Expanded(
+                  child: Center(
+                    child: TEmpty(subTitle: 'Tap microphone to start recording')
                   ),
                 ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: recordings.length,
+                  itemBuilder: (context, index) {
+                    final recording = recordings[index];
+                    return RecordingListItem(
+                      name: recording.name,
+                      duration: recording.formattedDuration,
+                      isPlaying: currentlyPlayingIndex == index && isPlaying,
+                      onPlayPause: () => _playRecording(index),
+                      onDelete: () => _deleteRecording(index),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+          floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+          floatingActionButton: isRecording
+              ? RecordingControls(
+                  isRecording: isRecording,
+                  isPaused: isPaused,
+                  recordingDuration: recordingDuration,
+                  recorderController: recorderController,
+                  onCancel: _cancelRecording,
+                  onStop: _stopRecording,
+                  onPauseResume: isPaused ? _resumeRecording : _pauseRecording,
+                )
+              : currentlyPlayingIndex != null
+                  ? AudioPlayerControls(
+                      fileName: recordings[currentlyPlayingIndex!].name,
+                      currentPosition: currentPosition,
+                      totalDuration: totalDuration,
+                      playbackSpeed: playbackSpeed,
+                      availableSpeeds: availableSpeeds,
+                      isPlaying: isPlaying,
+                      onSpeedChanged: (double speed) async {
+                        setState(() {
+                          playbackSpeed = speed;
+                        });
+                        await audioPlayer.setSpeed(speed);
+                      },
+                      onClose: () {
+                        audioPlayer.stop();
+                        setState(() {
+                          currentlyPlayingIndex = null;
+                          isPlaying = false;
+                          currentPosition = Duration.zero;
+                        });
+                      },
+                      onPlayPause: () => _playRecording(currentlyPlayingIndex!),
+                      onSeek: _seekTo,
+                      onBackward: () {
+                        final newPosition = currentPosition - const Duration(seconds: 15);
+                        _seekTo(newPosition.isNegative ? Duration.zero : newPosition);
+                      },
+                      onForward: () {
+                        final newPosition = currentPosition + const Duration(seconds: 15);
+                        _seekTo(newPosition > totalDuration ? totalDuration : newPosition);
+                      },
+                    )
+                  : AvatarGlow(
+                      animate: true,
+                      glowColor: TColors.primary,
+                      duration: const Duration(milliseconds: 2000),
+                      repeat: true,
+                      child: FloatingActionButton(
+                        shape: const CircleBorder(),
+                        onPressed: _startRecording,
+                        child: const Icon(Iconsax.microphone),
+                      ),
+                    ),
+        );
+      },
     );
   }
 }

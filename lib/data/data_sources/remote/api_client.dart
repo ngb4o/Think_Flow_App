@@ -34,12 +34,10 @@ class ApiClient {
   // GET REQUEST
   Future<Response> getRequest({
     required String path,
-    dynamic params,
   }) async {
     try {
       debugPrint('🚀 ========== API REQUEST ========= 🚀');
       debugPrint('Request url: ${baseOptions.baseUrl + path}');
-      debugPrint('Query parameters: $params');
 
       var response = await dio.get(
         path

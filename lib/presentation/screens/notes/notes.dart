@@ -44,9 +44,7 @@ class _NotesPageState extends State<NotesPage> with SingleTickerProviderStateMix
       listenWhen: (previous, current) => current is NotesActionState,
       buildWhen: (previous, current) => current is !NotesActionState,
       listener: (context, state) {
-        if(state is NotesCreateSuccessActionSate) {
-          TLoaders.successSnackBar(context, title: 'Create success',);
-        }else if (state is NotesCreateTextSuccessActionState){
+        if (state is NotesCreateTextSuccessActionState){
           Navigator.pop(context);
         }else  if(state is NotesCreateErrorActionState) {
           TLoaders.errorSnackBar(context, title: 'Create error', message: state.message);
@@ -127,24 +125,5 @@ class _NotesPageState extends State<NotesPage> with SingleTickerProviderStateMix
         );
       },
     );
-  }
-}
-
-class KeepAliveWrapper extends StatefulWidget {
-  final Widget child;
-  const KeepAliveWrapper({Key? key, required this.child}) : super(key: key);
-
-  @override
-  State<KeepAliveWrapper> createState() => _KeepAliveWrapperState();
-}
-
-class _KeepAliveWrapperState extends State<KeepAliveWrapper> with AutomaticKeepAliveClientMixin {
-  @override
-  bool get wantKeepAlive => true;
-
-  @override
-  Widget build(BuildContext context) {
-    super.build(context);
-    return widget.child;
   }
 }

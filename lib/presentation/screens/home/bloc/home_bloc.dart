@@ -74,20 +74,23 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   FutureOr<void> homeClickNavigationToNoteDetailPageEvent(
       HomeClickNavigationToNoteDetailPageEvent event, Emitter<HomeState> emit) {
-    emit(HomeNavigationToNoteDetailPageActionState(noteId: event.noteId, title: event.title));
+    emit(HomeNavigationToNoteDetailPageActionState(
+      noteId: event.noteId,
+      title: event.title,
+      createAt: event.createAt,
+    ));
   }
 
-  FutureOr<void> homeClickButtonDeleteNoteEvent(
-      HomeClickButtonDeleteNoteEvent event, Emitter<HomeState> emit) async {
+  FutureOr<void> homeClickButtonDeleteNoteEvent(HomeClickButtonDeleteNoteEvent event, Emitter<HomeState> emit) async {
     emit(HomeDeleteNoteLoadingState());
     try {
       final deleteNoteData = await noteRepo.deleteRequest(path: event.noteId);
-      if(deleteNoteData.data) {
+      if (deleteNoteData.data) {
         emit(HomeDeleteNoteSuccessActionState());
       }
     } on ApiException catch (e) {
       emit(HomeDeleteNoteErrorActionState(message: e.message));
-    } catch(e) {
+    } catch (e) {
       emit(HomeDeleteNoteErrorActionState(message: 'An unexpected error occurred'));
     }
   }

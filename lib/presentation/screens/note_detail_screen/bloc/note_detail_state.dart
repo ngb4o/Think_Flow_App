@@ -1,24 +1,38 @@
 part of 'note_detail_bloc.dart';
 
-@immutable
-sealed class NoteDetailState {}
+abstract class NoteDetailState {}
 
-final class NoteDetailInitial extends NoteDetailState {}
+class NoteDetailInitial extends NoteDetailState {}
 
 abstract class NoteDetailActionState extends NoteDetailState {}
 
-class NoteDetailLoadingState extends NoteDetailState {}
+// Text states
+class NoteTextDetailLoadingState extends NoteDetailState {}
 
-class NoteDetailSuccessState extends NoteDetailState {
-  final TextNoteModel textNoteModel;
+class NoteTextDetailSuccessState extends NoteDetailState {
+  final TextNoteModel? textNoteModel;
 
-  NoteDetailSuccessState({required this.textNoteModel});
+  NoteTextDetailSuccessState({this.textNoteModel});
 }
 
-class NoteDetailErrorState extends NoteDetailState {}
+class NoteTextDetailErrorState extends NoteDetailState {}
 
-class NoteDetailErrorActionState extends NoteDetailActionState {
+class NoteTextDetailErrorActionState extends NoteDetailActionState {
   final String message;
+  NoteTextDetailErrorActionState({required this.message});
+}
 
-  NoteDetailErrorActionState({required this.message});
+// Audio states
+class NoteAudioDetailLoadingState extends NoteDetailState {}
+
+class NoteAudioDetailSuccessState extends NoteDetailState {
+  final AudioNoteModel? audioNoteModel;
+  NoteAudioDetailSuccessState({this.audioNoteModel});
+}
+
+class NoteAudioDetailErrorState extends NoteDetailState {}
+
+class NoteAudioDetailErrorActionState extends NoteDetailActionState {
+  final String message;
+  NoteAudioDetailErrorActionState({required this.message});
 }
