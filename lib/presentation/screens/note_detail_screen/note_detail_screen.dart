@@ -50,12 +50,12 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
       listenWhen: (previous, current) => current is NoteDetailActionState,
       buildWhen: (previous, current) => current is! NoteDetailActionState,
       listener: (context, state) {
-        if(state is NoteUpdateSuccessActionSate) {
+        if (state is NoteUpdateSuccessActionSate) {
           Navigator.pop(context);
           TLoaders.successSnackBar(context, title: 'Update successfully');
-        } else if(state is NoteUpdateErrorActionState) {
+        } else if (state is NoteUpdateErrorActionState) {
           TLoaders.errorSnackBar(context, title: 'Update failed', message: state.message);
-        } else if(state is NotesUpdateNotifyHomeUpdateActionState) {
+        } else if (state is NotesUpdateNotifyUpdateActionState) {
           context.read<HomeBloc>().add(HomeInitialFetchDataEvent());
         }
       },
@@ -64,10 +64,13 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
           appBar: TAppbar(
             showBackArrow: true,
             actions: [
-              IconButton(
-                onPressed: () => _updateNote(widget.noteId, _titleController.text.trim()),
-                icon: Icon(Iconsax.tick_square4),
-              ),
+              if (state is NoteUpdateLoadingState)
+                LoadingSpinkit.loadingButton
+              else
+                IconButton(
+                  onPressed: () => _updateNote(widget.noteId, _titleController.text.trim()),
+                  icon: Icon(Iconsax.tick_square4),
+                ),
             ],
           ),
           body: DefaultTabController(
@@ -86,6 +89,9 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                     backgroundCursorColor: Colors.grey,
                     onChanged: (value) {
                       _titleController.text = value;
+                    },
+                    onSubmitted: (value) {
+                      _updateNote(widget.noteId, value.trim());
                     },
                   ),
                   SizedBox(height: TSizes.sm),

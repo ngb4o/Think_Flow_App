@@ -165,6 +165,26 @@ class NoteRepo extends ApiClient {
     }
   }
 
+  // Update text note
+  Future<DataModel> updateTextNote(String id, Map<String, dynamic> content) async {
+    try {
+      final response = await patchRequest(
+        path: '${ApiEndpointUrls.text}/$id',
+        body: content,
+      );
+      if (response.statusCode == 200) {
+        final responseData = dataModelFromJson(jsonEncode(response.data));
+        return responseData;
+      } else {
+        throw ApiException(message: 'Update text note failed');
+      }
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      throw ApiException(message: 'An unexpected error occurred');
+    }
+  }
+
   // ---------- DELETE ---------- //
   // Delete note
   Future<DataModel> deleteNote(String noteId) async {

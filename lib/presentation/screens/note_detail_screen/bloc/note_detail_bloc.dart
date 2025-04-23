@@ -18,6 +18,7 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
     on<NoteTextDetailInitialFetchDataEvent>(onTextDetailInitialFetch);
     on<NoteAudioDetailInitialFetchDataEvent>(onAudioDetailInitialFetch);
     on<NoteClickButtonUpdateEvent>(noteClickButtonUpdateEvent);
+    on<NoteClickButtonUpdateTextEvent>(noteClickButtonUpdateTextEvent);
   }
 
   FutureOr<void> onTextDetailInitialFetch(
@@ -61,12 +62,27 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
       var noteUpdateData = await noteRepo.updateNote(event.noteId, event.title);
       if(noteUpdateData.data != null) {
         emit(NoteUpdateSuccessActionSate());
-        emit(NotesUpdateNotifyHomeUpdateActionState());
+        emit(NotesUpdateNotifyUpdateActionState());
       }
     } on ApiException catch (e) {
       emit(NoteUpdateErrorActionState(message: e.message));
     } catch(e) {
       emit(NoteUpdateErrorActionState(message: 'An unexpected error occurred'));
+    }
+  }
+
+  FutureOr<void> noteClickButtonUpdateTextEvent(
+      NoteClickButtonUpdateTextEvent event, Emitter<NoteDetailState> emit) async {
+    emit(NoteUpdateTextLoadingState());
+    try {
+      var noteUpdateTextData = await noteRepo.updateTextNote(event.noteId, event.content);
+      if(noteUpdateTextData.data != null) {
+        emit(NoteUpdateTextSuccessActionSate());
+      }
+    } on ApiException catch (e) {
+      emit(NoteUpdateTextErrorActionState(message: e.message));
+    } catch(e) {
+      emit(NoteUpdateTextErrorActionState(message: 'An unexpected error occurred'));
     }
   }
 }

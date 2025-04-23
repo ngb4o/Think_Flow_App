@@ -37,7 +37,7 @@ class NoteAudioDetailErrorActionState extends NoteDetailActionState {
   NoteAudioDetailErrorActionState({required this.message});
 }
 
-// Update state
+// Update note state
 class NoteUpdateLoadingState extends NoteDetailState {}
 
 class NoteUpdateSuccessActionSate extends NoteDetailActionState {}
@@ -48,6 +48,17 @@ class NoteUpdateErrorActionState extends NoteDetailActionState {
   NoteUpdateErrorActionState({required this.message});
 }
 
+// Update text note state
+class NoteUpdateTextLoadingState extends NoteDetailState {}
+
+class NoteUpdateTextSuccessActionSate extends NoteDetailActionState {}
+
+class NoteUpdateTextErrorActionState extends NoteDetailActionState {
+  final String message;
+
+  NoteUpdateTextErrorActionState({required this.message});
+}
+
 // Notify
-class NotesUpdateNotifyHomeUpdateActionState extends NoteDetailActionState {}
+class NotesUpdateNotifyUpdateActionState extends NoteDetailActionState {}
 

@@ -41,6 +41,43 @@ class _TextDetailTabState extends State<TextDetailTab> with AutomaticKeepAliveCl
     });
   }
 
+  _updateText(String textId) {
+    final delta = _quillController.document.toDelta().toJson();
+    final content = {
+      "text_content": [
+        {
+          "body": {
+            "type": "doc",
+            "content": delta.map((op) {
+              if (op['insert'] == '\n') {
+                return {"type": "paragraph", "content": []};
+              }
+              return {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": op['insert'],
+                    "marks": op['attributes'] != null
+                        ? (op['attributes'] as Map<String, dynamic>).entries.map((e) => {"type": e.key}).toList()
+                        : []
+                  }
+                ]
+              };
+            }).toList()
+          }
+        }
+      ]
+    };
+
+    context.read<NoteDetailBloc>().add(
+          NoteClickButtonUpdateTextEvent(
+            noteId: textId,
+            content: content,
+          ),
+        );
+  }
+
   @override
   void dispose() {
     _quillController.dispose();
@@ -50,8 +87,19 @@ class _TextDetailTabState extends State<TextDetailTab> with AutomaticKeepAliveCl
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return BlocBuilder<NoteDetailBloc, NoteDetailState>(
+    return BlocConsumer<NoteDetailBloc, NoteDetailState>(
+      listenWhen: (previous, current) => current is NoteDetailActionState,
       buildWhen: (previous, current) => current is! NoteDetailActionState,
+      listener: (context, state) {
+        if (state is NoteUpdateTextSuccessActionSate) {
+          setState(() {
+            _isEditing = false;
+          });
+          _loadTextContent();
+        } else if (state is NoteUpdateErrorActionState) {
+          TLoaders.errorSnackBar(context, title: 'Error', message: state.message);
+        }
+      },
       builder: (context, state) {
         if (state is NoteTextDetailLoadingState && _cachedTextNoteModel == null) {
           return const Center(child: LoadingSpinkit.loadingPage);
@@ -95,35 +143,58 @@ class _TextDetailTabState extends State<TextDetailTab> with AutomaticKeepAliveCl
           );
         }
 
-        return SingleChildScrollView(
-          child: Column(
-            children: [
-              QuillSimpleToolbar(
-                controller: _quillController,
-                config: QuillSimpleToolbarConfig(
-                  color: Colors.transparent,
-                  multiRowsDisplay: false,
-                  showAlignmentButtons: true,
-                  showFontFamily: false,
-                  showFontSize: false,
-                  showInlineCode: false,
-                  showColorButton: false,
-                  showBackgroundColorButton: false,
-                  showClearFormat: false,
-                  showListCheck: false,
-                  showCodeBlock: false,
-                  showIndent: false,
-                  showSearchButton: false,
-                  showSubscript: false,
-                  showSuperscript: false,
+        return Stack(
+          children: [
+            SingleChildScrollView(
+              child: Column(
+                children: [
+                  QuillSimpleToolbar(
+                    controller: _quillController,
+                    config: QuillSimpleToolbarConfig(
+                      color: Colors.transparent,
+                      multiRowsDisplay: false,
+                      showAlignmentButtons: true,
+                      showFontFamily: false,
+                      showFontSize: false,
+                      showInlineCode: false,
+                      showColorButton: false,
+                      showBackgroundColorButton: false,
+                      showClearFormat: false,
+                      showListCheck: false,
+                      showCodeBlock: false,
+                      showIndent: false,
+                      showSearchButton: false,
+                      showSubscript: false,
+                      showSuperscript: false,
+                    ),
+                  ),
+                  QuillEditor.basic(
+                    controller: _quillController,
+                    config: QuillEditorConfig(),
+                  ),
+                ],
+              ),
+            ),
+            if (state is NoteUpdateTextLoadingState)
+              Positioned(
+                bottom: 10,
+                right: 0,
+                child: LoadingSpinkit.loadingButton,
+              )
+            else
+              Positioned(
+                bottom: 10,
+                right: 0,
+                child: GestureDetector(
+                  onTap: () => _updateText(_cachedTextNoteModel!.data!.id.toString()),
+                  child: Container(
+                    decoration: BoxDecoration(color: TColors.primary, borderRadius: BorderRadius.circular(20)),
+                    padding: EdgeInsets.symmetric(horizontal: TSizes.md, vertical: TSizes.sm),
+                    child: Text('Save', style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: TColors.white)),
+                  ),
                 ),
               ),
-              QuillEditor.basic(
-                controller: _quillController,
-                config: QuillEditorConfig(),
-              ),
-            ],
-          ),
+          ],
         );
       },
     );

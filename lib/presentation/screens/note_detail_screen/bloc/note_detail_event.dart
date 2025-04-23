@@ -21,3 +21,10 @@ class NoteClickButtonUpdateEvent extends NoteDetailEvent {
 
   NoteClickButtonUpdateEvent({required this.noteId, required this.title});
 }
+
+class NoteClickButtonUpdateTextEvent extends NoteDetailEvent {
+  final String noteId;
+  final Map<String, dynamic> content;
+
+  NoteClickButtonUpdateTextEvent({required this.noteId, required this.content});
+}

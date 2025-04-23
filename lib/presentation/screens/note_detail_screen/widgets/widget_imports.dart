@@ -8,6 +8,7 @@ import 'package:think_flow/common/widgets/loading/loading.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:think_flow/presentation/screens/notes/widgets/audio_notes/widgets/audio_player_controls.dart';
 import 'package:flutter_html/flutter_html.dart' as html;
+import 'package:think_flow/utils/popups/loaders.dart';
 
 import '../../../../common/widgets/texts/formatted_text.dart';
 import '../../../../data/models/text_note_model.dart';
