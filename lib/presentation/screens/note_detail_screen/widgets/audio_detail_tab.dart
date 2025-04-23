@@ -4,24 +4,34 @@ class AudioDetailTab extends StatefulWidget {
   const AudioDetailTab({super.key, required this.noteId});
 
   final String noteId;
+
   @override
   State<AudioDetailTab> createState() => _AudioDetailTabState();
 }
 
 class _AudioDetailTabState extends State<AudioDetailTab> {
   final AudioPlayer audioPlayer = AudioPlayer();
+  final AudioRecorder audioRecorder = AudioRecorder();
+  late final RecorderController recorderController;
   bool isPlaying = false;
+  bool isRecording = false;
+  bool isPaused = false;
   int? currentlyPlayingIndex;
   Duration currentPosition = Duration.zero;
   Duration totalDuration = Duration.zero;
+  Duration recordingDuration = Duration.zero;
   double playbackSpeed = 1.0;
   final List<double> availableSpeeds = [0.5, 0.75, 1.0, 1.25, 1.5, 2.0];
+  Timer? recordingTimer;
+  String? currentRecordingPath;
+  AudioNoteModel? _cachedAudioNoteModel;
 
   @override
   void initState() {
     super.initState();
+    _initRecorder();
     context.read<NoteDetailBloc>().add(NoteAudioDetailInitialFetchDataEvent(noteId: widget.noteId));
-    
+
     audioPlayer.positionStream.listen((position) {
       if (mounted) {
         setState(() {
@@ -29,7 +39,7 @@ class _AudioDetailTabState extends State<AudioDetailTab> {
         });
       }
     });
-    
+
     audioPlayer.durationStream.listen((duration) {
       if (mounted) {
         setState(() {
@@ -37,6 +47,168 @@ class _AudioDetailTabState extends State<AudioDetailTab> {
         });
       }
     });
+  }
+
+  Future<void> _initRecorder() async {
+    recorderController = RecorderController()
+      ..androidEncoder = AndroidEncoder.aac
+      ..androidOutputFormat = AndroidOutputFormat.mpeg4
+      ..iosEncoder = IosEncoder.kAudioFormatMPEG4AAC
+      ..sampleRate = 44100
+      ..bitRate = 128000;
+  }
+
+  Future<void> _startRecording() async {
+    try {
+      if (!await audioRecorder.hasPermission()) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Please grant microphone permission in settings'),
+            ),
+          );
+        }
+        return;
+      }
+
+      final Directory appDocumentsDir = await getApplicationDocumentsDirectory();
+      final String filePath = p.join(appDocumentsDir.path, 'recording_${DateTime.now().millisecondsSinceEpoch}.m4a');
+
+      await recorderController.record();
+      await audioRecorder.start(
+        const RecordConfig(
+          encoder: AudioEncoder.aacLc,
+          bitRate: 128000,
+          sampleRate: 44100,
+        ),
+        path: filePath,
+      );
+
+      if (mounted) {
+        setState(() {
+          isRecording = true;
+          isPaused = false;
+          currentRecordingPath = filePath;
+          recordingDuration = Duration.zero;
+        });
+        _startTimer();
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error starting recording: ${e.toString()}'),
+          ),
+        );
+      }
+    }
+  }
+
+  void _startTimer() {
+    recordingTimer?.cancel();
+    recordingTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (mounted) {
+        setState(() {
+          recordingDuration += const Duration(seconds: 1);
+        });
+      }
+    });
+  }
+
+  Future<void> _pauseRecording() async {
+    try {
+      await recorderController.pause();
+      await audioRecorder.pause();
+      if (mounted) {
+        setState(() {
+          isPaused = true;
+        });
+        recordingTimer?.cancel();
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error pausing recording: ${e.toString()}'),
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _resumeRecording() async {
+    try {
+      await recorderController.record();
+      await audioRecorder.resume();
+      if (mounted) {
+        setState(() {
+          isPaused = false;
+        });
+        _startTimer();
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error resuming recording: ${e.toString()}'),
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _stopRecording() async {
+    try {
+      await recorderController.stop();
+      String? filePath = await audioRecorder.stop();
+      recordingTimer?.cancel();
+      if (mounted && filePath != null) {
+        context.read<NoteDetailBloc>().add(
+              NoteClickButtonCreateAudioEvent(
+                id: widget.noteId,
+                audioFile: File(filePath),
+              ),
+            );
+        setState(() {
+          isRecording = false;
+          isPaused = false;
+          currentRecordingPath = null;
+          recordingDuration = Duration.zero;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error stopping recording: ${e.toString()}'),
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _cancelRecording() async {
+    try {
+      await recorderController.stop();
+      await audioRecorder.stop();
+      recordingTimer?.cancel();
+      if (mounted) {
+        setState(() {
+          isRecording = false;
+          isPaused = false;
+          currentRecordingPath = null;
+          recordingDuration = Duration.zero;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error canceling recording: ${e.toString()}'),
+          ),
+        );
+      }
+    }
   }
 
   Future<void> _playAudio(int index, String url) async {
@@ -86,95 +258,135 @@ class _AudioDetailTabState extends State<AudioDetailTab> {
 
   @override
   void dispose() {
+    recordingTimer?.cancel();
+    recorderController.dispose();
+    audioRecorder.dispose();
     audioPlayer.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<NoteDetailBloc, NoteDetailState>(
+    return BlocConsumer<NoteDetailBloc, NoteDetailState>(
+      listenWhen: (previous, current) => current is NoteDetailActionState,
       buildWhen: (previous, current) => current is! NoteDetailActionState,
+      listener: (context, state) {
+        if (state is NotesCreateAudioDetailSuccessActionState) {
+          context.read<NoteDetailBloc>().add(NoteAudioDetailInitialFetchDataEvent(noteId: widget.noteId));
+          TLoaders.successSnackBar(context, title: 'Audio uploaded successfully');
+        } else if (state is NotesCreateAudioDetailErrorActionState) {
+          TLoaders.errorSnackBar(context, title: 'Error uploaded audio', message: state.message);
+        }
+      },
       builder: (context, state) {
-        if (state is NoteAudioDetailLoadingState) {
+        if (state is NoteAudioDetailLoadingState && _cachedAudioNoteModel == null) {
           return const Center(child: LoadingSpinkit.loadingPage);
         }
 
         if (state is NoteAudioDetailSuccessState) {
-          final audioList = state.audioNoteModel?.data ?? [];
-          
-          if (audioList.isEmpty) {
-            return Center(
-              child: TEmpty(subTitle: 'No audio recordings yet'),
-            );
-          }
+          _cachedAudioNoteModel = state.audioNoteModel;
+        }
 
-          return Column(
-            children: [
-              SizedBox(height: TSizes.spaceBtwItems),
-              if(audioList.isEmpty)
-                Expanded(
-                  child: Center(
-                    child: TEmpty(subTitle: 'No audio recordings yet'),
-                  ),
-                ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: audioList.length,
-                  itemBuilder: (context, index) {
-                    final audio = audioList[index];
-                    return RecordingListItem(
-                      name: 'Audio ${index + 1}',
-                      duration: 'Date: ${Utils.formatDate(audio.createdAt)}',
-                      isPlaying: currentlyPlayingIndex == index && isPlaying,
-                      onPlayPause: () => _playAudio(index, audio.fileUrl ?? ''),
-                      onDelete: () {
-                        // TODO: Implement delete functionality if needed
-                      },
-                    );
-                  },
-                ),
-              ),
-              if (currentlyPlayingIndex != null)
-                AudioPlayerControls(
-                  fileName: audioList[currentlyPlayingIndex!].id ?? 'Untitled',
-                  currentPosition: currentPosition,
-                  totalDuration: totalDuration,
-                  playbackSpeed: playbackSpeed,
-                  availableSpeeds: availableSpeeds,
-                  isPlaying: isPlaying,
-                  onSpeedChanged: (double speed) async {
-                    setState(() {
-                      playbackSpeed = speed;
-                    });
-                    await audioPlayer.setSpeed(speed);
-                  },
-                  onClose: () {
-                    audioPlayer.stop();
-                    setState(() {
-                      currentlyPlayingIndex = null;
-                      isPlaying = false;
-                      currentPosition = Duration.zero;
-                    });
-                  },
-                  onPlayPause: () => _playAudio(
-                    currentlyPlayingIndex!, 
-                    audioList[currentlyPlayingIndex!].fileUrl ?? ''
-                  ),
-                  onSeek: _seekTo,
-                  onBackward: () {
-                    final newPosition = currentPosition - const Duration(seconds: 15);
-                    _seekTo(newPosition.isNegative ? Duration.zero : newPosition);
-                  },
-                  onForward: () {
-                    final newPosition = currentPosition + const Duration(seconds: 15);
-                    _seekTo(newPosition > totalDuration ? totalDuration : newPosition);
-                  },
-                ),
-            ],
+        final audioList = _cachedAudioNoteModel?.data ?? [];
+
+        if (audioList.isEmpty) {
+          return Center(
+            child: TEmpty(subTitle: 'No audio recordings yet'),
           );
         }
 
-        return const Center(child: Text('Error loading audio content'));
+        return Stack(
+          children: [
+            Column(
+              children: [
+                SizedBox(height: TSizes.spaceBtwItems),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: audioList.length,
+                    itemBuilder: (context, index) {
+                      final audio = audioList[index];
+                      return RecordingListItem(
+                        name: 'Audio ${index + 1}',
+                        duration: 'Date: ${Utils.formatDate(audio.createdAt)}',
+                        isPlaying: currentlyPlayingIndex == index && isPlaying,
+                        onPlayPause: () => _playAudio(index, audio.fileUrl ?? ''),
+                        onDelete: () {
+                          // TODO: Implement delete functionality if needed
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                if (isRecording)
+                  RecordingControls(
+                    isRecording: isRecording,
+                    isPaused: isPaused,
+                    recordingDuration: recordingDuration,
+                    recorderController: recorderController,
+                    onCancel: _cancelRecording,
+                    onStop: _stopRecording,
+                    onPauseResume: isPaused ? _resumeRecording : _pauseRecording,
+                  )
+                else if (currentlyPlayingIndex != null)
+                  AudioPlayerControls(
+                    fileName: 'Audio ${currentlyPlayingIndex! + 1}',
+                    currentPosition: currentPosition,
+                    totalDuration: totalDuration,
+                    playbackSpeed: playbackSpeed,
+                    availableSpeeds: availableSpeeds,
+                    isPlaying: isPlaying,
+                    onSpeedChanged: (double speed) async {
+                      setState(() {
+                        playbackSpeed = speed;
+                      });
+                      await audioPlayer.setSpeed(speed);
+                    },
+                    onClose: () {
+                      audioPlayer.stop();
+                      setState(() {
+                        currentlyPlayingIndex = null;
+                        isPlaying = false;
+                        currentPosition = Duration.zero;
+                      });
+                    },
+                    onPlayPause: () =>
+                        _playAudio(currentlyPlayingIndex!, audioList[currentlyPlayingIndex!].fileUrl ?? ''),
+                    onSeek: _seekTo,
+                    onBackward: () {
+                      final newPosition = currentPosition - const Duration(seconds: 15);
+                      _seekTo(newPosition.isNegative ? Duration.zero : newPosition);
+                    },
+                    onForward: () {
+                      final newPosition = currentPosition + const Duration(seconds: 15);
+                      _seekTo(newPosition > totalDuration ? totalDuration : newPosition);
+                    },
+                  )
+                else
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 40),
+                    child: Center(
+                      child: AvatarGlow(
+                        animate: true,
+                        glowColor: TColors.primary,
+                        duration: const Duration(milliseconds: 2000),
+                        repeat: true,
+                        child: FloatingActionButton(
+                          shape: const CircleBorder(),
+                          onPressed: _startRecording,
+                          child: const Icon(Iconsax.microphone),
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            )
+          ],
+        );
       },
     );
   }

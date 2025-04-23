@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
@@ -19,6 +20,7 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
     on<NoteAudioDetailInitialFetchDataEvent>(onAudioDetailInitialFetch);
     on<NoteClickButtonUpdateEvent>(noteClickButtonUpdateEvent);
     on<NoteClickButtonUpdateTextEvent>(noteClickButtonUpdateTextEvent);
+    on<NoteClickButtonCreateAudioEvent>(noteClickButtonCreateAudioEvent);
   }
 
   FutureOr<void> onTextDetailInitialFetch(
@@ -55,34 +57,48 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
     }
   }
 
-  FutureOr<void> noteClickButtonUpdateEvent(
-      NoteClickButtonUpdateEvent event, Emitter<NoteDetailState> emit) async {
-    emit(NoteUpdateLoadingState());
+  FutureOr<void> noteClickButtonUpdateEvent(NoteClickButtonUpdateEvent event, Emitter<NoteDetailState> emit) async {
+    emit(NoteUpdateDetailLoadingState());
     try {
       var noteUpdateData = await noteRepo.updateNote(event.noteId, event.title);
-      if(noteUpdateData.data != null) {
-        emit(NoteUpdateSuccessActionSate());
+      if (noteUpdateData.data != null) {
+        emit(NoteUpdateDetailSuccessActionSate());
         emit(NotesUpdateNotifyUpdateActionState());
       }
     } on ApiException catch (e) {
-      emit(NoteUpdateErrorActionState(message: e.message));
-    } catch(e) {
-      emit(NoteUpdateErrorActionState(message: 'An unexpected error occurred'));
+      emit(NoteUpdateDetailErrorActionState(message: e.message));
+    } catch (e) {
+      emit(NoteUpdateDetailErrorActionState(message: 'An unexpected error occurred'));
     }
   }
 
   FutureOr<void> noteClickButtonUpdateTextEvent(
       NoteClickButtonUpdateTextEvent event, Emitter<NoteDetailState> emit) async {
-    emit(NoteUpdateTextLoadingState());
+    emit(NoteUpdateTextDetailLoadingState());
     try {
       var noteUpdateTextData = await noteRepo.updateTextNote(event.noteId, event.content);
-      if(noteUpdateTextData.data != null) {
-        emit(NoteUpdateTextSuccessActionSate());
+      if (noteUpdateTextData.data != null) {
+        emit(NoteUpdateTextDetailSuccessActionSate());
       }
     } on ApiException catch (e) {
-      emit(NoteUpdateTextErrorActionState(message: e.message));
-    } catch(e) {
-      emit(NoteUpdateTextErrorActionState(message: 'An unexpected error occurred'));
+      emit(NoteUpdateTextDetailErrorActionState(message: e.message));
+    } catch (e) {
+      emit(NoteUpdateTextDetailErrorActionState(message: 'An unexpected error occurred'));
+    }
+  }
+
+  FutureOr<void> noteClickButtonCreateAudioEvent(
+      NoteClickButtonCreateAudioEvent event, Emitter<NoteDetailState> emit) async {
+    emit(NotesCreateAudioDetailLoadingState());
+    try {
+      var createAudioData = await noteRepo.createAudiNote(event.id, event.audioFile);
+      if (createAudioData.data != null) {
+        emit(NotesCreateAudioDetailSuccessActionState());
+      }
+    } on ApiException catch (e) {
+      emit(NotesCreateAudioDetailErrorActionState(message: e.message));
+    } catch (e) {
+      emit(NotesCreateAudioDetailErrorActionState(message: 'An unexpected error occurred'));
     }
   }
 }

@@ -101,7 +101,7 @@ class _TextNotesPageState extends State<TextNotesPage> {
                   child: QuillEditor.basic(
                     controller: _quillController,
                     config: QuillEditorConfig(
-                      padding: EdgeInsets.all(TSizes.spaceBtwItems),
+                      padding: EdgeInsets.all(TSizes.sm),
                       expands: true,
                       scrollable: true,
                     ),

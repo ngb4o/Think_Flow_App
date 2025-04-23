@@ -91,12 +91,12 @@ class _TextDetailTabState extends State<TextDetailTab> with AutomaticKeepAliveCl
       listenWhen: (previous, current) => current is NoteDetailActionState,
       buildWhen: (previous, current) => current is! NoteDetailActionState,
       listener: (context, state) {
-        if (state is NoteUpdateTextSuccessActionSate) {
+        if (state is NoteUpdateTextDetailSuccessActionSate) {
           setState(() {
             _isEditing = false;
           });
           _loadTextContent();
-        } else if (state is NoteUpdateErrorActionState) {
+        } else if (state is NoteUpdateDetailErrorActionState) {
           TLoaders.errorSnackBar(context, title: 'Error', message: state.message);
         }
       },
@@ -175,7 +175,7 @@ class _TextDetailTabState extends State<TextDetailTab> with AutomaticKeepAliveCl
                 ],
               ),
             ),
-            if (state is NoteUpdateTextLoadingState)
+            if (state is NoteUpdateTextDetailLoadingState)
               Positioned(
                 bottom: 10,
                 right: 0,

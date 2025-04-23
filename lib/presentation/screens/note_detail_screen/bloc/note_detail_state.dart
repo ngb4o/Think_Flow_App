@@ -37,26 +37,37 @@ class NoteAudioDetailErrorActionState extends NoteDetailActionState {
   NoteAudioDetailErrorActionState({required this.message});
 }
 
-// Update note state
-class NoteUpdateLoadingState extends NoteDetailState {}
+// Update note
+class NoteUpdateDetailLoadingState extends NoteDetailState {}
 
-class NoteUpdateSuccessActionSate extends NoteDetailActionState {}
+class NoteUpdateDetailSuccessActionSate extends NoteDetailActionState {}
 
-class NoteUpdateErrorActionState extends NoteDetailActionState {
+class NoteUpdateDetailErrorActionState extends NoteDetailActionState {
   final String message;
 
-  NoteUpdateErrorActionState({required this.message});
+  NoteUpdateDetailErrorActionState({required this.message});
 }
 
-// Update text note state
-class NoteUpdateTextLoadingState extends NoteDetailState {}
+// Update text note
+class NoteUpdateTextDetailLoadingState extends NoteDetailState {}
 
-class NoteUpdateTextSuccessActionSate extends NoteDetailActionState {}
+class NoteUpdateTextDetailSuccessActionSate extends NoteDetailActionState {}
 
-class NoteUpdateTextErrorActionState extends NoteDetailActionState {
+class NoteUpdateTextDetailErrorActionState extends NoteDetailActionState {
   final String message;
 
-  NoteUpdateTextErrorActionState({required this.message});
+  NoteUpdateTextDetailErrorActionState({required this.message});
+}
+
+// Create audio note
+class NotesCreateAudioDetailLoadingState extends NoteDetailState {}
+
+class NotesCreateAudioDetailSuccessActionState extends NoteDetailActionState {}
+
+class NotesCreateAudioDetailErrorActionState extends NoteDetailActionState {
+  final String message;
+
+  NotesCreateAudioDetailErrorActionState({required this.message});
 }
 
 // Notify

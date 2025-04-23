@@ -79,7 +79,7 @@ class _AudioPlayerControlsState extends State<AudioPlayerControls> {
               Expanded(
                 child: Text(
                   widget.fileName,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(color: TColors.white),
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: TColors.white),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),

@@ -50,10 +50,10 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
       listenWhen: (previous, current) => current is NoteDetailActionState,
       buildWhen: (previous, current) => current is! NoteDetailActionState,
       listener: (context, state) {
-        if (state is NoteUpdateSuccessActionSate) {
+        if (state is NoteUpdateDetailSuccessActionSate) {
           Navigator.pop(context);
           TLoaders.successSnackBar(context, title: 'Update successfully');
-        } else if (state is NoteUpdateErrorActionState) {
+        } else if (state is NoteUpdateDetailErrorActionState) {
           TLoaders.errorSnackBar(context, title: 'Update failed', message: state.message);
         } else if (state is NotesUpdateNotifyUpdateActionState) {
           context.read<HomeBloc>().add(HomeInitialFetchDataEvent());
@@ -64,7 +64,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
           appBar: TAppbar(
             showBackArrow: true,
             actions: [
-              if (state is NoteUpdateLoadingState)
+              if (state is NoteUpdateDetailLoadingState)
                 LoadingSpinkit.loadingButton
               else
                 IconButton(
@@ -77,7 +77,11 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
             length: tabs.length,
             initialIndex: currentTabIndex,
             child: Padding(
-              padding: EdgeInsets.all(TSizes.defaultSpace),
+              padding: EdgeInsets.only(
+                left: TSizes.defaultSpace,
+                right: TSizes.defaultSpace,
+                bottom: TSizes.defaultSpace,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

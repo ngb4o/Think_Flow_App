@@ -28,3 +28,10 @@ class NoteClickButtonUpdateTextEvent extends NoteDetailEvent {
 
   NoteClickButtonUpdateTextEvent({required this.noteId, required this.content});
 }
+
+class NoteClickButtonCreateAudioEvent extends NoteDetailEvent {
+  final String id;
+  final File audioFile;
+
+  NoteClickButtonCreateAudioEvent({required this.id, required this.audioFile});
+}
