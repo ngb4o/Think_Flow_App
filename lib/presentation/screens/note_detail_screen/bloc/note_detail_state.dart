@@ -36,3 +36,18 @@ class NoteAudioDetailErrorActionState extends NoteDetailActionState {
   final String message;
   NoteAudioDetailErrorActionState({required this.message});
 }
+
+// Update state
+class NoteUpdateLoadingState extends NoteDetailState {}
+
+class NoteUpdateSuccessActionSate extends NoteDetailActionState {}
+
+class NoteUpdateErrorActionState extends NoteDetailActionState {
+  final String message;
+
+  NoteUpdateErrorActionState({required this.message});
+}
+
+// Notify
+class NotesUpdateNotifyHomeUpdateActionState extends NoteDetailActionState {}
+

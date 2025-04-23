@@ -62,7 +62,7 @@ class _TextDetailTabState extends State<TextDetailTab> with AutomaticKeepAliveCl
         }
 
         final textContent = _cachedTextNoteModel?.data?.textContent;
-        
+
         if (!_isEditing) {
           return SingleChildScrollView(
             child: Column(

@@ -14,6 +14,7 @@ import '../models/audio_note_model.dart';
 class NoteRepo extends ApiClient {
   NoteRepo();
 
+  // ---------- GET ---------- //
   // Get list note
   Future<NoteModel> getListNotes({String? cursor}) async {
     try {
@@ -71,6 +72,7 @@ class NoteRepo extends ApiClient {
     }
   }
 
+  // ---------- CREATE ---------- //
   // Create new note
   Future<DataModel> createNewNote(String title) async {
     Map body = {
@@ -139,6 +141,31 @@ class NoteRepo extends ApiClient {
     }
   }
 
+  // ---------- PATCH ---------- //
+  // Update note
+  Future<DataModel> updateNote(String noteId, String title) async {
+    Map body = {
+      "title": title,
+    };
+    try {
+      final response = await patchRequest(
+        path: '${ApiEndpointUrls.note}/$noteId',
+        body: body,
+      );
+      if (response.statusCode == 200) {
+        final responseData = dataModelFromJson(jsonEncode(response.data));
+        return responseData;
+      } else {
+        throw ApiException(message: 'Update failed');
+      }
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      throw ApiException(message: 'An unexpected error occurred');
+    }
+  }
+
+  // ---------- DELETE ---------- //
   // Delete note
   Future<DataModel> deleteNote(String noteId) async {
     try {

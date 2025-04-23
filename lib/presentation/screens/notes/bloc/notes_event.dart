@@ -22,5 +22,3 @@ class NoteCreateAudioEvent extends NotesEvent {
 
   NoteCreateAudioEvent({required this.id, required this.audioFile});
 }
-
-class NotesNotifyHomeUpdateEvent extends NotesEvent {}

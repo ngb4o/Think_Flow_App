@@ -17,7 +17,6 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
     on<NotesClickButtonCreateEvent>(notesClickButtonCreateEvent);
     on<NoteCreateTextEvent>(noteCreateTextEvent);
     on<NoteCreateAudioEvent>(noteCreateAudioEvent);
-    on<NotesNotifyHomeUpdateEvent>(notesNotifyHomeUpdateEvent);
   }
 
   FutureOr<void> notesClickButtonCreateEvent(
@@ -63,10 +62,5 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
     } catch (e) {
       emit(NotesCreateAudioErrorActionState(message: 'An unexpected error occurred'));
     }
-  }
-
-  FutureOr<void> notesNotifyHomeUpdateEvent(
-      NotesNotifyHomeUpdateEvent event, Emitter<NotesState> emit) {
-    emit(NotesNotifyHomeUpdateActionState());
   }
 }

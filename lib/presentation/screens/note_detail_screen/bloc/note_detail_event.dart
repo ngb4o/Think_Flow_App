@@ -14,3 +14,10 @@ class NoteAudioDetailInitialFetchDataEvent extends NoteDetailEvent {
 
   NoteAudioDetailInitialFetchDataEvent({required this.noteId});
 }
+
+class NoteClickButtonUpdateEvent extends NoteDetailEvent {
+  final String noteId;
+  final String title;
+
+  NoteClickButtonUpdateEvent({required this.noteId, required this.title});
+}

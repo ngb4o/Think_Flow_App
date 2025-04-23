@@ -21,8 +21,9 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
   final tabs = ["Text", "Audio"];
 
   int currentTabIndex = 0;
-  bool _isEditingTitle = false;
+
   late TextEditingController _titleController;
+
   late FocusNode _titleFocusNode;
 
   @override
@@ -39,98 +40,115 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
     super.dispose();
   }
 
+  _updateNote(String noteId, String title) {
+    context.read<NoteDetailBloc>().add(NoteClickButtonUpdateEvent(noteId: noteId, title: title));
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: TAppbar(
-        showBackArrow: true,
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: Icon(Iconsax.tick_square4),
-          ),
-        ],
-      ),
-      body: DefaultTabController(
-        length: tabs.length,
-        initialIndex: currentTabIndex,
-        child: Padding(
-          padding: EdgeInsets.all(TSizes.defaultSpace),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              EditableText(
-                controller: _titleController,
-                focusNode: _titleFocusNode,
-                style: Theme.of(context).textTheme.headlineMedium!,
-                cursorColor: Theme.of(context).primaryColor,
-                backgroundCursorColor: Colors.grey,
-                onChanged: (value) {
-                  // TODO: Add logic to update title
-                },
-                onSubmitted: (value) {
-                  // TODO: Add logic to update title
-                },
+    return BlocConsumer<NoteDetailBloc, NoteDetailState>(
+      listenWhen: (previous, current) => current is NoteDetailActionState,
+      buildWhen: (previous, current) => current is! NoteDetailActionState,
+      listener: (context, state) {
+        if(state is NoteUpdateSuccessActionSate) {
+          Navigator.pop(context);
+          TLoaders.successSnackBar(context, title: 'Update successfully');
+        } else if(state is NoteUpdateErrorActionState) {
+          TLoaders.errorSnackBar(context, title: 'Update failed', message: state.message);
+        } else if(state is NotesUpdateNotifyHomeUpdateActionState) {
+          context.read<HomeBloc>().add(HomeInitialFetchDataEvent());
+        }
+      },
+      builder: (context, state) {
+        return Scaffold(
+          appBar: TAppbar(
+            showBackArrow: true,
+            actions: [
+              IconButton(
+                onPressed: () => _updateNote(widget.noteId, _titleController.text.trim()),
+                icon: Icon(Iconsax.tick_square4),
               ),
-              SizedBox(height: TSizes.sm),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
+            ],
+          ),
+          body: DefaultTabController(
+            length: tabs.length,
+            initialIndex: currentTabIndex,
+            child: Padding(
+              padding: EdgeInsets.all(TSizes.defaultSpace),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(
-                    Iconsax.calendar_1,
-                    size: 20,
-                    color: TColors.darkerGrey,
+                  EditableText(
+                    controller: _titleController,
+                    focusNode: _titleFocusNode,
+                    style: Theme.of(context).textTheme.headlineMedium!,
+                    cursorColor: Theme.of(context).primaryColor,
+                    backgroundCursorColor: Colors.grey,
+                    onChanged: (value) {
+                      _titleController.text = value;
+                    },
                   ),
-                  SizedBox(width: TSizes.xs),
-                  Text.rich(
-                    TextSpan(
+                  SizedBox(height: TSizes.sm),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Icon(
+                        Iconsax.calendar_1,
+                        size: 20,
+                        color: TColors.darkerGrey,
+                      ),
+                      SizedBox(width: TSizes.xs),
+                      Text.rich(
+                        TextSpan(
+                          children: [
+                            TextSpan(
+                              text: 'Date created : ',
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                            TextSpan(
+                              text: widget.createAt,
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: TSizes.spaceBtwItems),
+                  TTabBar(
+                    tabs: [
+                      Tab(text: 'Text'),
+                      Tab(text: 'Audio'),
+                    ],
+                    currentIndex: currentTabIndex,
+                    onTap: (value) {
+                      setState(() {
+                        currentTabIndex = value;
+                      });
+                    },
+                    selectedColor: TColors.primary,
+                    unselectedColor: Colors.grey.shade200,
+                    selectedTextColor: Colors.white,
+                    unselectedTextColor: Colors.black,
+                    width: MediaQuery.of(context).size.width - (TSizes.defaultSpace * 2),
+                    fullWidth: true,
+                    paddingBetweenTabs: true,
+                  ),
+                  SizedBox(height: TSizes.spaceBtwItems),
+                  Expanded(
+                    child: TabBarView(
                       children: [
-                        TextSpan(
-                          text: 'Date created : ',
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                        TextSpan(
-                          text: widget.createAt,
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
+                        KeepAliveWrapper(child: TextDetailTab(noteId: widget.noteId)),
+                        KeepAliveWrapper(child: AudioDetailTab(noteId: widget.noteId)),
                       ],
                     ),
                   ),
                 ],
               ),
-              SizedBox(height: TSizes.spaceBtwItems),
-              TTabBar(
-                tabs: [
-                  Tab(text: 'Text'),
-                  Tab(text: 'Audio'),
-                ],
-                currentIndex: currentTabIndex,
-                onTap: (value) {
-                  setState(() {
-                    currentTabIndex = value;
-                  });
-                },
-                selectedColor: TColors.primary,
-                unselectedColor: Colors.grey.shade200,
-                selectedTextColor: Colors.white,
-                unselectedTextColor: Colors.black,
-                width: MediaQuery.of(context).size.width - (TSizes.defaultSpace * 2),
-                fullWidth: true,
-                paddingBetweenTabs: true,
-              ),
-              SizedBox(height: TSizes.spaceBtwItems),
-              Expanded(
-                child: TabBarView(
-                  children: [
-                    KeepAliveWrapper(child: TextDetailTab(noteId: widget.noteId)),
-                    KeepAliveWrapper(child: AudioDetailTab(noteId: widget.noteId)),
-                  ],
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
