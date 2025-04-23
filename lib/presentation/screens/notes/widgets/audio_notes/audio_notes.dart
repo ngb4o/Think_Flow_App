@@ -378,7 +378,7 @@ class _AudioNotesPageState extends State<AudioNotesPage> {
                   itemBuilder: (context, index) {
                     final recording = recordings[index];
                     return RecordingListItem(
-                      name: recording.name,
+                      name: 'Audio ${index + 1}',
                       duration: recording.formattedDuration,
                       isPlaying: currentlyPlayingIndex == index && isPlaying,
                       onPlayPause: () => _playRecording(index),

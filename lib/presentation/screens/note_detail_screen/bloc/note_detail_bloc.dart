@@ -15,11 +15,11 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
   final NoteRepo noteRepo;
 
   NoteDetailBloc(this.noteRepo) : super(NoteDetailInitial()) {
-    on<NoteTextDetailInitialFetchDataEvent>(_onTextDetailInitialFetch);
-    on<NoteAudioDetailInitialFetchDataEvent>(_onAudioDetailInitialFetch);
+    on<NoteTextDetailInitialFetchDataEvent>(onTextDetailInitialFetch);
+    on<NoteAudioDetailInitialFetchDataEvent>(onAudioDetailInitialFetch);
   }
 
-  FutureOr<void> _onTextDetailInitialFetch(
+  FutureOr<void> onTextDetailInitialFetch(
       NoteTextDetailInitialFetchDataEvent event, Emitter<NoteDetailState> emit) async {
     emit(NoteTextDetailLoadingState());
     try {
@@ -36,7 +36,7 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
     }
   }
 
-  FutureOr<void> _onAudioDetailInitialFetch(
+  FutureOr<void> onAudioDetailInitialFetch(
       NoteAudioDetailInitialFetchDataEvent event, Emitter<NoteDetailState> emit) async {
     emit(NoteAudioDetailLoadingState());
     try {

@@ -21,11 +21,36 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
   final tabs = ["Text", "Audio"];
 
   int currentTabIndex = 0;
+  bool _isEditingTitle = false;
+  late TextEditingController _titleController;
+  late FocusNode _titleFocusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    _titleController = TextEditingController(text: widget.title);
+    _titleFocusNode = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _titleFocusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: TAppbar(showBackArrow: true),
+      appBar: TAppbar(
+        showBackArrow: true,
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: Icon(Iconsax.tick_square4),
+          ),
+        ],
+      ),
       body: DefaultTabController(
         length: tabs.length,
         initialIndex: currentTabIndex,
@@ -34,7 +59,19 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(widget.title, style: Theme.of(context).textTheme.headlineMedium),
+              EditableText(
+                controller: _titleController,
+                focusNode: _titleFocusNode,
+                style: Theme.of(context).textTheme.headlineMedium!,
+                cursorColor: Theme.of(context).primaryColor,
+                backgroundCursorColor: Colors.grey,
+                onChanged: (value) {
+                  // TODO: Add logic to update title
+                },
+                onSubmitted: (value) {
+                  // TODO: Add logic to update title
+                },
+              ),
               SizedBox(height: TSizes.sm),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,

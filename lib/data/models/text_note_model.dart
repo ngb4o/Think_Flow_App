@@ -29,7 +29,7 @@ class Data {
   DateTime? createdAt;
   DateTime? updatedAt;
   int? noteId;
-  TextContent? textContent;
+  List<TextContent>? textContent;
 
   Data({
     this.id,
@@ -44,7 +44,7 @@ class Data {
     createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
     updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
     noteId: json["note_id"],
-    textContent: json["text_content"] == null ? null : TextContent.fromJson(json["text_content"]),
+    textContent: json["text_content"] == null ? [] : List<TextContent>.from(json["text_content"]!.map((x) => TextContent.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
@@ -52,195 +52,127 @@ class Data {
     "created_at": createdAt?.toIso8601String(),
     "updated_at": updatedAt?.toIso8601String(),
     "note_id": noteId,
-    "text_content": textContent?.toJson(),
+    "text_content": textContent == null ? [] : List<dynamic>.from(textContent!.map((x) => x.toJson())),
   };
 }
 
 class TextContent {
-  String? type;
-  List<TextContentContent>? content;
+  Body? body;
 
   TextContent({
-    this.type,
-    this.content,
+    this.body,
   });
 
   factory TextContent.fromJson(Map<String, dynamic> json) => TextContent(
-    type: json["type"],
-    content: json["content"] == null ? [] : List<TextContentContent>.from(json["content"]!.map((x) => TextContentContent.fromJson(x))),
+    body: json["body"] == null ? null : Body.fromJson(json["body"]),
   );
 
   Map<String, dynamic> toJson() => {
-    "type": type,
-    "content": content == null ? [] : List<dynamic>.from(content!.map((x) => x.toJson())),
+    "body": body?.toJson(),
   };
 }
 
-class TextContentContent {
+class Body {
   String? type;
-  PurpleAttrs? attrs;
-  List<PurpleContent>? content;
+  List<BodyContent>? content;
 
-  TextContentContent({
+  Body({
     this.type,
-    this.attrs,
     this.content,
   });
 
-  factory TextContentContent.fromJson(Map<String, dynamic> json) => TextContentContent(
+  factory Body.fromJson(Map<String, dynamic> json) => Body(
     type: json["type"],
-    attrs: json["attrs"] == null ? null : PurpleAttrs.fromJson(json["attrs"]),
-    content: json["content"] == null ? [] : List<PurpleContent>.from(json["content"]!.map((x) => PurpleContent.fromJson(x))),
+    content: json["content"] == null ? [] : List<BodyContent>.from(json["content"]!.map((x) => BodyContent.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
     "type": type,
-    "attrs": attrs?.toJson(),
     "content": content == null ? [] : List<dynamic>.from(content!.map((x) => x.toJson())),
   };
 }
 
-class PurpleAttrs {
-  int? level;
-  String? textAlign;
-  dynamic type;
-  int? start;
+class BodyContent {
+  ContentType? type;
+  List<ContentContent>? content;
 
-  PurpleAttrs({
-    this.level,
-    this.textAlign,
+  BodyContent({
     this.type,
-    this.start,
+    this.content,
   });
 
-  factory PurpleAttrs.fromJson(Map<String, dynamic> json) => PurpleAttrs(
-    level: json["level"],
-    textAlign: json["textAlign"],
-    type: json["type"],
-    start: json["start"],
+  factory BodyContent.fromJson(Map<String, dynamic> json) => BodyContent(
+    type: contentTypeValues.map[json["type"]]!,
+    content: json["content"] == null ? [] : List<ContentContent>.from(json["content"]!.map((x) => ContentContent.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
-    "level": level,
-    "textAlign": textAlign,
-    "type": type,
-    "start": start,
+    "type": contentTypeValues.reverse[type],
+    "content": content == null ? [] : List<dynamic>.from(content!.map((x) => x.toJson())),
   };
 }
 
-class PurpleContent {
+class ContentContent {
   String? text;
-  Type? type;
+  String? type;
   List<Mark>? marks;
-  List<FluffyContent>? content;
 
-  PurpleContent({
+  ContentContent({
     this.text,
     this.type,
     this.marks,
-    this.content,
   });
 
-  factory PurpleContent.fromJson(Map<String, dynamic> json) => PurpleContent(
+  factory ContentContent.fromJson(Map<String, dynamic> json) => ContentContent(
     text: json["text"],
-    type: typeValues.map[json["type"]]!,
-    marks: json["marks"] == null ? [] : List<Mark>.from(json["marks"]!.map((x) => Mark.fromJson(x))),
-    content: json["content"] == null ? [] : List<FluffyContent>.from(json["content"]!.map((x) => FluffyContent.fromJson(x))),
-  );
-
-  Map<String, dynamic> toJson() => {
-    "text": text,
-    "type": typeValues.reverse[type],
-    "marks": marks == null ? [] : List<dynamic>.from(marks!.map((x) => x.toJson())),
-    "content": content == null ? [] : List<dynamic>.from(content!.map((x) => x.toJson())),
-  };
-}
-
-class FluffyContent {
-  String? type;
-  FluffyAttrs? attrs;
-  List<TentacledContent>? content;
-
-  FluffyContent({
-    this.type,
-    this.attrs,
-    this.content,
-  });
-
-  factory FluffyContent.fromJson(Map<String, dynamic> json) => FluffyContent(
     type: json["type"],
-    attrs: json["attrs"] == null ? null : FluffyAttrs.fromJson(json["attrs"]),
-    content: json["content"] == null ? [] : List<TentacledContent>.from(json["content"]!.map((x) => TentacledContent.fromJson(x))),
-  );
-
-  Map<String, dynamic> toJson() => {
-    "type": type,
-    "attrs": attrs?.toJson(),
-    "content": content == null ? [] : List<dynamic>.from(content!.map((x) => x.toJson())),
-  };
-}
-
-class FluffyAttrs {
-  String? textAlign;
-
-  FluffyAttrs({
-    this.textAlign,
-  });
-
-  factory FluffyAttrs.fromJson(Map<String, dynamic> json) => FluffyAttrs(
-    textAlign: json["textAlign"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "textAlign": textAlign,
-  };
-}
-
-class TentacledContent {
-  String? text;
-  Type? type;
-
-  TentacledContent({
-    this.text,
-    this.type,
-  });
-
-  factory TentacledContent.fromJson(Map<String, dynamic> json) => TentacledContent(
-    text: json["text"],
-    type: typeValues.map[json["type"]]!,
+    marks: json["marks"] == null ? [] : List<Mark>.from(json["marks"]!.map((x) => Mark.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
     "text": text,
-    "type": typeValues.reverse[type],
+    "type": type,
+    "marks": marks == null ? [] : List<dynamic>.from(marks!.map((x) => x.toJson())),
   };
 }
-
-enum Type {
-  LIST_ITEM,
-  TEXT
-}
-
-final typeValues = EnumValues({
-  "listItem": Type.LIST_ITEM,
-  "text": Type.TEXT
-});
 
 class Mark {
-  String? type;
+  MarkType? type;
 
   Mark({
     this.type,
   });
 
   factory Mark.fromJson(Map<String, dynamic> json) => Mark(
-    type: json["type"],
+    type: markTypeValues.map[json["type"]]!,
   );
 
   Map<String, dynamic> toJson() => {
-    "type": type,
+    "type": markTypeValues.reverse[type],
   };
 }
+
+enum MarkType {
+  BOLD,
+  ITALIC,
+  UNDERLINE,
+  STRIKE
+}
+
+final markTypeValues = EnumValues({
+  "bold": MarkType.BOLD,
+  "italic": MarkType.ITALIC,
+  "underline": MarkType.UNDERLINE,
+  "strike": MarkType.STRIKE
+});
+
+enum ContentType {
+  PARAGRAPH
+}
+
+final contentTypeValues = EnumValues({
+  "paragraph": ContentType.PARAGRAPH
+});
 
 class EnumValues<T> {
   Map<String, T> map;

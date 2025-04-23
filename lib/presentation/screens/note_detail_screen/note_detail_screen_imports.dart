@@ -12,6 +12,7 @@ import 'package:think_flow/utils/utils.dart';
 import '../../../../common/widgets/appbar/appbar.dart';
 import '../../../../common/widgets/loading/loading.dart';
 import '../../../common/widgets/keep_alive_wrapper.dart';
+import '../../../utils/constants/text_strings.dart';
 import 'bloc/note_detail_bloc.dart';
 
 part 'note_detail_screen.dart';

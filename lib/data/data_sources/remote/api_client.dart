@@ -97,6 +97,41 @@ class ApiClient {
     }
   }
 
+  Future<Response> patchRequest({
+    required String path,
+    dynamic body,
+  }) async {
+    try {
+      debugPrint('🚀 ========== API REQUEST ========= 🚀');
+      debugPrint('Request url: ${baseOptions.baseUrl + path}');
+      debugPrint('Body: $body');
+
+      var response = await dio.patch(path, data: body);
+
+      debugPrint('🔥 ========== API RESPONSE ========= 🔥');
+      debugPrint('Status code: ${response.statusCode.toString()}');
+      debugPrint('Response data: ${response.data.toString()}');
+      debugPrint('Response headers: ${response.headers.toString()}');
+
+      return response;
+    } on DioException catch (e) {
+      if (e.response != null) {
+        debugPrint('❌ ========== API ERROR RESPONSE ========= ❌');
+        debugPrint('Error Status code: ${e.response?.statusCode}');
+        debugPrint('Error Data: ${e.response?.data}');
+        debugPrint('Error Headers: ${e.response?.headers}');
+        debugPrint(e.response!.data.toString());
+        debugPrint(e.response!.headers.toString());
+        debugPrint(e.response!.requestOptions.toString());
+        throw ApiException.fromDioError(e);
+      } else {
+        debugPrint(e.requestOptions.toString());
+        debugPrint(e.message);
+        throw ApiException(message: e.message ?? 'Something went wrong');
+      }
+    }
+  }
+
   // DELETE REQUEST
   Future<Response> deleteRequest({
     required String path,

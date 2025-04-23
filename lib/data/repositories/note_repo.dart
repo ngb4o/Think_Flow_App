@@ -96,11 +96,10 @@ class NoteRepo extends ApiClient {
 
   // Create text note
   Future<DataModel> createTextNote(String id, Map<String, dynamic> content) async {
-    Map body = {"text_content": content};
     try {
       final response = await postRequest(
         path: '${ApiEndpointUrls.textNote}/$id',
-        body: body,
+        body: content,
       );
       if (response.statusCode == 200) {
         final responseData = dataModelFromJson(jsonEncode(response.data));

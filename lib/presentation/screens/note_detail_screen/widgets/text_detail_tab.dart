@@ -32,36 +32,12 @@ class _TextDetailTabState extends State<TextDetailTab> with AutomaticKeepAliveCl
   }
 
   void _enterEditMode() {
-    if (_cachedTextNoteModel?.data?.textContent?.content == null) {
-      setState(() {
-        _isEditing = true;
-      });
-      return;
+    if (_cachedTextNoteModel?.data?.textContent != null) {
+      final delta = Utils.convertProseMirrorToDelta(_cachedTextNoteModel?.data?.textContent);
+      _quillController.document = Document.fromDelta(delta);
     }
-
-    final content = _cachedTextNoteModel!.data!.textContent!.content!;
-    final jsonContent = content.map((paragraph) {
-      final text = paragraph.content?.firstOrNull?.text ?? '';
-      return {
-        "insert": text,
-        "attributes": {"align": "left"}
-      };
-    }).toList();
-
-    // Add an empty line at the end
-    jsonContent.add({
-      "insert": "\n",
-      "attributes": {"align": "left"}
-    });
-
-    final document = Document.fromJson(jsonContent);
-
     setState(() {
       _isEditing = true;
-      _quillController = QuillController(
-        document: document,
-        selection: const TextSelection.collapsed(offset: 0),
-      );
     });
   }
 
@@ -92,8 +68,7 @@ class _TextDetailTabState extends State<TextDetailTab> with AutomaticKeepAliveCl
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: TSizes.spaceBtwItems),
-                if (textContent == null || textContent.content == null || textContent.content!.isEmpty)
+                if (textContent == null || textContent.isEmpty)
                   Column(
                     children: [
                       SizedBox(height: TSizes.spaceBtwSections * 2),
@@ -103,13 +78,16 @@ class _TextDetailTabState extends State<TextDetailTab> with AutomaticKeepAliveCl
                     ],
                   )
                 else
-                  ...textContent.content!.map(
-                    (paragraph) => GestureDetector(
-                      onTap: _enterEditMode,
-                      child: Padding(
-                        padding: EdgeInsets.only(bottom: TSizes.spaceBtwItems),
-                        child: TFormattedText(content: paragraph),
-                      ),
+                  GestureDetector(
+                    onTap: _enterEditMode,
+                    child: html.Html(
+                      data: Utils.convertProseMirrorToHtml(textContent),
+                      style: {
+                        'p': html.Style(
+                          margin: html.Margins.zero,
+                          padding: html.HtmlPaddings.zero,
+                        ),
+                      },
                     ),
                   ),
               ],
