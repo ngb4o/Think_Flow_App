@@ -34,13 +34,18 @@ class ApiClient {
   // GET REQUEST
   Future<Response> getRequest({
     required String path,
+    Map<String, dynamic>? queryParameters,
   }) async {
     try {
       debugPrint('🚀 ========== API REQUEST ========= 🚀');
       debugPrint('Request url: ${baseOptions.baseUrl + path}');
+      if (queryParameters != null) {
+        debugPrint('Query parameters: $queryParameters');
+      }
 
       var response = await dio.get(
-        path
+        path,
+        queryParameters: queryParameters,
       );
 
       debugPrint('🔥 ========== API RESPONSE ========= 🔥');

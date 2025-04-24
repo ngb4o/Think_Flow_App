@@ -15,6 +15,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   String? nextCursor;
   bool hasMoreData = true;
   List<Note> notes = [];
+  bool isLoadingMore = false;
 
   HomeBloc(this.noteRepo) : super(HomeInitial()) {
     on<HomeInitialFetchDataEvent>(homeInitialFetchDataEvent);
@@ -29,7 +30,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     emit(HomeLoadingState());
     try {
       final noteData = await noteRepo.getListNotes();
-      noteData.paging.nextCursor;
+      nextCursor = noteData.paging.nextCursor;
+      hasMoreData = nextCursor != null;
+      notes = noteData.data;
       emit(HomeSuccessState(noteModel: noteData));
     } on ApiException catch (e) {
       emit(HomeErrorState());
@@ -41,24 +44,27 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   FutureOr<void> homeLoadMoreDataEvent(HomeLoadMoreDataEvent event, Emitter<HomeState> emit) async {
-    if (!hasMoreData) return;
+    if (!hasMoreData || nextCursor == null || isLoadingMore) return;
 
+    isLoadingMore = true;
     try {
       final noteData = await noteRepo.getListNotes(cursor: nextCursor);
       nextCursor = noteData.paging.nextCursor;
-      emit(
-        HomeSuccessState(
-          noteModel: NoteModel(
-            data: notes,
-            paging: noteData.paging,
-            extra: noteData.extra,
-          ),
+      hasMoreData = nextCursor != null;
+      notes.addAll(noteData.data);
+      emit(HomeSuccessState(
+        noteModel: NoteModel(
+          data: notes,
+          paging: noteData.paging,
+          extra: noteData.extra,
         ),
-      );
+      ));
     } on ApiException catch (e) {
       emit(HomeErrorActionState(message: e.message));
     } catch (e) {
       emit(HomeErrorActionState(message: 'An unexpected error occurred'));
+    } finally {
+      isLoadingMore = false;
     }
   }
 
@@ -84,7 +90,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   FutureOr<void> homeClickButtonDeleteNoteEvent(HomeClickButtonDeleteNoteEvent event, Emitter<HomeState> emit) async {
     emit(HomeDeleteNoteLoadingState());
     try {
-      final deleteNoteData = await noteRepo.deleteRequest(path: event.noteId);
+      final deleteNoteData = await noteRepo.deleteNote(event.noteId);
       if (deleteNoteData.data) {
         emit(HomeDeleteNoteSuccessActionState());
       }

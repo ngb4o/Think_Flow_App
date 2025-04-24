@@ -10,21 +10,29 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final ScrollController _scrollController = ScrollController();
+  Timer? _debounce;
 
   @override
   void initState() {
     super.initState();
     context.read<HomeBloc>().add(HomeInitialFetchDataEvent());
+    _scrollController.addListener(_onScroll);
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
+    _debounce?.cancel();
     super.dispose();
   }
 
   void _onScroll() {
-    context.read<HomeBloc>().add(HomeLoadMoreDataEvent());
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
+        context.read<HomeBloc>().add(HomeLoadMoreDataEvent());
+      }
+    });
   }
 
   @override
@@ -79,10 +87,18 @@ class _HomeScreenState extends State<HomeScreen> {
                         context.read<HomeBloc>().add(HomeInitialFetchDataEvent());
                       },
                       child: ListView.builder(
-                        controller: null,
+                        controller: _scrollController,
                         padding: EdgeInsets.all(TSizes.defaultSpace),
-                        itemCount: successState.noteModel.data.length,
+                        itemCount: successState.noteModel.data.length + 1,
                         itemBuilder: (context, index) {
+                          if (index == successState.noteModel.data.length) {
+                            return const Center(
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(vertical: 16.0),
+                                child: CircularProgressIndicator(),
+                              ),
+                            );
+                          }
                           final note = successState.noteModel.data[index];
                           return GestureDetector(
                             onTap: () => context.read<HomeBloc>().add(HomeClickNavigationToNoteDetailPageEvent(

@@ -21,6 +21,7 @@ class NoteRepo extends ApiClient {
       final queryParams = cursor != null ? {'cursor': cursor} : null;
       final response = await getRequest(
         path: ApiEndpointUrls.note,
+        queryParameters: queryParams,
       );
 
       if (response.statusCode == 200) {
