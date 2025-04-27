@@ -35,6 +35,17 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  void deleteNoteWarningPopup(String noteId) {
+    TWarningPopup.show(
+      context: context,
+      title: 'Delete Note',
+      message: 'Are you sure you want to delete this note? This action cannot be undone.',
+      onConfirm: () {
+        context.read<HomeBloc>().add(HomeClickButtonDeleteNoteEvent(noteId: noteId));
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<HomeBloc, HomeState>(
@@ -86,69 +97,90 @@ class _HomeScreenState extends State<HomeScreen> {
                       onRefresh: () async {
                         context.read<HomeBloc>().add(HomeInitialFetchDataEvent());
                       },
-                      child: ListView.builder(
-                        controller: _scrollController,
-                        padding: EdgeInsets.all(TSizes.defaultSpace),
-                        itemCount: notes.noteModel.data.length,
-                        itemBuilder: (context, index) {
-                          final note = notes.noteModel.data[index];
-                          return GestureDetector(
-                            onTap: () => context.read<HomeBloc>().add(HomeClickNavigationToNoteDetailPageEvent(
-                                  noteId: note.id,
-                                  title: note.title,
-                                  createAt: note.createdAt,
-                                )),
-                            child: Padding(
-                              padding: EdgeInsets.only(bottom: TSizes.spaceBtwItems),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(color: TColors.grey, width: 2),
-                                ),
-                                padding: EdgeInsets.all(TSizes.spaceBtwItems),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      note.title,
-                                      style: Theme.of(context).textTheme.titleMedium,
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
-                                    ),
-                                    SizedBox(height: TSizes.spaceBtwItems),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          note.createdAt,
-                                          style: Theme.of(context).textTheme.bodySmall,
-                                        ),
-                                        Row(
-                                          children: [
-                                            Icon(Iconsax.archive_tick),
-                                            SizedBox(width: TSizes.spaceBtwItems),
-                                            if (state is HomeDeleteNoteLoadingState)
-                                              LoadingSpinkit.loadingButton
-                                            else
-                                              GestureDetector(
-                                                onTap: () {
-                                                  context
-                                                      .read<HomeBloc>()
-                                                      .add(HomeClickButtonDeleteNoteEvent(noteId: note.id));
-                                                },
-                                                child: Icon(Iconsax.trash),
-                                              ),
-                                          ],
-                                        )
-                                      ],
-                                    )
-                                  ],
-                                ),
+                      child: notes.noteModel.data.isEmpty
+                          ? Center(
+                              child: TEmpty(
+                                subTitle: 'Create your first note to get started',
                               ),
+                            )
+                          : ListView.builder(
+                              controller: _scrollController,
+                              padding: EdgeInsets.all(TSizes.defaultSpace),
+                              itemCount: notes.noteModel.data.length,
+                              itemBuilder: (context, index) {
+                                final note = notes.noteModel.data[index];
+                                return GestureDetector(
+                                  onTap: () => context.read<HomeBloc>().add(HomeClickNavigationToNoteDetailPageEvent(
+                                        noteId: note.id,
+                                        title: note.title,
+                                        createAt: note.createdAt,
+                                      )),
+                                  child: Padding(
+                                    padding: EdgeInsets.only(bottom: TSizes.spaceBtwItems),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        border: Border.all(color: TColors.grey, width: 2),
+                                      ),
+                                      padding: EdgeInsets.all(TSizes.spaceBtwItems),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: Text(
+                                                  note.title,
+                                                  style: Theme.of(context).textTheme.titleMedium,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  maxLines: 1,
+                                                ),
+                                              ),
+                                              if (state is HomeDeleteNoteLoadingState)
+                                                LoadingSpinkit.loadingButton
+                                              else
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    deleteNoteWarningPopup(note.id);
+                                                  },
+                                                  child: Icon(Iconsax.trash),
+                                                ),
+                                            ],
+                                          ),
+                                          SizedBox(height: TSizes.lg),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                note.createdAt,
+                                                style: Theme.of(context).textTheme.bodySmall,
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Icon(Iconsax.archive_tick),
+                                                  SizedBox(width: TSizes.spaceBtwItems),
+                                                  if (state is HomeDeleteNoteLoadingState)
+                                                    LoadingSpinkit.loadingButton
+                                                  else
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        context
+                                                            .read<HomeBloc>()
+                                                            .add(HomeClickButtonDeleteNoteEvent(noteId: note.id));
+                                                      },
+                                                      child: Icon(Iconsax.share),
+                                                    ),
+                                                ],
+                                              )
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
-                          );
-                        },
-                      ),
                     ),
                   ),
                 ],
@@ -186,9 +218,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   THomeAppBar(),
                   Expanded(
                     child: Center(
-                      child: Text(
-                        'You don\'t have any notes yet',
-                        style: Theme.of(context).textTheme.bodyLarge,
+                      child: TEmpty(
+                        subTitle: 'Create your first note to get started',
                       ),
                     ),
                   ),
