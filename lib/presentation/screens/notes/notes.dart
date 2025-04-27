@@ -42,15 +42,15 @@ class _NotesPageState extends State<NotesPage> with SingleTickerProviderStateMix
 
     return BlocConsumer<NotesBloc, NotesState>(
       listenWhen: (previous, current) => current is NotesActionState,
-      buildWhen: (previous, current) => current is !NotesActionState,
+      buildWhen: (previous, current) => current is! NotesActionState,
       listener: (context, state) {
-        if (state is NotesCreateTextSuccessActionState){
+        if (state is NotesCreateTextSuccessActionState) {
           Navigator.pop(context);
-        }else  if(state is NotesCreateErrorActionState) {
+        } else if (state is NotesCreateErrorActionState) {
           TLoaders.errorSnackBar(context, title: 'Create error', message: state.message);
-        }else if(state is NotesCreateTextErrorActionState) {
+        } else if (state is NotesCreateTextErrorActionState) {
           TLoaders.errorSnackBar(context, title: 'Create error', message: state.message);
-        } else if(state is NotesNotifyHomeUpdateActionState) {
+        } else if (state is NotesNotifyHomeUpdateActionState) {
           context.read<HomeBloc>().add(HomeInitialFetchDataEvent());
         }
       },
@@ -61,12 +61,12 @@ class _NotesPageState extends State<NotesPage> with SingleTickerProviderStateMix
             isCenterTitle: true,
             title: Text('Notes'),
             actions: [
-              if(state is NotesCreateLoadingState)
+              if (state is NotesCreateLoadingState)
                 LoadingSpinkit.loadingButton
               else
                 IconButton(
                   onPressed: () => _createNote(titleController.text.trim()),
-                  icon: Icon(Iconsax.tick_square4),
+                  icon: Icon(Iconsax.tick_square4, color: TColors.primary),
                 ),
             ],
           ),
@@ -92,14 +92,17 @@ class _NotesPageState extends State<NotesPage> with SingleTickerProviderStateMix
                           color: dark ? TColors.black : TColors.white,
                           child: TabBar(
                             controller: _tabController,
-                            tabs: tabs.map((tab) =>
-                                Tab(
-                                  child: SizedBox(
-                                    width: double.infinity,
-                                    child: Text(tab, textAlign: TextAlign.center,),
-                                  ),
-                                )
-                            ).toList(),
+                            tabs: tabs
+                                .map((tab) => Tab(
+                                      child: SizedBox(
+                                        width: double.infinity,
+                                        child: Text(
+                                          tab,
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    ))
+                                .toList(),
                             tabAlignment: TabAlignment.fill,
                             indicatorColor: TColors.primary,
                             labelColor: dark ? TColors.white : TColors.primary,

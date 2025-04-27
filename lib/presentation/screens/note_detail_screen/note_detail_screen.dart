@@ -88,14 +88,11 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                   EditableText(
                     controller: _titleController,
                     focusNode: _titleFocusNode,
-                    style: Theme.of(context).textTheme.headlineMedium!,
+                    style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.w600),
                     cursorColor: Theme.of(context).primaryColor,
                     backgroundCursorColor: Colors.grey,
                     onChanged: (value) {
                       _titleController.text = value;
-                    },
-                    onSubmitted: (value) {
-                      _updateNote(widget.noteId, value.trim());
                     },
                   ),
                   SizedBox(height: TSizes.sm),

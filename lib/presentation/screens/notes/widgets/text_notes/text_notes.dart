@@ -68,47 +68,45 @@ class _TextNotesPageState extends State<TextNotesPage> {
         }
       },
       builder: (context, state) {
-        return SizedBox.expand(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                SizedBox(height: TSizes.spaceBtwItems),
-                QuillSimpleToolbar(
+        return SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(height: TSizes.spaceBtwItems),
+              QuillSimpleToolbar(
+                controller: _quillController,
+                config: QuillSimpleToolbarConfig(
+                  color: Colors.transparent,
+                  multiRowsDisplay: false,
+                  showAlignmentButtons: true,
+                  showFontFamily: false,
+                  showFontSize: false,
+                  showInlineCode: false,
+                  showColorButton: false,
+                  showBackgroundColorButton: false,
+                  showClearFormat: false,
+                  showListCheck: false,
+                  showCodeBlock: false,
+                  showIndent: false,
+                  showSearchButton: false,
+                  showSubscript: false,
+                  showSuperscript: false,
+                  showBoldButton: true,
+                  showItalicButton: true,
+                  showUnderLineButton: true,
+                ),
+              ),
+              SizedBox(
+                height: THelperFunctions.screenHeight(context),
+                child: QuillEditor.basic(
                   controller: _quillController,
-                  config: QuillSimpleToolbarConfig(
-                    color: Colors.transparent,
-                    multiRowsDisplay: false,
-                    showAlignmentButtons: true,
-                    showFontFamily: false,
-                    showFontSize: false,
-                    showInlineCode: false,
-                    showColorButton: false,
-                    showBackgroundColorButton: false,
-                    showClearFormat: false,
-                    showListCheck: false,
-                    showCodeBlock: false,
-                    showIndent: false,
-                    showSearchButton: false,
-                    showSubscript: false,
-                    showSuperscript: false,
-                    showBoldButton: true,
-                    showItalicButton: true,
-                    showUnderLineButton: true,
+                  config: QuillEditorConfig(
+                    padding: EdgeInsets.all(TSizes.sm),
+                    expands: true,
+                    scrollable: true,
                   ),
                 ),
-                SizedBox(
-                  height: THelperFunctions.screenHeight(context),
-                  child: QuillEditor.basic(
-                    controller: _quillController,
-                    config: QuillEditorConfig(
-                      padding: EdgeInsets.all(TSizes.sm),
-                      expands: true,
-                      scrollable: true,
-                    ),
-                  ),
-                )
-              ],
-            ),
+              )
+            ],
           ),
         );
       },

@@ -156,7 +156,7 @@ enum MarkType {
   BOLD,
   ITALIC,
   UNDERLINE,
-  STRIKE
+  STRIKE,
 }
 
 final markTypeValues = EnumValues({

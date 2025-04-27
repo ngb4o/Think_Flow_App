@@ -330,6 +330,34 @@ class _AudioNotesPageState extends State<AudioNotesPage> {
     }
   }
 
+  _uploadFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['mp3', 'wav', 'm4a', 'aac'],
+    );
+
+    if (result != null && result.files.isNotEmpty) {
+      final file = result.files.first;
+      final tempPlayer = AudioPlayer();
+      try {
+        await tempPlayer.setFilePath(file.path!);
+        final duration = await tempPlayer.duration;
+        
+        setState(() {
+          recordings.add(AudioRecording(
+            path: file.path!,
+            name: file.name,
+            duration: duration ?? Duration.zero,
+            createdAt: DateTime.now(),
+          ));
+        });
+      } finally {
+        await tempPlayer.stop();
+        await tempPlayer.dispose();
+      }
+    }
+  }
+
   @override
   void dispose() {
     recordingTimer?.cancel();
@@ -354,11 +382,10 @@ class _AudioNotesPageState extends State<AudioNotesPage> {
                   ),
                 );
           }
-        }else if(state is NotesCreateAudioSuccessActionState) {
+        } else if (state is NotesCreateAudioSuccessActionState) {
           TLoaders.successSnackBar(context, title: 'Audio uploaded successfully');
-        } else if(state is NotesCreateAudioErrorActionState) {
+        } else if (state is NotesCreateAudioErrorActionState) {
           TLoaders.successSnackBar(context, title: 'Error uploaded audio', message: state.message);
-
         }
       },
       builder: (context, state) {
@@ -366,11 +393,18 @@ class _AudioNotesPageState extends State<AudioNotesPage> {
           body: Column(
             children: [
               SizedBox(height: TSizes.spaceBtwItems),
-              if(recordings.isEmpty)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  GestureDetector(
+                    onTap: () => _uploadFile(),
+                    child: Icon(Iconsax.document_upload5, color: TColors.primary, size: 30),
+                  )
+                ],
+              ),
+              if (recordings.isEmpty)
                 Expanded(
-                  child: Center(
-                    child: TEmpty(subTitle: 'Tap microphone to start recording')
-                  ),
+                  child: Center(child: TEmpty(subTitle: 'Tap microphone to start recording')),
                 ),
               Expanded(
                 child: ListView.builder(

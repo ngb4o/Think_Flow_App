@@ -73,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             );
           case HomeSuccessState:
-            final successState = state as HomeSuccessState;
+            final notes = state as HomeSuccessState;
             return Scaffold(
               body: Column(
                 children: [
@@ -89,17 +89,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: ListView.builder(
                         controller: _scrollController,
                         padding: EdgeInsets.all(TSizes.defaultSpace),
-                        itemCount: successState.noteModel.data.length + 1,
+                        itemCount: notes.noteModel.data.length,
                         itemBuilder: (context, index) {
-                          if (index == successState.noteModel.data.length) {
-                            return const Center(
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(vertical: 16.0),
-                                child: CircularProgressIndicator(),
-                              ),
-                            );
-                          }
-                          final note = successState.noteModel.data[index];
+                          final note = notes.noteModel.data[index];
                           return GestureDetector(
                             onTap: () => context.read<HomeBloc>().add(HomeClickNavigationToNoteDetailPageEvent(
                                   noteId: note.id,

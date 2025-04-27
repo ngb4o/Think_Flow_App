@@ -256,6 +256,31 @@ class _AudioDetailTabState extends State<AudioDetailTab> {
     await audioPlayer.seek(position);
   }
 
+  _uploadFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['mp3', 'wav', 'm4a', 'aac'],
+    );
+
+    if (result != null && result.files.isNotEmpty) {
+      final file = result.files.first;
+      final tempPlayer = AudioPlayer();
+      try {
+        await tempPlayer.setFilePath(file.path!);
+
+        setState(() {
+          context.read<NoteDetailBloc>().add(NoteClickButtonCreateAudioEvent(
+                id: widget.noteId,
+                audioFile: File(file.path!),
+              ));
+        });
+      } finally {
+        await tempPlayer.stop();
+        await tempPlayer.dispose();
+      }
+    }
+  }
+
   @override
   void dispose() {
     recordingTimer?.cancel();
@@ -299,7 +324,15 @@ class _AudioDetailTabState extends State<AudioDetailTab> {
           children: [
             Column(
               children: [
-                SizedBox(height: TSizes.spaceBtwItems),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    GestureDetector(
+                      onTap: () => _uploadFile(),
+                      child: Icon(Iconsax.document_upload5, color: TColors.primary, size: 30),
+                    )
+                  ],
+                ),
                 Expanded(
                   child: ListView.builder(
                     itemCount: audioList.length,
