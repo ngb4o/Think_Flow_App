@@ -35,6 +35,7 @@ class Note {
   final User user;
   final String createdAt;
   final String updatedAt;
+  final String permission;
 
   Note({
     required this.id,
@@ -43,6 +44,7 @@ class Note {
     required this.user,
     required this.createdAt,
     required this.updatedAt,
+    required this.permission,
   });
 
   factory Note.fromJson(Map<String, dynamic> json) => Note(
@@ -52,6 +54,7 @@ class Note {
         user: User.fromJson(json["user"]),
         createdAt: json["created_at"],
         updatedAt: json["updated_at"],
+        permission: json["permission"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -61,6 +64,7 @@ class Note {
         "user": user.toJson(),
         "created_at": createdAt,
         "updated_at": updatedAt,
+        "permission": permission,
       };
 }
 

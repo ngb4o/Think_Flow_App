@@ -8,6 +8,35 @@ import '../presentation/router/router_imports.gr.dart';
 
 class Utils {
 
+  static Map<String, dynamic> convertDeltaToContent(List<Map<String, dynamic>> delta) {
+    return {
+      "text_content": [{
+        "body": {
+          "type": "doc",
+          "content": delta.map((op) {
+            if (op['insert'] == '\n') {
+              return {
+                "type": "paragraph",
+                "content": []
+              };
+            }
+            return {
+              "type": "paragraph",
+              "content": [{
+                "type": "text",
+                "text": op['insert'],
+                "marks": op['attributes'] != null ? 
+                  (op['attributes'] as Map<String, dynamic>).entries.map((e) => {
+                    "type": e.key
+                  }).toList() : []
+              }]
+            };
+          }).toList()
+        }
+      }]
+    };
+  }
+
   static Map<String, dynamic> convertDeltaToWebFormat(List<Map<String, dynamic>> delta) {
     List<Map<String, dynamic>> content = [];
     List<Map<String, dynamic>> currentParagraph = [];
@@ -61,7 +90,11 @@ class Utils {
 
   static String formatDate(DateTime? date) {
     if (date == null) return '';
-    return '${date.day}/${date.month}/${date.year}';
+    final months = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
+    return '${months[date.month - 1]} ${date.day}';
   }
 
   static Future<void> screenRedirect(context) async {

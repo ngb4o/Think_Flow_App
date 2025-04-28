@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 
 import 'package:think_flow/data/data_sources/remote/api_client.dart';
+import 'package:think_flow/data/models/create_link_note_model.dart';
 import 'package:think_flow/data/models/data_model.dart';
 import 'package:think_flow/data/models/note_model.dart';
 import 'package:think_flow/data/models/text_note_model.dart';
@@ -95,6 +96,28 @@ class NoteRepo extends ApiClient {
     }
   }
 
+  // Get note share with me
+  Future<NoteModel> getNoteShareWithMe({String? cursor}) async {
+    try {
+      final queryParams = cursor != null ? {'cursor': cursor} : null;
+      final response = await getRequest(
+        path: ApiEndpointUrls.noteShareWithMe,
+        queryParameters: queryParams,
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = noteModelFromJson(jsonEncode(response.data));
+        return responseData;
+      } else {
+        throw ApiException(message: 'Failed to get list notes');
+      }
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      throw ApiException(message: 'An unexpected error occurred');
+    }
+  }
+
   // ---------- CREATE ---------- //
   // Create new note
   Future<DataModel> createNewNote(String title) async {
@@ -156,6 +179,53 @@ class NoteRepo extends ApiClient {
         return responseData;
       } else {
         throw ApiException(message: 'Create audio note failed');
+      }
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      throw ApiException(message: 'An unexpected error occurred');
+    }
+  }
+
+  // Create link note
+  Future<CreateLinkNoteModel> createLinkNote(String permission, String noteId) async {
+    Map body = {
+      "permission": permission,
+    };
+    try {
+      final response = await postRequest(
+        path: '${ApiEndpointUrls.note}/$noteId${ApiEndpointUrls.createLinkNote}',
+        body: body,
+      );
+      if(response.statusCode == 200) {
+        final responseData = createLinkNoteModelFromJson(jsonEncode(response.data));
+        return responseData;
+      } else {
+        throw ApiException(message: 'Create link note failed');
+      }
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      throw ApiException(message: 'An unexpected error occurred');
+    }
+  }
+
+  // Share link to email
+  Future<DataModel> shareLinkNoteToEmail(String email, String permission, String noteId) async {
+    Map body = {
+      "email": email,
+      "permission": permission,
+    };
+    try {
+      final response = await postRequest(
+        path: '${ApiEndpointUrls.note}/$noteId${ApiEndpointUrls.shareLinkNoteToEmail}',
+        body: body,
+      );
+      if(response.statusCode == 200) {
+        final responseData = dataModelFromJson(jsonEncode(response.data));
+        return responseData;
+      } else {
+        throw ApiException(message: 'Share note failed');
       }
     } on ApiException {
       rethrow;

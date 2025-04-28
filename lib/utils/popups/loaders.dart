@@ -32,7 +32,7 @@ class TLoaders {
       SnackBar(
         content: Row(
           children: [
-            const Icon(Iconsax.check, color: TColors.white),
+            const Icon(Iconsax.tick_circle, color: TColors.white),
             const SizedBox(width: 8),
             Expanded(
               child: Column(

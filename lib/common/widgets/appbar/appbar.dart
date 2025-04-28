@@ -14,7 +14,7 @@ class TAppbar extends StatelessWidget implements PreferredSizeWidget {
     this.leadingIcon,
     this.actions,
     this.leadingOnPressed,
-    this.isCenterTitle = false,
+    this.centerTitle = false,
     this.paddingTitle = TSizes.md,
     this.colorBackArrow = TColors.primary
   });
@@ -24,7 +24,7 @@ class TAppbar extends StatelessWidget implements PreferredSizeWidget {
   final IconData? leadingIcon;
   final List<Widget>? actions;
   final VoidCallback? leadingOnPressed;
-  final bool isCenterTitle;
+  final bool centerTitle;
   final double paddingTitle;
   final Color colorBackArrow;
 
@@ -42,7 +42,7 @@ class TAppbar extends StatelessWidget implements PreferredSizeWidget {
                 : null,
         title: title,
         actions: actions,
-        centerTitle: isCenterTitle,
+        centerTitle: centerTitle,
       ),
     );
   }

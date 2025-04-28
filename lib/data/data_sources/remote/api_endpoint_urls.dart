@@ -15,5 +15,8 @@ class ApiEndpointUrls {
   static const String text = "/note/v1/texts";
   static const String archive = "/note/v1/notes/archive";
   static const String archived = "/note/v1/notes/archived";
-  static const String unarchive ="/note/v1/notes/unarchive";
+  static const String unarchive = "/note/v1/notes/unarchive";
+  static const String shareLinkNoteToEmail = "/share/email";
+  static const String createLinkNote = "/share/link";
+  static const String noteShareWithMe = "/note/v1/notes/shared-with-me";
 }
