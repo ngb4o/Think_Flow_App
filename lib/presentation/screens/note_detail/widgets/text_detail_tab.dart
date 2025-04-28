@@ -4,9 +4,11 @@ class TextDetailTab extends StatefulWidget {
   const TextDetailTab({
     super.key,
     required this.noteId,
+    required this.permission,
   });
 
   final String noteId;
+  final String permission;
 
   @override
   State<TextDetailTab> createState() => _TextDetailTabState();
@@ -32,6 +34,10 @@ class _TextDetailTabState extends State<TextDetailTab> with AutomaticKeepAliveCl
   }
 
   void _enterEditMode() {
+    if (widget.permission == 'read') {
+      TLoaders.errorSnackBar(context, title: 'Error', message: 'You do not have permission to edit this note');
+      return;
+    }
     if (_cachedTextNoteModel?.data?.textContent != null) {
       final delta = Utils.convertProseMirrorToDelta(_cachedTextNoteModel?.data?.textContent);
       _quillController.document = Document.fromDelta(delta);
@@ -42,33 +48,12 @@ class _TextDetailTabState extends State<TextDetailTab> with AutomaticKeepAliveCl
   }
 
   _updateText(String textId) {
+    if (widget.permission == 'read') {
+      TLoaders.errorSnackBar(context, title: 'Error', message: 'You do not have permission to edit this note');
+      return;
+    }
     final delta = _quillController.document.toDelta().toJson();
-    final content = {
-      "text_content": [
-        {
-          "body": {
-            "type": "doc",
-            "content": delta.map((op) {
-              if (op['insert'] == '\n') {
-                return {"type": "paragraph", "content": []};
-              }
-              return {
-                "type": "paragraph",
-                "content": [
-                  {
-                    "type": "text",
-                    "text": op['insert'],
-                    "marks": op['attributes'] != null
-                        ? (op['attributes'] as Map<String, dynamic>).entries.map((e) => {"type": e.key}).toList()
-                        : []
-                  }
-                ]
-              };
-            }).toList()
-          }
-        }
-      ]
-    };
+    final content = Utils.convertDeltaToContent(delta);
 
     context.read<NoteDetailBloc>().add(
           NoteClickButtonUpdateTextEvent(
@@ -121,13 +106,13 @@ class _TextDetailTabState extends State<TextDetailTab> with AutomaticKeepAliveCl
                     children: [
                       SizedBox(height: TSizes.spaceBtwSections * 2),
                       Center(
-                        child: TEmpty(subTitle: 'Tap anywhere to start editing'),
+                        child: TEmpty(subTitle: widget.permission == 'read' ? 'No content available' : 'Tap anywhere to start editing'),
                       ),
                     ],
                   )
                 else
                   GestureDetector(
-                    onTap: _enterEditMode,
+                    onTap: widget.permission == 'read' ? null : _enterEditMode,
                     child: html.Html(
                       data: Utils.convertProseMirrorToHtml(textContent),
                       style: {

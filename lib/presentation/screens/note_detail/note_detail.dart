@@ -7,11 +7,13 @@ class NoteDetailScreen extends StatefulWidget {
     required this.noteId,
     required this.title,
     required this.createAt,
+    required this.permission,
   });
 
   final String noteId;
   final String title;
   final String createAt;
+  final String permission;
 
   @override
   State<NoteDetailScreen> createState() => _NoteDetailScreenState();
@@ -41,6 +43,10 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
   }
 
   _updateNote(String noteId, String title) {
+    if (widget.permission == 'read') {
+      TLoaders.errorSnackBar(context, title: 'Error', message: 'You do not have permission to edit this note');
+      return;
+    }
     context.read<NoteDetailBloc>().add(NoteClickButtonUpdateEvent(noteId: noteId, title: title));
   }
 
@@ -57,6 +63,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
           TLoaders.errorSnackBar(context, title: 'Update failed', message: state.message);
         } else if (state is NotesUpdateNotifyUpdateActionState) {
           context.read<HomeBloc>().add(HomeInitialFetchDataEvent());
+          context.read<NoteShareBloc>().add(NoteShareInitialFetchDataEvent());
         }
       },
       builder: (context, state) {
@@ -66,7 +73,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
             actions: [
               if (state is NoteUpdateDetailLoadingState)
                 LoadingSpinkit.loadingButton
-              else
+              else if (widget.permission != 'read')
                 IconButton(
                   onPressed: () => _updateNote(widget.noteId, _titleController.text.trim()),
                   icon: Icon(Iconsax.tick_square4),
@@ -92,8 +99,11 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                     cursorColor: Theme.of(context).primaryColor,
                     backgroundCursorColor: Colors.grey,
                     onChanged: (value) {
-                      _titleController.text = value;
+                      if (widget.permission != 'read') {
+                        _titleController.text = value;
+                      }
                     },
+                    readOnly: widget.permission == 'read',
                   ),
                   SizedBox(height: TSizes.sm),
                   Row(
@@ -145,8 +155,8 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                   Expanded(
                     child: TabBarView(
                       children: [
-                        KeepAliveWrapper(child: TextDetailTab(noteId: widget.noteId)),
-                        KeepAliveWrapper(child: AudioDetailTab(noteId: widget.noteId)),
+                        KeepAliveWrapper(child: TextDetailTab(noteId: widget.noteId, permission: widget.permission)),
+                        KeepAliveWrapper(child: AudioDetailTab(noteId: widget.noteId, permission: widget.permission)),
                       ],
                     ),
                   ),

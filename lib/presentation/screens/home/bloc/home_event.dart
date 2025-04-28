@@ -21,11 +21,13 @@ class HomeClickNavigationToNoteDetailPageEvent extends HomeEvent {
   final String noteId;
   final String title;
   final String createAt;
+  final String permission;
 
   HomeClickNavigationToNoteDetailPageEvent({
     required this.noteId,
     required this.title,
     required this.createAt,
+    required this.permission,
   });
 }
 

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:think_flow/common/widgets/appbar/tabbar.dart';
 import 'package:think_flow/presentation/screens/note_detail/widgets/widget_imports.dart';
+import 'package:think_flow/presentation/screens/note_share/bloc/note_share_bloc.dart';
 import 'package:think_flow/utils/constants/colors.dart';
 import 'package:think_flow/utils/constants/sizes.dart';
 import 'package:think_flow/utils/popups/loaders.dart';

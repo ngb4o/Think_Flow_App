@@ -1,9 +1,10 @@
 part of 'widget_imports.dart';
 
 class AudioDetailTab extends StatefulWidget {
-  const AudioDetailTab({super.key, required this.noteId});
+  const AudioDetailTab({super.key, required this.noteId, required this.permission});
 
   final String noteId;
+  final String permission;
 
   @override
   State<AudioDetailTab> createState() => _AudioDetailTabState();
@@ -59,6 +60,10 @@ class _AudioDetailTabState extends State<AudioDetailTab> {
   }
 
   Future<void> _startRecording() async {
+    if (widget.permission == 'read') {
+      TLoaders.errorSnackBar(context, title: 'Error', message: 'You do not have permission to edit this note');
+      return;
+    }
     try {
       if (!await audioRecorder.hasPermission()) {
         if (mounted) {
@@ -116,6 +121,10 @@ class _AudioDetailTabState extends State<AudioDetailTab> {
   }
 
   Future<void> _pauseRecording() async {
+    if (widget.permission == 'read') {
+      TLoaders.errorSnackBar(context, title: 'Error', message: 'You do not have permission to edit this note');
+      return;
+    }
     try {
       await recorderController.pause();
       await audioRecorder.pause();
@@ -137,6 +146,10 @@ class _AudioDetailTabState extends State<AudioDetailTab> {
   }
 
   Future<void> _resumeRecording() async {
+    if (widget.permission == 'read') {
+      TLoaders.errorSnackBar(context, title: 'Error', message: 'You do not have permission to edit this note');
+      return;
+    }
     try {
       await recorderController.record();
       await audioRecorder.resume();
@@ -158,6 +171,10 @@ class _AudioDetailTabState extends State<AudioDetailTab> {
   }
 
   Future<void> _stopRecording() async {
+    if (widget.permission == 'read') {
+      TLoaders.errorSnackBar(context, title: 'Error', message: 'You do not have permission to edit this note');
+      return;
+    }
     try {
       await recorderController.stop();
       String? filePath = await audioRecorder.stop();
@@ -188,6 +205,10 @@ class _AudioDetailTabState extends State<AudioDetailTab> {
   }
 
   Future<void> _cancelRecording() async {
+    if (widget.permission == 'read') {
+      TLoaders.errorSnackBar(context, title: 'Error', message: 'You do not have permission to edit this note');
+      return;
+    }
     try {
       await recorderController.stop();
       await audioRecorder.stop();
@@ -257,6 +278,10 @@ class _AudioDetailTabState extends State<AudioDetailTab> {
   }
 
   _uploadFile() async {
+    if (widget.permission == 'read') {
+      TLoaders.errorSnackBar(context, title: 'Error', message: 'You do not have permission to edit this note');
+      return;
+    }
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['mp3', 'wav', 'm4a', 'aac'],
@@ -282,6 +307,10 @@ class _AudioDetailTabState extends State<AudioDetailTab> {
   }
 
   void _deleteAudioWarningPopup (String audioId) {
+    if (widget.permission == 'read') {
+      TLoaders.errorSnackBar(context, title: 'Error', message: 'You do not have permission to edit this note');
+      return;
+    }
     TWarningPopup.show(
       context: context,
       title: 'Delete Note',
@@ -328,20 +357,20 @@ class _AudioDetailTabState extends State<AudioDetailTab> {
 
         final audioList = _cachedAudioNoteModel?.data ?? [];
 
-
         return Stack(
           children: [
             Column(
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    GestureDetector(
-                      onTap: () => _uploadFile(),
-                      child: Icon(Iconsax.document_upload5, color: TColors.primary, size: 30),
-                    )
-                  ],
-                ),
+                if (widget.permission != 'read')
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      GestureDetector(
+                        onTap: () => _uploadFile(),
+                        child: Icon(Iconsax.document_upload5, color: TColors.primary, size: 30),
+                      )
+                    ],
+                  ),
                 Expanded(
                   child: audioList.isEmpty
                       ? TEmpty(subTitle: 'No audio recordings yet')
@@ -351,10 +380,10 @@ class _AudioDetailTabState extends State<AudioDetailTab> {
                             final audio = audioList[index];
                             return RecordingListItem(
                               name: 'Audio ${index + 1}',
-                              duration: 'Date: ${Utils.formatDate(audio.createdAt)}',
+                              duration: 'Create on ${Utils.formatDate(audio.createdAt)}',
                               isPlaying: currentlyPlayingIndex == index && isPlaying,
                               onPlayPause: () => _playAudio(index, audio.fileUrl ?? ''),
-                              onDelete: () => _deleteAudioWarningPopup(audio.id!),
+                              onDelete: widget.permission == 'read' ? () {} : () => _deleteAudioWarningPopup(audio.id!),
                             );
                           },
                         ),
@@ -408,7 +437,7 @@ class _AudioDetailTabState extends State<AudioDetailTab> {
                       _seekTo(newPosition > totalDuration ? totalDuration : newPosition);
                     },
                   )
-                else
+                else if (widget.permission != 'read')
                   Padding(
                     padding: EdgeInsets.only(bottom: 40),
                     child: Center(

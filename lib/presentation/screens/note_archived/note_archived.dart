@@ -52,7 +52,7 @@ class _NoteArchivedScreenState extends State<NoteArchivedScreen> {
               appBar: TAppbar(
                 showBackArrow: true,
                 title: Text('Archived Note'),
-                isCenterTitle: true,
+                centerTitle: true,
               ),
               body: Center(child: LoadingSpinkit.loadingPage),
             );
@@ -62,7 +62,7 @@ class _NoteArchivedScreenState extends State<NoteArchivedScreen> {
               appBar: TAppbar(
                 showBackArrow: true,
                 title: Text('Archived Note'),
-                isCenterTitle: true,
+                centerTitle: true,
               ),
               body: Column(
                 children: [

@@ -31,32 +31,7 @@ class _TextNotesPageState extends State<TextNotesPage> {
       listener: (context, state) {
         if (state is NotesCreateSuccessActionSate) {
           final delta = _quillController.document.toDelta().toJson();
-          final content = {
-            "text_content": [{
-              "body": {
-                "type": "doc",
-                "content": delta.map((op) {
-                  if (op['insert'] == '\n') {
-                    return {
-                      "type": "paragraph",
-                      "content": []
-                    };
-                  }
-                  return {
-                    "type": "paragraph",
-                    "content": [{
-                      "type": "text",
-                      "text": op['insert'],
-                      "marks": op['attributes'] != null ? 
-                        (op['attributes'] as Map<String, dynamic>).entries.map((e) => {
-                          "type": e.key
-                        }).toList() : []
-                    }]
-                  };
-                }).toList()
-              }
-            }]
-          };
+          final content = Utils.convertDeltaToContent(delta);
           
           context.read<NotesBloc>().add(
             NoteCreateTextEvent(

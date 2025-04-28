@@ -58,7 +58,7 @@ class _NotesPageState extends State<NotesPage> with SingleTickerProviderStateMix
         return Scaffold(
           appBar: TAppbar(
             showBackArrow: true,
-            isCenterTitle: true,
+            centerTitle: true,
             title: Text('Notes'),
             actions: [
               if (state is NotesCreateLoadingState)

@@ -41,11 +41,13 @@ class HomeNavigationToNoteDetailPageActionState extends HomeActionState {
   final String noteId;
   final String title;
   final String createAt;
+  final String permission;
 
   HomeNavigationToNoteDetailPageActionState({
     required this.noteId,
     required this.title,
     required this.createAt,
+    required this.permission,
   });
 }
 

@@ -88,6 +88,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       noteId: event.noteId,
       title: event.title,
       createAt: event.createAt,
+      permission: event.permission,
     ));
   }
 

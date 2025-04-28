@@ -59,6 +59,42 @@ class _HomeScreenState extends State<HomeScreen> {
     context.read<HomeBloc>().add(HomeClickButtonArchiveNoteEvent(noteId: noteId));
   }
 
+  void _showNoteActionsBottomSheet(String noteId) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: Icon(Iconsax.archive_23, size: 30),
+              title: Text('Archive Note', style: Theme.of(context).textTheme.bodyLarge),
+              onTap: () {
+                Navigator.pop(context);
+                _archiveNote(noteId);
+              },
+            ),
+            Divider(),
+            ListTile(
+              leading: Icon(Iconsax.share, size: 30),
+              title: Text('Share Note', style: Theme.of(context).textTheme.bodyLarge),
+              onTap: () {
+                Navigator.pop(context);
+                shareNoteBottomSheet(noteId);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<HomeBloc, HomeState>(
@@ -76,6 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
             noteId: state.noteId,
             title: state.title,
             createAt: state.createAt,
+            permission: state.permission,
           ));
         } else if (state is HomeDeleteNoteSuccessActionState) {
           TLoaders.successSnackBar(context, title: 'Delete successfully');
@@ -135,6 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         noteId: note.id,
                                         title: note.title,
                                         createAt: note.createdAt,
+                                        permission: note.permission,
                                       )),
                                   child: Padding(
                                     padding: EdgeInsets.only(bottom: TSizes.spaceBtwItems),
@@ -173,24 +211,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             children: [
                                               Text(
-                                                note.createdAt,
+                                                'Date: ${note.createdAt}',
                                                 style: Theme.of(context).textTheme.bodySmall,
                                               ),
-                                              Row(
-                                                children: [
-                                                  GestureDetector(
-                                                    onTap: () => _archiveNote(note.id),
-                                                    child: Icon(Iconsax.archive_23, size: 25),
-                                                  ),
-                                                  SizedBox(width: TSizes.spaceBtwItems),
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      shareNoteBottomSheet(note.id);
-                                                    },
-                                                    child: Icon(Iconsax.share, size: 25),
-                                                  ),
-                                                ],
-                                              )
+                                              GestureDetector(
+                                                onTap: () => _showNoteActionsBottomSheet(note.id),
+                                                child: Icon(Iconsax.more, size: 25),
+                                              ),
                                             ],
                                           )
                                         ],
