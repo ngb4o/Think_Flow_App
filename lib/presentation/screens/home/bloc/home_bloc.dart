@@ -26,6 +26,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<HomeClickButtonDeleteNoteEvent>(homeClickButtonDeleteNoteEvent);
     on<HomeClickButtonNavigationToArchivedPageEvent>(homeClickButtonNavigationToArchivedPageEvent);
     on<HomeClickButtonArchiveNoteEvent>(homeClickButtonArchiveNoteEvent);
+    on<HomeClickButtonShareLinkNoteToEmailEvent>(homeClickButtonShareLinkNoteToEmailEvent);
+    on<HomeClickButtonCreateLinkNoteEvent>(homeClickButtonCreateLinkNoteEvent);
   }
 
   FutureOr<void> homeInitialFetchDataEvent(HomeInitialFetchDataEvent event, Emitter<HomeState> emit) async {
@@ -89,19 +91,17 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     ));
   }
 
-  FutureOr<void> homeClickButtonArchiveNoteEvent(
-      HomeClickButtonArchiveNoteEvent event, Emitter<HomeState> emit) async {
+  FutureOr<void> homeClickButtonArchiveNoteEvent(HomeClickButtonArchiveNoteEvent event, Emitter<HomeState> emit) async {
     emit(HomeArchiveNoteLoadingState());
     try {
       final archiveData = await noteRepo.archiveNote(event.noteId);
-      if(archiveData.data) {
+      if (archiveData.data) {
         emit(HomeArchiveNoteSuccessActionState());
       }
     } on ApiException catch (e) {
       emit(HomeArchiveNoteErrorActionState(message: e.message));
     } catch (e) {
       emit(HomeArchiveNoteErrorActionState(message: 'An unexpected error occurred'));
-
     }
   }
 
@@ -121,6 +121,39 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       emit(HomeDeleteNoteErrorActionState(message: e.message));
     } catch (e) {
       emit(HomeDeleteNoteErrorActionState(message: 'An unexpected error occurred'));
+    }
+  }
+
+  FutureOr<void> homeClickButtonShareLinkNoteToEmailEvent(
+      HomeClickButtonShareLinkNoteToEmailEvent event, Emitter<HomeState> emit) async {
+    emit(HomeShareLinkNoteToEmailLoadingState());
+    try {
+      final shareLinkNoteToEmailData = await noteRepo.shareLinkNoteToEmail(event.email, event.permission, event.noteId);
+      if(shareLinkNoteToEmailData.data != null) {
+        emit(HomeShareLinkNoteToEmailSuccessState());
+        emit(HomeShareLinkNoteToEmailSuccessActionState());
+      }
+    } on ApiException catch (e) {
+      emit(HomeShareLinkNoteToEmailErrorActionState(message: e.message));
+    } catch (e) {
+      emit(HomeShareLinkNoteToEmailErrorActionState(message: 'An unexpected error occurred'));
+    }
+  }
+
+  FutureOr<void> homeClickButtonCreateLinkNoteEvent(
+      HomeClickButtonCreateLinkNoteEvent event, Emitter<HomeState> emit) async {
+    emit(HomeCreateLinkNoteLoadingState());
+    try {
+      final createLinkNoteData = await noteRepo.createLinkNote(event.permission, event.noteId);
+      if(createLinkNoteData.data?.url != null) {
+        emit(HomeCreateLinkNoteSuccessState(link: createLinkNoteData.data?.url));
+        emit(HomeCreateLinkNoteSuccessActionState(link: createLinkNoteData.data?.url));
+
+      }
+    } on ApiException catch (e) {
+      emit(HomeCreateLinkNoteErrorActionState(message: e.message));
+    } catch (e) {
+      emit(HomeCreateLinkNoteErrorActionState(message: 'An unexpected error occurred'));
     }
   }
 }

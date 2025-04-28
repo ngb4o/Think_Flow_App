@@ -46,12 +46,12 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void shareNoteBottomSheet() {
+  void shareNoteBottomSheet(String noteId) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => const HomeShareNote(),
+      builder: (context) => HomeShareNote(noteId: noteId),
     );
   }
 
@@ -68,6 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
         if (state is HomeNavigationToCreateNotesPageActionState) {
           AutoRouter.of(context).push(NotesPageRoute());
         } else if (state is HomeNavigationToShareNotePageActionState) {
+          AutoRouter.of(context).push(NoteShareScreenRoute());
         } else if (state is HomeErrorActionState) {
           TLoaders.errorSnackBar(context, title: 'Error', message: state.message);
         } else if (state is HomeNavigationToNoteDetailPageActionState) {
@@ -181,10 +182,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     onTap: () => _archiveNote(note.id),
                                                     child: Icon(Iconsax.archive_23, size: 25),
                                                   ),
-                                                  SizedBox(width: TSizes.defaultSpace),
+                                                  SizedBox(width: TSizes.spaceBtwItems),
                                                   GestureDetector(
                                                     onTap: () {
-                                                      shareNoteBottomSheet();
+                                                      shareNoteBottomSheet(note.id);
                                                     },
                                                     child: Icon(Iconsax.share, size: 25),
                                                   ),

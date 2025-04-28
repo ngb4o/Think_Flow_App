@@ -54,7 +54,7 @@ class _NoteArchivedScreenState extends State<NoteArchivedScreen> {
                 title: Text('Archived Note'),
                 isCenterTitle: true,
               ),
-              body: Center(child: CircularProgressIndicator()),
+              body: Center(child: LoadingSpinkit.loadingPage),
             );
           case NoteArchivedSuccessState:
             final noteArchived = state as NoteArchivedSuccessState;
@@ -127,7 +127,7 @@ class _NoteArchivedScreenState extends State<NoteArchivedScreen> {
                                           else
                                             GestureDetector(
                                               onTap: () => _unarchiveNote(note.id),
-                                              child: Icon(Iconsax.export_14, size: 25),
+                                              child: Icon(Iconsax.clipboard_export, size: 25),
                                             ),
                                         ],
                                       )

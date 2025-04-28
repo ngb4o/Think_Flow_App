@@ -60,3 +60,36 @@ class HomeArchiveNoteErrorActionState extends HomeActionState {
 }
 
 class HomeNavigationToArchivedPageActionState extends HomeActionState {}
+
+class HomeShareLinkNoteToEmailLoadingState extends HomeState {}
+
+class HomeShareLinkNoteToEmailSuccessState extends HomeState {}
+
+class HomeShareLinkNoteToEmailSuccessActionState extends HomeActionState {}
+
+class HomeShareLinkNoteToEmailErrorActionState extends HomeActionState {
+  final String message;
+
+  HomeShareLinkNoteToEmailErrorActionState({required this.message});
+}
+
+class HomeCreateLinkNoteLoadingState extends HomeState {}
+
+class HomeCreateLinkNoteSuccessState extends HomeState {
+  final String? link;
+
+  HomeCreateLinkNoteSuccessState({this.link});
+}
+
+class HomeCreateLinkNoteSuccessActionState extends HomeActionState {
+  final String? link;
+
+  HomeCreateLinkNoteSuccessActionState({required this.link});
+}
+
+class HomeCreateLinkNoteErrorActionState extends HomeActionState {
+  final String message;
+
+  HomeCreateLinkNoteErrorActionState({required this.message});
+}
+
