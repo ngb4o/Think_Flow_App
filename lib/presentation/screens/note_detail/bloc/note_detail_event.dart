@@ -35,3 +35,9 @@ class NoteClickButtonCreateAudioEvent extends NoteDetailEvent {
 
   NoteClickButtonCreateAudioEvent({required this.id, required this.audioFile});
 }
+
+class NoteClickButtonDeleteAudioEvent extends NoteDetailEvent {
+  final String audioId;
+
+  NoteClickButtonDeleteAudioEvent({required this.audioId});
+}

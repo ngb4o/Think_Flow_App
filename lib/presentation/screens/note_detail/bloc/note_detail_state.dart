@@ -70,6 +70,17 @@ class NotesCreateAudioDetailErrorActionState extends NoteDetailActionState {
   NotesCreateAudioDetailErrorActionState({required this.message});
 }
 
+// Delete audio note
+class NoteDeleteAudioLoadingState extends NoteDetailState {}
+
+class NoteDeleteAudioSuccessState extends NoteDetailActionState {}
+
+class NoteDeleteAudioErrorState extends NoteDetailActionState {
+  final String message;
+
+  NoteDeleteAudioErrorState({required this.message});
+}
+
 // Notify
 class NotesUpdateNotifyUpdateActionState extends NoteDetailActionState {}
 

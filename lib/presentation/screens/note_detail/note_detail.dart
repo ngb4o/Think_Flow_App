@@ -1,4 +1,4 @@
-part of 'note_detail_screen_imports.dart';
+part of 'note_detail_imports.dart';
 
 @RoutePage()
 class NoteDetailScreen extends StatefulWidget {

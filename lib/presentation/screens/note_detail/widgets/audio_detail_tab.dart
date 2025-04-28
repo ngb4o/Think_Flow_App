@@ -281,6 +281,17 @@ class _AudioDetailTabState extends State<AudioDetailTab> {
     }
   }
 
+  void _deleteAudioWarningPopup (String audioId) {
+    TWarningPopup.show(
+      context: context,
+      title: 'Delete Note',
+      message: 'Are you sure you want to delete this note? This action cannot be undone.',
+      onConfirm: () {
+        context.read<NoteDetailBloc>().add(NoteClickButtonDeleteAudioEvent(audioId: audioId));
+      },
+    );
+  }
+
   @override
   void dispose() {
     recordingTimer?.cancel();
@@ -301,6 +312,9 @@ class _AudioDetailTabState extends State<AudioDetailTab> {
           TLoaders.successSnackBar(context, title: 'Audio uploaded successfully');
         } else if (state is NotesCreateAudioDetailErrorActionState) {
           TLoaders.errorSnackBar(context, title: 'Error uploaded audio', message: state.message);
+        } else if(state is NoteDeleteAudioSuccessState) {
+          TLoaders.successSnackBar(context, title: 'Delete audio successfully');
+          context.read<NoteDetailBloc>().add(NoteAudioDetailInitialFetchDataEvent(noteId: widget.noteId));
         }
       },
       builder: (context, state) {
@@ -314,11 +328,6 @@ class _AudioDetailTabState extends State<AudioDetailTab> {
 
         final audioList = _cachedAudioNoteModel?.data ?? [];
 
-        if (audioList.isEmpty) {
-          return Center(
-            child: TEmpty(subTitle: 'No audio recordings yet'),
-          );
-        }
 
         return Stack(
           children: [
@@ -334,21 +343,21 @@ class _AudioDetailTabState extends State<AudioDetailTab> {
                   ],
                 ),
                 Expanded(
-                  child: ListView.builder(
-                    itemCount: audioList.length,
-                    itemBuilder: (context, index) {
-                      final audio = audioList[index];
-                      return RecordingListItem(
-                        name: 'Audio ${index + 1}',
-                        duration: 'Date: ${Utils.formatDate(audio.createdAt)}',
-                        isPlaying: currentlyPlayingIndex == index && isPlaying,
-                        onPlayPause: () => _playAudio(index, audio.fileUrl ?? ''),
-                        onDelete: () {
-                          // TODO: Implement delete functionality if needed
-                        },
-                      );
-                    },
-                  ),
+                  child: audioList.isEmpty
+                      ? TEmpty(subTitle: 'No audio recordings yet')
+                      : ListView.builder(
+                          itemCount: audioList.length,
+                          itemBuilder: (context, index) {
+                            final audio = audioList[index];
+                            return RecordingListItem(
+                              name: 'Audio ${index + 1}',
+                              duration: 'Date: ${Utils.formatDate(audio.createdAt)}',
+                              isPlaying: currentlyPlayingIndex == index && isPlaying,
+                              onPlayPause: () => _playAudio(index, audio.fileUrl ?? ''),
+                              onDelete: () => _deleteAudioWarningPopup(audio.id!),
+                            );
+                          },
+                        ),
                 ),
               ],
             ),

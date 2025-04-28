@@ -24,6 +24,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<HomeClickButtonNavigationToShareNotePageEvent>(homeClickButtonNavigationToShareNotePageEvent);
     on<HomeClickNavigationToNoteDetailPageEvent>(homeClickNavigationToNoteDetailPageEvent);
     on<HomeClickButtonDeleteNoteEvent>(homeClickButtonDeleteNoteEvent);
+    on<HomeClickButtonNavigationToArchivedPageEvent>(homeClickButtonNavigationToArchivedPageEvent);
+    on<HomeClickButtonArchiveNoteEvent>(homeClickButtonArchiveNoteEvent);
   }
 
   FutureOr<void> homeInitialFetchDataEvent(HomeInitialFetchDataEvent event, Emitter<HomeState> emit) async {
@@ -44,13 +46,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   FutureOr<void> homeLoadMoreDataEvent(HomeLoadMoreDataEvent event, Emitter<HomeState> emit) async {
-    if (!hasMoreData || nextCursor == null || isLoadingMore) return;
+    if (!hasMoreData || nextCursor == null || nextCursor!.isEmpty || isLoadingMore) return;
 
     isLoadingMore = true;
     try {
       final noteData = await noteRepo.getListNotes(cursor: nextCursor);
       nextCursor = noteData.paging.nextCursor;
-      hasMoreData = nextCursor != null;
+      hasMoreData = nextCursor != null && nextCursor!.isNotEmpty;
       notes.addAll(noteData.data);
       emit(HomeSuccessState(
         noteModel: NoteModel(
@@ -85,6 +87,27 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       title: event.title,
       createAt: event.createAt,
     ));
+  }
+
+  FutureOr<void> homeClickButtonArchiveNoteEvent(
+      HomeClickButtonArchiveNoteEvent event, Emitter<HomeState> emit) async {
+    emit(HomeArchiveNoteLoadingState());
+    try {
+      final archiveData = await noteRepo.archiveNote(event.noteId);
+      if(archiveData.data) {
+        emit(HomeArchiveNoteSuccessActionState());
+      }
+    } on ApiException catch (e) {
+      emit(HomeArchiveNoteErrorActionState(message: e.message));
+    } catch (e) {
+      emit(HomeArchiveNoteErrorActionState(message: 'An unexpected error occurred'));
+
+    }
+  }
+
+  FutureOr<void> homeClickButtonNavigationToArchivedPageEvent(
+      HomeClickButtonNavigationToArchivedPageEvent event, Emitter<HomeState> emit) {
+    emit(HomeNavigationToArchivedPageActionState());
   }
 
   FutureOr<void> homeClickButtonDeleteNoteEvent(HomeClickButtonDeleteNoteEvent event, Emitter<HomeState> emit) async {

@@ -46,6 +46,19 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void shareNoteBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => const HomeShareNote(),
+    );
+  }
+
+  void _archiveNote(String noteId) {
+    context.read<HomeBloc>().add(HomeClickButtonArchiveNoteEvent(noteId: noteId));
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<HomeBloc, HomeState>(
@@ -68,6 +81,13 @@ class _HomeScreenState extends State<HomeScreen> {
           context.read<HomeBloc>().add(HomeInitialFetchDataEvent());
         } else if (state is HomeDeleteNoteErrorActionState) {
           TLoaders.errorSnackBar(context, title: 'Delete failed', message: state.message);
+        } else if (state is HomeNavigationToArchivedPageActionState) {
+          AutoRouter.of(context).push(NoteArchivedScreenRoute());
+        } else if (state is HomeArchiveNoteSuccessActionState) {
+          TLoaders.successSnackBar(context, title: 'Note archived successfully');
+          context.read<HomeBloc>().add(HomeInitialFetchDataEvent());
+        } else if(state is HomeArchiveNoteErrorActionState) {
+          TLoaders.errorSnackBar(context, title: 'Note archived failed', message: state.message);
         }
       },
       builder: (context, state) {
@@ -143,7 +163,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   onTap: () {
                                                     deleteNoteWarningPopup(note.id);
                                                   },
-                                                  child: Icon(Iconsax.trash),
+                                                  child: Icon(Iconsax.trash, size: 20,),
                                                 ),
                                             ],
                                           ),
@@ -157,19 +177,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                               ),
                                               Row(
                                                 children: [
-                                                  Icon(Iconsax.archive_tick),
-                                                  SizedBox(width: TSizes.spaceBtwItems),
-                                                  if (state is HomeDeleteNoteLoadingState)
-                                                    LoadingSpinkit.loadingButton
-                                                  else
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        context
-                                                            .read<HomeBloc>()
-                                                            .add(HomeClickButtonDeleteNoteEvent(noteId: note.id));
-                                                      },
-                                                      child: Icon(Iconsax.share),
-                                                    ),
+                                                  GestureDetector(
+                                                    onTap: () => _archiveNote(note.id),
+                                                    child: Icon(Iconsax.archive_23, size: 25),
+                                                  ),
+                                                  SizedBox(width: TSizes.defaultSpace),
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      shareNoteBottomSheet();
+                                                    },
+                                                    child: Icon(Iconsax.share, size: 25),
+                                                  ),
                                                 ],
                                               )
                                             ],
@@ -194,6 +212,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 spacing: 10,
                 spaceBetweenChildren: 10,
                 children: [
+                  SpeedDialChild(
+                    child: Icon(Iconsax.archive_23),
+                    label: 'Archived',
+                    onTap: () {
+                      context.read<HomeBloc>().add(HomeClickButtonNavigationToArchivedPageEvent());
+                    },
+                  ),
                   SpeedDialChild(
                     child: Icon(Iconsax.share),
                     label: 'Share with me',

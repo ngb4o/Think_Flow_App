@@ -13,4 +13,7 @@ class ApiEndpointUrls {
   static const String textNote = "/note/v1/texts/note";
   static const String audioNote = "/media/v1/media/audios";
   static const String text = "/note/v1/texts";
+  static const String archive = "/note/v1/notes/archive";
+  static const String archived = "/note/v1/notes/archived";
+  static const String unarchive ="/note/v1/notes/unarchive";
 }

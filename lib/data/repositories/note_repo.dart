@@ -73,6 +73,28 @@ class NoteRepo extends ApiClient {
     }
   }
 
+  // Get list archived
+  Future<NoteModel> getListArchived({String? cursor}) async {
+    try {
+      final queryParams = cursor != null ? {'cursor': cursor} : null;
+      final response = await getRequest(
+        path: ApiEndpointUrls.archived,
+        queryParameters: queryParams,
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = noteModelFromJson(jsonEncode(response.data));
+        return responseData;
+      } else {
+        throw ApiException(message: 'Failed to get list notes');
+      }
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      throw ApiException(message: 'An unexpected error occurred');
+    }
+  }
+
   // ---------- CREATE ---------- //
   // Create new note
   Future<DataModel> createNewNote(String title) async {
@@ -186,11 +208,66 @@ class NoteRepo extends ApiClient {
     }
   }
 
+  // Archive note
+  Future<DataModel> archiveNote(String noteId) async {
+    try {
+      final response = await patchRequest(
+        path: '${ApiEndpointUrls.archive}/$noteId',
+      );
+      if (response.statusCode == 200) {
+        final responseData = dataModelFromJson(jsonEncode(response.data));
+        return responseData;
+      } else {
+        throw ApiException(message: 'Update text note failed');
+      }
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      throw ApiException(message: 'An unexpected error occurred');
+    }
+  }
+
+  // Unarchive note
+  Future<DataModel> unarchiveNote(String noteId) async {
+    try {
+      final response = await patchRequest(
+        path: '${ApiEndpointUrls.unarchive}/$noteId',
+      );
+      if (response.statusCode == 200) {
+        final responseData = dataModelFromJson(jsonEncode(response.data));
+        return responseData;
+      } else {
+        throw ApiException(message: 'Update text note failed');
+      }
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      throw ApiException(message: 'An unexpected error occurred');
+    }
+  }
+
   // ---------- DELETE ---------- //
   // Delete note
   Future<DataModel> deleteNote(String noteId) async {
     try {
       final response = await deleteRequest(path: '${ApiEndpointUrls.note}/$noteId');
+      if (response.statusCode == 200) {
+        final responseData = dataModelFromJson(jsonEncode(response.data));
+        return responseData;
+      } else {
+        throw ApiException(message: 'Delete failed');
+      }
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      throw ApiException(message: 'An unexpected error occurred');
+    }
+  }
+
+  // Delete audio
+  Future<DataModel> deleteAudio(String audioId) async {
+    try {
+      final response = await deleteRequest(path: '${ApiEndpointUrls.audioNote}/$audioId');
       if (response.statusCode == 200) {
         final responseData = dataModelFromJson(jsonEncode(response.data));
         return responseData;

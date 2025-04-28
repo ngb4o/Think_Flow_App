@@ -25,6 +25,7 @@ class AppRouter extends $AppRouter {
     AutoRoute(page: AudioNotesPageRoute.page),
     AutoRoute(page: NotesPageRoute.page),
     AutoRoute(page: NoteDetailScreenRoute.page),
+    AutoRoute(page: NoteArchivedScreenRoute.page),
   ];
 
 }

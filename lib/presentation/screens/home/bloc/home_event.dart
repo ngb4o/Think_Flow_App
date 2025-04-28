@@ -28,3 +28,11 @@ class HomeClickNavigationToNoteDetailPageEvent extends HomeEvent {
     required this.createAt,
   });
 }
+
+class HomeClickButtonArchiveNoteEvent extends HomeEvent {
+  final String noteId;
+
+  HomeClickButtonArchiveNoteEvent({required this.noteId});
+}
+
+class HomeClickButtonNavigationToArchivedPageEvent extends HomeEvent {}

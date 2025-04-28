@@ -20,6 +20,7 @@ import 'package:record/record.dart';
 import 'package:avatar_glow/avatar_glow.dart';
 
 import '../../../../common/widgets/texts/formatted_text.dart';
+import '../../../../common/widgets/warning/t_warning_popup.dart';
 import '../../../../data/models/text_note_model.dart';
 import '../../../../utils/constants/sizes.dart';
 import '../../../../utils/constants/colors.dart';

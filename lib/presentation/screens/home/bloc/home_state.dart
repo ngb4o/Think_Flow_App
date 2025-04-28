@@ -48,3 +48,15 @@ class HomeNavigationToNoteDetailPageActionState extends HomeActionState {
     required this.createAt,
   });
 }
+
+class HomeArchiveNoteLoadingState extends HomeState {}
+
+class HomeArchiveNoteSuccessActionState extends HomeActionState {}
+
+class HomeArchiveNoteErrorActionState extends HomeActionState {
+  final String message;
+
+  HomeArchiveNoteErrorActionState({required this.message});
+}
+
+class HomeNavigationToArchivedPageActionState extends HomeActionState {}
