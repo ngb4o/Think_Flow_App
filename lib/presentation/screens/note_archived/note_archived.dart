@@ -149,7 +149,7 @@ class _NoteArchivedScreenState extends State<NoteArchivedScreen> {
               ),
             );
           default:
-            return SizedBox();
+            return Scaffold(body: SizedBox());
         }
       },
     );

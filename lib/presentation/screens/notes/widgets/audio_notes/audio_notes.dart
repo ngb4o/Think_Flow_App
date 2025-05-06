@@ -436,7 +436,7 @@ class _AudioNotesPageState extends State<AudioNotesPage> {
                 )
               : currentlyPlayingIndex != null
                   ? AudioPlayerControls(
-                      fileName: recordings[currentlyPlayingIndex!].name,
+                      fileName: 'Audio ${currentlyPlayingIndex! + 1}',
                       currentPosition: currentPosition,
                       totalDuration: totalDuration,
                       playbackSpeed: playbackSpeed,

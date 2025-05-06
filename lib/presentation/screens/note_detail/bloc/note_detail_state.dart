@@ -81,6 +81,23 @@ class NoteDeleteAudioErrorState extends NoteDetailActionState {
   NoteDeleteAudioErrorState({required this.message});
 }
 
+// Note member
+class NoteDetailMemberLoadingState extends NoteDetailState {}
+
+class NoteDetailMemberSuccessState extends NoteDetailState {
+  final NoteMemberModel? members;
+  NoteDetailMemberSuccessState({this.members});
+}
+
+class NoteDetailMemberErrorState extends NoteDetailState {}
+
+class NoteDetailMemberErrorActionState extends NoteDetailActionState {
+  final String message;
+
+  NoteDetailMemberErrorActionState({required this.message});
+}
+
+
 // Notify
 class NotesUpdateNotifyUpdateActionState extends NoteDetailActionState {}
 

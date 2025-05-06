@@ -12,7 +12,10 @@ import 'package:think_flow/utils/popups/loaders.dart';
 import '../../../../common/widgets/appbar/appbar.dart';
 import '../../../../common/widgets/loading/loading.dart';
 import '../../../common/widgets/keep_alive_wrapper.dart';
+import '../../../common/widgets/profile/t_circular_image.dart';
+import '../../../utils/constants/image_strings.dart';
 import '../home/bloc/home_bloc.dart';
+import '../home/widgets/widget_imports.dart';
 import 'bloc/note_detail_bloc.dart';
 
 part 'note_detail.dart';

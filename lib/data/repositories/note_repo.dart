@@ -11,6 +11,7 @@ import 'package:think_flow/data/models/text_note_model.dart';
 import '../data_sources/remote/api_endpoint_urls.dart';
 import '../data_sources/remote/api_exception.dart';
 import '../models/audio_note_model.dart';
+import '../models/note_member_model.dart';
 
 class NoteRepo extends ApiClient {
   NoteRepo();
@@ -59,7 +60,7 @@ class NoteRepo extends ApiClient {
   Future<AudioNoteModel> getListAudioNote(String noteId) async {
     try {
       final response = await getRequest(
-        path: '${ApiEndpointUrls.audioNote}?note-id=$noteId',
+        path: '${ApiEndpointUrls.listAudioNote}?note-id=$noteId',
       );
       if (response.statusCode == 200) {
         final responseData = audioNoteModelFromJson(jsonEncode(response.data));
@@ -114,6 +115,23 @@ class NoteRepo extends ApiClient {
     } on ApiException {
       rethrow;
     } catch (e) {
+      throw ApiException(message: 'An unexpected error occurred');
+    }
+  }
+
+  // Get note member
+  Future<NoteMemberModel> getNoteMember(String noteId) async {
+    try {
+      final response = await getRequest(path: '${ApiEndpointUrls.note}/$noteId${ApiEndpointUrls.members}');
+      if(response.statusCode == 200) {
+        final responseData = noteMemberModelFromJson(jsonEncode(response.data));
+        return responseData;
+      }else {
+        throw ApiException(message: 'Fail to get list member');
+      }
+    } on ApiException {
+      rethrow;
+    } catch(e) {
       throw ApiException(message: 'An unexpected error occurred');
     }
   }
@@ -316,6 +334,30 @@ class NoteRepo extends ApiClient {
     }
   }
 
+  // Update permission member
+  Future<DataModel> updatePermissionMember(String noteId, String userId, String permission) async {
+    Map body = {
+      'permission' : permission,
+    };
+    try {
+      final response = await patchRequest(
+        path: '${ApiEndpointUrls.note}/$noteId${ApiEndpointUrls.members}/$userId',
+        body: body,
+      );
+      if (response.statusCode == 200) {
+        final responseData = dataModelFromJson(jsonEncode(response.data));
+        return responseData;
+      } else {
+        throw ApiException(message: 'Update text note failed');
+      }
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      throw ApiException(message: 'An unexpected error occurred');
+    }
+  }
+
+
   // ---------- DELETE ---------- //
   // Delete note
   Future<DataModel> deleteNote(String noteId) async {
@@ -337,7 +379,7 @@ class NoteRepo extends ApiClient {
   // Delete audio
   Future<DataModel> deleteAudio(String audioId) async {
     try {
-      final response = await deleteRequest(path: '${ApiEndpointUrls.audioNote}/$audioId');
+      final response = await deleteRequest(path: '${ApiEndpointUrls.listAudioNote}/$audioId');
       if (response.statusCode == 200) {
         final responseData = dataModelFromJson(jsonEncode(response.data));
         return responseData;

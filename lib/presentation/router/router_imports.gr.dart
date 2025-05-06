@@ -98,6 +98,7 @@ abstract class $AppRouter extends _i19.RootStackRouter {
           title: args.title,
           createAt: args.createAt,
           permission: args.permission,
+          ownerName: args.ownerName,
         ),
       );
     },
@@ -290,6 +291,7 @@ class NoteDetailScreenRoute
     required String title,
     required String createAt,
     required String permission,
+    required String ownerName,
     List<_i19.PageRouteInfo>? children,
   }) : super(
           NoteDetailScreenRoute.name,
@@ -299,6 +301,7 @@ class NoteDetailScreenRoute
             title: title,
             createAt: createAt,
             permission: permission,
+            ownerName: ownerName,
           ),
           initialChildren: children,
         );
@@ -316,6 +319,7 @@ class NoteDetailScreenRouteArgs {
     required this.title,
     required this.createAt,
     required this.permission,
+    required this.ownerName,
   });
 
   final _i20.Key? key;
@@ -328,9 +332,11 @@ class NoteDetailScreenRouteArgs {
 
   final String permission;
 
+  final String ownerName;
+
   @override
   String toString() {
-    return 'NoteDetailScreenRouteArgs{key: $key, noteId: $noteId, title: $title, createAt: $createAt, permission: $permission}';
+    return 'NoteDetailScreenRouteArgs{key: $key, noteId: $noteId, title: $title, createAt: $createAt, permission: $permission, ownerName: $ownerName}';
   }
 }
 

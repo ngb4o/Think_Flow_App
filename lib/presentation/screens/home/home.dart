@@ -60,12 +60,13 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _showNoteActionsBottomSheet(String noteId) {
+    final isDarkMode = THelperFunctions.isDarkMode(context);
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
       builder: (context) => Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
+        decoration: BoxDecoration(
+          color: isDarkMode ? TColors.dark : Colors.white,
           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         ),
         padding: const EdgeInsets.all(16),
@@ -113,6 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
             title: state.title,
             createAt: state.createAt,
             permission: state.permission,
+            ownerName: state.ownerName,
           ));
         } else if (state is HomeDeleteNoteSuccessActionState) {
           TLoaders.successSnackBar(context, title: 'Delete successfully');
@@ -136,7 +138,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   THomeAppBar(),
                   const Expanded(
-                    child: Center(child: CircularProgressIndicator()),
+                    child: Center(child: LoadingSpinkit.loadingPage),
                   ),
                 ],
               ),
@@ -173,6 +175,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         title: note.title,
                                         createAt: note.createdAt,
                                         permission: note.permission,
+                                        ownerName: '${note.user.firstName} ${note.user.lastName}'
                                       )),
                                   child: Padding(
                                     padding: EdgeInsets.only(bottom: TSizes.spaceBtwItems),

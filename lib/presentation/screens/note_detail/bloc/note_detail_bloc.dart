@@ -8,6 +8,8 @@ import 'package:think_flow/data/models/audio_note_model.dart';
 import 'package:think_flow/data/models/text_note_model.dart';
 import 'package:think_flow/data/repositories/note_repo.dart';
 
+import '../../../../data/models/note_member_model.dart';
+
 part 'note_detail_event.dart';
 
 part 'note_detail_state.dart';
@@ -18,6 +20,7 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
   NoteDetailBloc(this.noteRepo) : super(NoteDetailInitial()) {
     on<NoteTextDetailInitialFetchDataEvent>(onTextDetailInitialFetch);
     on<NoteAudioDetailInitialFetchDataEvent>(onAudioDetailInitialFetch);
+    on<NoteDetailInitialFetchDataMemberEvent>(noteDetailInitialFetchDataMemberEvent);
     on<NoteClickButtonUpdateEvent>(noteClickButtonUpdateEvent);
     on<NoteClickButtonUpdateTextEvent>(noteClickButtonUpdateTextEvent);
     on<NoteClickButtonCreateAudioEvent>(noteClickButtonCreateAudioEvent);
@@ -55,6 +58,23 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
     } catch (e) {
       emit(NoteAudioDetailErrorState());
       emit(NoteAudioDetailErrorActionState(message: 'An unexpected error occurred'));
+    }
+  }
+
+  FutureOr<void> noteDetailInitialFetchDataMemberEvent(
+      NoteDetailInitialFetchDataMemberEvent event, Emitter<NoteDetailState> emit) async {
+    emit(NoteDetailMemberLoadingState());
+    try {
+      var noteDetailMemberData = await noteRepo.getNoteMember(event.noteId);
+      if (noteDetailMemberData.data != null) {
+        emit(NoteDetailMemberSuccessState(members: noteDetailMemberData));
+      }
+    } on ApiException catch (e) {
+      emit(NoteDetailMemberErrorState());
+      emit(NoteDetailMemberErrorActionState(message: e.message));
+    } catch (e) {
+      emit(NoteDetailMemberErrorState());
+      emit(NoteDetailMemberErrorActionState(message: 'An unexpected error occurred'));
     }
   }
 

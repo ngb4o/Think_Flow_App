@@ -8,12 +8,14 @@ class NoteDetailScreen extends StatefulWidget {
     required this.title,
     required this.createAt,
     required this.permission,
+    required this.ownerName,
   });
 
   final String noteId;
   final String title;
   final String createAt;
   final String permission;
+  final String ownerName;
 
   @override
   State<NoteDetailScreen> createState() => _NoteDetailScreenState();
@@ -50,6 +52,15 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
     context.read<NoteDetailBloc>().add(NoteClickButtonUpdateEvent(noteId: noteId, title: title));
   }
 
+  void shareNoteBottomSheet(String noteId) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => HomeShareNote(noteId: noteId),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<NoteDetailBloc, NoteDetailState>(
@@ -73,11 +84,16 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
             actions: [
               if (state is NoteUpdateDetailLoadingState)
                 LoadingSpinkit.loadingButton
-              else if (widget.permission != 'read')
+              else if (widget.permission != 'read') ...[
+                IconButton(
+                  onPressed: () => shareNoteBottomSheet(widget.noteId),
+                  icon: Icon(Iconsax.share),
+                ),
                 IconButton(
                   onPressed: () => _updateNote(widget.noteId, _titleController.text.trim()),
                   icon: Icon(Iconsax.tick_square4),
                 ),
+              ],
             ],
           ),
           body: DefaultTabController(
@@ -109,11 +125,6 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Icon(
-                        Iconsax.calendar_1,
-                        size: 20,
-                        color: TColors.darkerGrey,
-                      ),
                       SizedBox(width: TSizes.xs),
                       Text.rich(
                         TextSpan(
@@ -124,13 +135,27 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                             ),
                             TextSpan(
                               text: widget.createAt,
-                              style: Theme.of(context).textTheme.bodyMedium,
+                              style: Theme.of(context).textTheme.bodySmall,
                             ),
                           ],
                         ),
                       ),
                     ],
                   ),
+                  if (widget.permission == 'read' || widget.permission == 'write')
+                    Column(
+                      children: [
+                        SizedBox(height: TSizes.sm),
+                        Row(
+                          children: [
+                            Text('Share by ', style: Theme.of(context).textTheme.bodySmall),
+                            SizedBox(width: TSizes.xs),
+                            TCircularImage(image: TImages.user, height: 30, width: 30),
+                            Text(' ${widget.ownerName}', style: Theme.of(context).textTheme.bodySmall),
+                          ],
+                        ),
+                      ],
+                    ),
                   SizedBox(height: TSizes.spaceBtwItems),
                   TTabBar(
                     tabs: [

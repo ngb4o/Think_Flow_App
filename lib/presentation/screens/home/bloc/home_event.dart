@@ -22,12 +22,14 @@ class HomeClickNavigationToNoteDetailPageEvent extends HomeEvent {
   final String title;
   final String createAt;
   final String permission;
+  final String ownerName;
 
   HomeClickNavigationToNoteDetailPageEvent({
     required this.noteId,
     required this.title,
     required this.createAt,
     required this.permission,
+    required this.ownerName,
   });
 }
 
@@ -38,25 +40,3 @@ class HomeClickButtonArchiveNoteEvent extends HomeEvent {
 }
 
 class HomeClickButtonNavigationToArchivedPageEvent extends HomeEvent {}
-
-class HomeClickButtonShareLinkNoteToEmailEvent extends HomeEvent {
-  final String noteId;
-  final String email;
-  final String permission;
-
-  HomeClickButtonShareLinkNoteToEmailEvent({
-    required this.noteId,
-    required this.email,
-    required this.permission,
-  });
-}
-
-class HomeClickButtonCreateLinkNoteEvent extends HomeEvent {
-  final String noteId;
-  final String permission;
-
-  HomeClickButtonCreateLinkNoteEvent({
-    required this.noteId,
-    required this.permission,
-  });
-}

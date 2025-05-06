@@ -32,7 +32,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           }
           TLoaders.errorSnackBar(context, title: 'Error', message: state.message);
         } else if (state is SettingLogoutSuccessActionState) {
-          TLoaders.successSnackBar(context, title: 'Logout Success');
+          TLoaders.successSnackBar(context, title: 'Logout successfully', message: 'You have been logged out. See you again soon');
           AutoRouter.of(context).replace(LoginScreenRoute());
           Utils.clearAllSavedData();
         } else if (state is SettingLogoutErrorActionState) {
@@ -66,7 +66,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         TUserProfileTile(
                           onPressed: () =>
                               context.read<SettingsBloc>().add(SettingClickButtonNavigationToProfilePageEvent()),
-                          fullName: '${profileData?.lastName} ${profileData?.firstName}',
+                          fullName: '${profileData?.firstName} ${profileData?.lastName}',
                           email: '${profileData?.email}',
                         ),
                         const SizedBox(height: TSizes.spaceBtwSections),

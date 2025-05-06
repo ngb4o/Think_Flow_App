@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:audio_waveforms/audio_waveforms.dart';
+import 'package:think_flow/utils/helpers/helper_functions.dart';
 import '../../../../../../utils/constants/colors.dart';
 import '../../../../../../utils/constants/sizes.dart';
 
@@ -34,6 +35,7 @@ class RecordingControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = THelperFunctions.isDarkMode(context);
     return Container(
       padding: EdgeInsets.only(bottom: TSizes.defaultSpace),
       decoration: BoxDecoration(
@@ -85,7 +87,7 @@ class RecordingControls extends StatelessWidget {
                 backgroundColor: TColors.white,
                 heroTag: 'cancel',
                 onPressed: onCancel,
-                child: const Icon(Iconsax.close_circle),
+                child: Icon(Iconsax.close_circle, color: isDarkMode ? TColors.dark :TColors.primary),
               ),
               const SizedBox(width: TSizes.spaceBtwItems),
               SizedBox(
@@ -95,7 +97,7 @@ class RecordingControls extends StatelessWidget {
                   backgroundColor: Colors.pink,
                   heroTag: 'stop',
                   onPressed: onStop,
-                  child: const Icon(Iconsax.stop, color: TColors.white, size: 35),
+                  child: Icon(Iconsax.stop, color: TColors.white, size: 35),
                 ),
               ),
               const SizedBox(width: TSizes.spaceBtwItems),
@@ -103,7 +105,7 @@ class RecordingControls extends StatelessWidget {
                 backgroundColor: TColors.white,
                 heroTag: 'pause',
                 onPressed: onPauseResume,
-                child: Icon(isPaused ? Iconsax.play : Iconsax.pause),
+                child: Icon(isPaused ? Iconsax.play : Iconsax.pause, color: isDarkMode ? TColors.dark :TColors.primary),
               ),
             ],
           ),

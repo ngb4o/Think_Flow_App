@@ -9,6 +9,12 @@ class NoteTextDetailInitialFetchDataEvent extends NoteDetailEvent {
   NoteTextDetailInitialFetchDataEvent({required this.noteId});
 }
 
+class NoteDetailInitialFetchDataMemberEvent extends NoteDetailEvent {
+  final String noteId;
+
+  NoteDetailInitialFetchDataMemberEvent({required this.noteId});
+}
+
 class NoteAudioDetailInitialFetchDataEvent extends NoteDetailEvent {
   final String noteId;
 

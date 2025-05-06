@@ -90,7 +90,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
               TProfileMenu(
                   title: 'Name',
-                  value: '${widget.userModel.data?.lastName} ${widget.userModel.data?.firstName}',
+                  value: '${widget.userModel.data?.firstName} ${widget.userModel.data?.lastName}',
                   // onTap: () => Get.to(() => const UpdateNameScreen()),),
                   onTap: () {
 

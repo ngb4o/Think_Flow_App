@@ -1,4 +1,4 @@
-part of 'widget_imports.dart';
+part of '../widget_imports.dart';
 
 class HomeShareNote extends StatefulWidget {
   const HomeShareNote({
@@ -18,10 +18,16 @@ class _HomeShareNoteState extends State<HomeShareNote> {
   final formKey = GlobalKey<FormState>();
   String? _copiedLink;
 
+  @override
+  void initState() {
+    super.initState();
+    context.read<HomeShareNoteBloc>().add(HomeShareNoteInitialFetchDataMemberEvent(noteId: widget.noteId));
+  }
+
   _shareLinkNoteToEmail() {
     if (formKey.currentState!.validate()) {
-      context.read<HomeBloc>().add(
-            HomeClickButtonShareLinkNoteToEmailEvent(
+      context.read<HomeShareNoteBloc>().add(
+            HomeShareNoteClickButtonShareLinkNoteToEmailEvent(
               noteId: widget.noteId,
               email: emailController.text.trim(),
               permission: _selectedAccess,
@@ -31,8 +37,8 @@ class _HomeShareNoteState extends State<HomeShareNote> {
   }
 
   _createLinkNote() {
-    context.read<HomeBloc>().add(
-          HomeClickButtonCreateLinkNoteEvent(
+    context.read<HomeShareNoteBloc>().add(
+          HomeShareNoteClickButtonCreateLinkNoteEvent(
             noteId: widget.noteId,
             permission: _selectedAccess,
           ),
@@ -48,32 +54,34 @@ class _HomeShareNoteState extends State<HomeShareNote> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<HomeBloc, HomeState>(
-      listenWhen: (previous, current) => current is HomeActionState,
-      buildWhen: (previous, current) => current is! HomeActionState,
+    return BlocConsumer<HomeShareNoteBloc, HomeShareNoteState>(
+      listenWhen: (previous, current) => current is HomeShareNoteActionState,
+      buildWhen: (previous, current) => current is! HomeShareNoteActionState,
       listener: (context, state) {
-        if (state is HomeShareLinkNoteToEmailSuccessActionState) {
-          context.read<HomeBloc>().add(HomeInitialFetchDataEvent());
+        if (state is HomeShareNoteShareLinkNoteToEmailSuccessActionState) {
           Navigator.pop(context);
-          TLoaders.successSnackBar(context, title: 'Share link successfully');
-        } else if (state is HomeShareLinkNoteToEmailErrorActionState) {
-          context.read<HomeBloc>().add(HomeInitialFetchDataEvent());
+          TLoaders.successSnackBar(context, title: 'Share note successfully');
+        } else if (state is HomeShareNoteShareLinkNoteToEmailErrorActionState) {
           Navigator.pop(context);
-          TLoaders.errorSnackBar(context, title: 'Share link failed', message: state.message);
-        } else if (state is HomeCreateLinkNoteSuccessActionState) {
+          TLoaders.errorSnackBar(context, title: 'Share note failed', message: state.message);
+        } else if (state is HomeShareNoteCreateLinkNoteSuccessActionState) {
           _copyLinkToClipboard(state.link!);
-          context.read<HomeBloc>().add(HomeInitialFetchDataEvent());
-        } else if (state is HomeCreateLinkNoteErrorActionState) {
-          context.read<HomeBloc>().add(HomeInitialFetchDataEvent());
+        } else if (state is HomeShareNoteUpdatePermissionMemberSuccessActionState) {
+          context.read<HomeShareNoteBloc>().add(HomeShareNoteInitialFetchDataMemberEvent(noteId: widget.noteId));
+          TLoaders.successSnackBar(context, title: 'Permission updated successfully');
+        } else if (state is HomeShareNoteUpdatePermissionMemberErrorState) {
+          TLoaders.errorSnackBar(context, title: 'Update permission failed', message: state.message);
         }
       },
       builder: (context, state) {
+        final isDarkMode = THelperFunctions.isDarkMode(context);
+
         return Form(
           key: formKey,
           child: Container(
-            height: MediaQuery.of(context).size.height * 0.5,
-            decoration: const BoxDecoration(
-              color: Colors.white,
+            height: MediaQuery.of(context).size.height * 0.6,
+            decoration: BoxDecoration(
+              color: isDarkMode ? TColors.dark : TColors.white,
               borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
             ),
             child: Padding(
@@ -97,7 +105,7 @@ class _HomeShareNoteState extends State<HomeShareNote> {
                   ),
                   Expanded(
                     child: ListView(
-                      padding: const EdgeInsets.all(16),
+                      padding: EdgeInsets.only(left: TSizes.md, right: TSizes.md, top: TSizes.xs),
                       children: [
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -112,7 +120,7 @@ class _HomeShareNoteState extends State<HomeShareNote> {
                                 labelText: TTexts.email,
                               ),
                             ),
-                            SizedBox(height: TSizes.sm),
+                            SizedBox(height: TSizes.md),
                             Text('Access Permissions', style: Theme.of(context).textTheme.bodyLarge),
                             SizedBox(height: TSizes.sm),
                             Row(
@@ -147,13 +155,91 @@ class _HomeShareNoteState extends State<HomeShareNote> {
                                 ),
                               ],
                             ),
-                            SizedBox(height: TSizes.sm),
+                            BlocBuilder<HomeShareNoteBloc, HomeShareNoteState>(
+                              buildWhen: (previous, current) => current is HomeShareNoteMemberSuccessState,
+                              builder: (context, state) {
+                                if (state is HomeShareNoteMemberSuccessState && state.members?.data != null) {
+                                  return Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text('Collaborators', style: Theme.of(context).textTheme.bodyLarge),
+                                      SizedBox(height: TSizes.sm),
+                                      ListView.builder(
+                                        shrinkWrap: true,
+                                        physics: NeverScrollableScrollPhysics(),
+                                        itemCount: state.members!.data!.length,
+                                        itemBuilder: (context, index) {
+                                          final member = state.members!.data![index];
+                                          if (member.permission == 'all') return const SizedBox();
+                                          return ListTile(
+                                            contentPadding: EdgeInsets.zero,
+                                            leading: TCircularImage(image: TImages.user, height: 40, width: 40),
+                                            title: Text('${member.firstName} ${member.lastName}',
+                                                style: Theme.of(context).textTheme.bodyMedium),
+                                            subtitle: Text(
+                                              '${member.email}',
+                                              style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 13),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            trailing: Container(
+                                              decoration: BoxDecoration(
+                                                color: TColors.primary,
+                                                borderRadius: BorderRadius.circular(10)
+                                              ),
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(left: 5),
+                                                child: DropdownButton<String>(
+                                                  padding: EdgeInsets.zero,
+                                                  value: member.permission,
+                                                  iconSize: 22,
+                                                  iconEnabledColor: TColors.white,
+                                                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: TColors.white),
+                                                  isDense: true,
+                                                  alignment: AlignmentDirectional.centerEnd,
+                                                  dropdownColor: TColors.primary,
+                                                  items: const [
+                                                    DropdownMenuItem(
+                                                      value: 'read',
+                                                      child: Text('View only'),
+                                                    ),
+                                                    DropdownMenuItem(
+                                                      value: 'write',
+                                                      child: Text('Can edit'),
+                                                    ),
+                                                  ],
+                                                  onChanged: (value) {
+                                                    if (value != null) {
+                                                      setState(() {
+                                                        member.permission = value;
+                                                      });
+                                                      context.read<HomeShareNoteBloc>().add(
+                                                        HomeShareNoteUpdatePermissionMemberEvent(
+                                                          noteId: widget.noteId,
+                                                          userId: member.id.toString(),
+                                                          permission: value,
+                                                        ),
+                                                      );
+                                                    }
+                                                  },
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                }
+                                return const SizedBox();
+                              },
+                            ),
                             Text('Shared with anyone', style: Theme.of(context).textTheme.bodyLarge),
                             SizedBox(height: TSizes.sm),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                if (state is HomeCreateLinkNoteLoadingState)
+                                if (state is HomeShareNoteCreateLinkNoteLoadingState)
                                   LoadingSpinkit.loadingButton
                                 else if (_copiedLink != null)
                                   OutlinedButton(
@@ -191,7 +277,7 @@ class _HomeShareNoteState extends State<HomeShareNote> {
                                       ],
                                     ),
                                   ),
-                                if (state is HomeShareLinkNoteToEmailLoadingState)
+                                if (state is HomeShareNoteShareLinkNoteToEmailLoadingState)
                                   LoadingSpinkit.loadingButton
                                 else
                                   ElevatedButton(

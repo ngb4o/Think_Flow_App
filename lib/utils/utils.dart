@@ -7,33 +7,38 @@ import '../data/models/text_note_model.dart';
 import '../presentation/router/router_imports.gr.dart';
 
 class Utils {
-
   static Map<String, dynamic> convertDeltaToContent(List<Map<String, dynamic>> delta) {
+    String plainText = '';
+    
     return {
-      "text_content": [{
-        "body": {
-          "type": "doc",
-          "content": delta.map((op) {
-            if (op['insert'] == '\n') {
+      "text_content": [
+        {
+          "body": {
+            "type": "doc",
+            "content": delta.map((op) {
+              if (op['insert'] == '\n') {
+                plainText += '\n';
+                return {"type": "paragraph", "content": []};
+              }
+              String text = op['insert'];
+              plainText += text;
               return {
                 "type": "paragraph",
-                "content": []
+                "content": [
+                  {
+                    "type": "text",
+                    "text": text,
+                    "marks": op['attributes'] != null
+                        ? (op['attributes'] as Map<String, dynamic>).entries.map((e) => {"type": e.key}).toList()
+                        : []
+                  }
+                ]
               };
-            }
-            return {
-              "type": "paragraph",
-              "content": [{
-                "type": "text",
-                "text": op['insert'],
-                "marks": op['attributes'] != null ? 
-                  (op['attributes'] as Map<String, dynamic>).entries.map((e) => {
-                    "type": e.key
-                  }).toList() : []
-              }]
-            };
-          }).toList()
-        }
-      }]
+            }).toList()
+          }
+        },
+      ],
+      "text_string": plainText.trim()
     };
   }
 
@@ -52,10 +57,7 @@ class Utils {
           currentParagraph = [];
         }
       } else {
-        Map<String, dynamic> textNode = {
-          'type': 'text',
-          'text': op['insert']
-        };
+        Map<String, dynamic> textNode = {'type': 'text', 'text': op['insert']};
 
         if (op.containsKey('attributes')) {
           List<Map<String, dynamic>> marks = [];
@@ -90,10 +92,7 @@ class Utils {
 
   static String formatDate(DateTime? date) {
     if (date == null) return '';
-    final months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-    ];
+    final months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     return '${months[date.month - 1]} ${date.day}';
   }
 
@@ -153,12 +152,12 @@ class Utils {
 
   static Delta convertProseMirrorToDelta(List<TextContent>? content) {
     if (content == null || content.isEmpty) return Delta()..insert('\n');
-    
+
     final bodyContent = content[0].body?.content;
     if (bodyContent == null || bodyContent.isEmpty) return Delta()..insert('\n');
-    
+
     final delta = Delta();
-    
+
     for (var paragraph in bodyContent) {
       if (paragraph.content == null || paragraph.content!.isEmpty) {
         delta.insert('\n');
@@ -168,7 +167,7 @@ class Utils {
       for (var textContent in paragraph.content!) {
         String text = textContent.text ?? '';
         List<Mark>? marks = textContent.marks;
-        
+
         Map<String, dynamic> attributes = {};
         if (marks != null) {
           for (var mark in marks) {
@@ -190,20 +189,20 @@ class Utils {
             }
           }
         }
-        
+
         delta.insert(text, attributes);
       }
     }
-    
+
     return delta;
   }
 
   static String convertProseMirrorToHtml(List<TextContent>? content) {
     if (content == null || content.isEmpty) return '';
-    
+
     final bodyContent = content[0].body?.content;
     if (bodyContent == null || bodyContent.isEmpty) return '';
-    
+
     final StringBuffer html = StringBuffer();
     html.write('<p>');
 
@@ -222,7 +221,7 @@ class Utils {
       for (var textContent in paragraph.content!) {
         String text = textContent.text ?? '';
         text = text.replaceAll('\n', '<br>');
-        
+
         List<Mark>? marks = textContent.marks;
 
         String styledText = text;

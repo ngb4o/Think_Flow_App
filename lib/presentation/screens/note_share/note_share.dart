@@ -82,6 +82,7 @@ class _NoteShareScreenState extends State<NoteShareScreen> {
                                   title: note.title,
                                   createAt: note.createdAt,
                                   permission: note.permission,
+                                ownerName: '${note.user.firstName} ${note.user.lastName}'
                                 )),
                             child: Padding(
                               padding: EdgeInsets.only(bottom: TSizes.spaceBtwItems),
