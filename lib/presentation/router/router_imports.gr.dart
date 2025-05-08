@@ -9,11 +9,10 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:auto_route/auto_route.dart' as _i19;
-import 'package:flutter/cupertino.dart' as _i22;
+import 'package:flutter/cupertino.dart' as _i21;
 import 'package:flutter/material.dart' as _i20;
 import 'package:think_flow/common/screens/success_screen/success_screen.dart'
     as _i15;
-import 'package:think_flow/data/models/user_model.dart' as _i21;
 import 'package:think_flow/navigation_menu.dart' as _i5;
 import 'package:think_flow/presentation/screens/home/home_imports.dart' as _i3;
 import 'package:think_flow/presentation/screens/login/login_imports.dart'
@@ -121,13 +120,9 @@ abstract class $AppRouter extends _i19.RootStackRouter {
       );
     },
     ProfileScreenRoute.name: (routeData) {
-      final args = routeData.argsAs<ProfileScreenRouteArgs>();
       return _i19.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: _i11.ProfileScreen(
-          key: args.key,
-          userModel: args.userModel,
-        ),
+        child: const _i11.ProfileScreen(),
       );
     },
     ResetPasswordScreenRoute.name: (routeData) {
@@ -384,40 +379,16 @@ class OnboardingScreenRoute extends _i19.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i11.ProfileScreen]
-class ProfileScreenRoute extends _i19.PageRouteInfo<ProfileScreenRouteArgs> {
-  ProfileScreenRoute({
-    _i20.Key? key,
-    required _i21.UserModel userModel,
-    List<_i19.PageRouteInfo>? children,
-  }) : super(
+class ProfileScreenRoute extends _i19.PageRouteInfo<void> {
+  const ProfileScreenRoute({List<_i19.PageRouteInfo>? children})
+      : super(
           ProfileScreenRoute.name,
-          args: ProfileScreenRouteArgs(
-            key: key,
-            userModel: userModel,
-          ),
           initialChildren: children,
         );
 
   static const String name = 'ProfileScreenRoute';
 
-  static const _i19.PageInfo<ProfileScreenRouteArgs> page =
-      _i19.PageInfo<ProfileScreenRouteArgs>(name);
-}
-
-class ProfileScreenRouteArgs {
-  const ProfileScreenRouteArgs({
-    this.key,
-    required this.userModel,
-  });
-
-  final _i20.Key? key;
-
-  final _i21.UserModel userModel;
-
-  @override
-  String toString() {
-    return 'ProfileScreenRouteArgs{key: $key, userModel: $userModel}';
-  }
+  static const _i19.PageInfo<void> page = _i19.PageInfo<void>(name);
 }
 
 /// generated route for
@@ -425,7 +396,7 @@ class ProfileScreenRouteArgs {
 class ResetPasswordScreenRoute
     extends _i19.PageRouteInfo<ResetPasswordScreenRouteArgs> {
   ResetPasswordScreenRoute({
-    _i22.Key? key,
+    _i21.Key? key,
     required String email,
     List<_i19.PageRouteInfo>? children,
   }) : super(
@@ -449,7 +420,7 @@ class ResetPasswordScreenRouteArgs {
     required this.email,
   });
 
-  final _i22.Key? key;
+  final _i21.Key? key;
 
   final String email;
 
@@ -587,7 +558,7 @@ class TextNotesPageRoute extends _i19.PageRouteInfo<void> {
 class VerifyEmailScreenRoute
     extends _i19.PageRouteInfo<VerifyEmailScreenRouteArgs> {
   VerifyEmailScreenRoute({
-    _i22.Key? key,
+    _i21.Key? key,
     String? email,
     List<_i19.PageRouteInfo>? children,
   }) : super(
@@ -611,7 +582,7 @@ class VerifyEmailScreenRouteArgs {
     this.email,
   });
 
-  final _i22.Key? key;
+  final _i21.Key? key;
 
   final String? email;
 

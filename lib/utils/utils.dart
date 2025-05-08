@@ -1,7 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_quill/quill_delta.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../data/models/note_model.dart';
 
 import '../data/models/text_note_model.dart';
 import '../presentation/router/router_imports.gr.dart';

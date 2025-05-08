@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import '../../../utils/constants/enums.dart';
 import '../../../utils/constants/sizes.dart';
-import '../../../utils/helpers/helper_functions.dart';
 import '../custom_shapes/containers/t_rounded_container.dart';
 import '../texts/t_brand_title_text_with_verified_icon.dart';
 
@@ -22,7 +21,6 @@ class TBrandCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dark = THelperFunctions.isDarkMode(context);
     return GestureDetector(
       onTap: onTap,
       // Container Design

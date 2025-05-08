@@ -12,7 +12,6 @@ import '../../../../common/widgets/profile/t_circular_image.dart';
 import '../../../../utils/constants/image_strings.dart';
 import '../../../../utils/constants/text_strings.dart';
 import '../../../../utils/validators/validation.dart';
-import '../bloc/home_bloc.dart';
 import 'home_share_note/bloc/home_share_note_bloc.dart';
 
 

@@ -26,7 +26,7 @@ abstract class _OnboardingController with Store {
   void nextPage(BuildContext context) {
     if (currentPageIndex == 2) {
       Utils.setIsFirstTime(false);
-      AutoRouter.of(context).push(LoginScreenRoute());
+      AutoRouter.of(context).replace(LoginScreenRoute());
     }
     currentPageIndex++;
     pageController.jumpToPage(currentPageIndex);

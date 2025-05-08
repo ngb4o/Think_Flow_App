@@ -13,7 +13,6 @@ class NetworkManager {
 
   final Connectivity _connectivity = Connectivity();
   StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
-  List<ConnectivityResult> _connectionStatus = [];
 
   /// Initialize the network manager and set up a stream to continually check the connection status.
   void initialize(BuildContext context) {
@@ -22,7 +21,6 @@ class NetworkManager {
 
   /// Update the connection status based on changes in connectivity and show a relevant popup for no internet connection.
   Future<void> _updateConnectionStatus(List<ConnectivityResult> result, BuildContext context) async {
-    _connectionStatus = result;
     if (result.contains(ConnectivityResult.none)) {
       TLoaders.customToast(context, message: 'No Internet Connection');
     }

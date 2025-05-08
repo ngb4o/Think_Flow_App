@@ -21,4 +21,5 @@ class ApiEndpointUrls {
   static const String createLinkNote = "/share/link";
   static const String noteShareWithMe = "/note/v1/notes/shared-with-me";
   static const String members = "/members";
+  static const String image = "/media/v1/images";
 }

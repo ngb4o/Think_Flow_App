@@ -1,10 +1,8 @@
-
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:think_flow/common/widgets/profile/t_circular_image.dart';
 
 import '../../../utils/constants/colors.dart';
-import '../../../utils/constants/image_strings.dart';
 
 class TUserProfileTile extends StatelessWidget {
   const TUserProfileTile({
@@ -12,16 +10,27 @@ class TUserProfileTile extends StatelessWidget {
     required this.onPressed,
     required this.fullName,
     required this.email,
+    required this.avatar,
+    required this.isNetworkImage,
   });
 
   final VoidCallback onPressed;
   final String fullName;
   final String email;
+  final String avatar;
+  final bool isNetworkImage;
 
   @override
   Widget build(BuildContext context) {
+
     return ListTile(
-      leading: const TCircularImage(image: TImages.user, width: 50, height: 50, padding: 0),
+      leading: TCircularImage(
+        image: avatar,
+        width: 50,
+        height: 50,
+        padding: 0,
+        isNetworkImage: isNetworkImage,
+      ),
       title: Text(
         fullName,
         style: Theme.of(context).textTheme.headlineSmall!.apply(color: TColors.white),

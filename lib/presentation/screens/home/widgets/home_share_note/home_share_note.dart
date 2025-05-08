@@ -173,7 +173,12 @@ class _HomeShareNoteState extends State<HomeShareNote> {
                                           if (member.permission == 'all') return const SizedBox();
                                           return ListTile(
                                             contentPadding: EdgeInsets.zero,
-                                            leading: TCircularImage(image: TImages.user, height: 40, width: 40),
+                                            leading: TCircularImage(
+                                              image: TImages.user,
+                                              height: 40,
+                                              width: 40,
+                                              isNetworkImage: member.avatar ?? false,
+                                            ),
                                             title: Text('${member.firstName} ${member.lastName}',
                                                 style: Theme.of(context).textTheme.bodyMedium),
                                             subtitle: Text(
@@ -184,9 +189,7 @@ class _HomeShareNoteState extends State<HomeShareNote> {
                                             ),
                                             trailing: Container(
                                               decoration: BoxDecoration(
-                                                color: TColors.primary,
-                                                borderRadius: BorderRadius.circular(10)
-                                              ),
+                                                  color: TColors.primary, borderRadius: BorderRadius.circular(10)),
                                               child: Padding(
                                                 padding: const EdgeInsets.only(left: 5),
                                                 child: DropdownButton<String>(
@@ -194,7 +197,10 @@ class _HomeShareNoteState extends State<HomeShareNote> {
                                                   value: member.permission,
                                                   iconSize: 22,
                                                   iconEnabledColor: TColors.white,
-                                                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: TColors.white),
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyMedium!
+                                                      .copyWith(color: TColors.white),
                                                   isDense: true,
                                                   alignment: AlignmentDirectional.centerEnd,
                                                   dropdownColor: TColors.primary,
@@ -214,12 +220,12 @@ class _HomeShareNoteState extends State<HomeShareNote> {
                                                         member.permission = value;
                                                       });
                                                       context.read<HomeShareNoteBloc>().add(
-                                                        HomeShareNoteUpdatePermissionMemberEvent(
-                                                          noteId: widget.noteId,
-                                                          userId: member.id.toString(),
-                                                          permission: value,
-                                                        ),
-                                                      );
+                                                            HomeShareNoteUpdatePermissionMemberEvent(
+                                                              noteId: widget.noteId,
+                                                              userId: member.id.toString(),
+                                                              permission: value,
+                                                            ),
+                                                          );
                                                     }
                                                   },
                                                 ),

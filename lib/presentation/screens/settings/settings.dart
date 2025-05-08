@@ -38,7 +38,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         } else if (state is SettingLogoutErrorActionState) {
           TLoaders.errorSnackBar(context, title: 'Logout failed', message: state.message);
         } else if (state is SettingNavigationToProfilePageActionState) {
-          AutoRouter.of(context).push(ProfileScreenRoute(userModel: state.userModel));
+          AutoRouter.of(context).push(ProfileScreenRoute());
         }
       },
       builder: (context, state) {
@@ -68,6 +68,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               context.read<SettingsBloc>().add(SettingClickButtonNavigationToProfilePageEvent()),
                           fullName: '${profileData?.firstName} ${profileData?.lastName}',
                           email: '${profileData?.email}',
+                          avatar: profileData?.avatar?.url ?? TImages.user,
+                          isNetworkImage: profileData?.avatar?.url != null,
                         ),
                         const SizedBox(height: TSizes.spaceBtwSections),
                       ],

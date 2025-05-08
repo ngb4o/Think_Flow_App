@@ -13,6 +13,7 @@ import 'package:think_flow/presentation/screens/note_archived/bloc/note_archived
 import 'package:think_flow/presentation/screens/note_detail/bloc/note_detail_bloc.dart';
 import 'package:think_flow/presentation/screens/note_share/bloc/note_share_bloc.dart';
 import 'package:think_flow/presentation/screens/notes/bloc/notes_bloc.dart';
+import 'package:think_flow/presentation/screens/profile/bloc/profile_bloc.dart';
 import 'package:think_flow/presentation/screens/settings/bloc/settings_bloc.dart';
 import 'package:think_flow/presentation/screens/signup/bloc/signup_bloc.dart';
 import 'package:think_flow/presentation/screens/verify_email/bloc/verify_email_bloc.dart';
@@ -39,6 +40,7 @@ class App extends StatelessWidget {
     final NoteArchivedBloc noteArchivedBloc = NoteArchivedBloc(noteRepo);
     final NoteShareBloc noteShareBloc = NoteShareBloc(noteRepo);
     final HomeShareNoteBloc homeShareNoteBloc = HomeShareNoteBloc(noteRepo);
+    final ProfileBloc profileBloc = ProfileBloc(userRepo);
     return MultiBlocProvider(
       providers: [
         // Login
@@ -61,6 +63,8 @@ class App extends StatelessWidget {
         BlocProvider(create: (context) => noteShareBloc),
         // Home share
         BlocProvider(create: (context) => homeShareNoteBloc),
+        // Profile
+        BlocProvider(create: (context) => profileBloc),
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,

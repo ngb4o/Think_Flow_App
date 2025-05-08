@@ -341,7 +341,7 @@ class _AudioNotesPageState extends State<AudioNotesPage> {
       final tempPlayer = AudioPlayer();
       try {
         await tempPlayer.setFilePath(file.path!);
-        final duration = await tempPlayer.duration;
+        final duration = tempPlayer.duration;
         
         setState(() {
           recordings.add(AudioRecording(

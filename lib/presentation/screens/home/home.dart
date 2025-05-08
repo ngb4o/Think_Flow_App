@@ -182,7 +182,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     child: Container(
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(10),
-                                        border: Border.all(color: TColors.grey, width: 2),
+                                        border: Border.all(color: TColors.grey, width: 1),
                                       ),
                                       padding: EdgeInsets.all(TSizes.spaceBtwItems),
                                       child: Column(
@@ -214,7 +214,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             children: [
                                               Text(
-                                                'Date: ${note.createdAt}',
+                                                note.createdAt,
                                                 style: Theme.of(context).textTheme.bodySmall,
                                               ),
                                               GestureDetector(
