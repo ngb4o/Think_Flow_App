@@ -235,7 +235,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
               floatingActionButton: SpeedDial(
-                icon: Iconsax.note_15,
+                icon: Iconsax.note_favorite5,
                 activeIcon: Iconsax.close_square,
                 iconTheme: IconThemeData(color: TColors.primary, size: 40),
                 backgroundColor: Colors.transparent,

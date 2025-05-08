@@ -13,7 +13,7 @@ import 'package:flutter/cupertino.dart' as _i21;
 import 'package:flutter/material.dart' as _i20;
 import 'package:think_flow/common/screens/success_screen/success_screen.dart'
     as _i15;
-import 'package:think_flow/navigation_menu.dart' as _i5;
+import 'package:think_flow/presentation/screens/navigation_menu/navigation_menu.dart' as _i5;
 import 'package:think_flow/presentation/screens/home/home_imports.dart' as _i3;
 import 'package:think_flow/presentation/screens/login/login_imports.dart'
     as _i4;
