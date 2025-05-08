@@ -163,6 +163,11 @@ class NoteRepo extends ApiClient {
   // Create text note
   Future<DataModel> createTextNote(String id, Map<String, dynamic> content) async {
     try {
+      // Ensure text_string is not empty
+      if (content['text_string'] == null || content['text_string'].toString().trim().isEmpty) {
+        content['text_string'] = 'New note';
+      }
+
       final response = await postRequest(
         path: '${ApiEndpointUrls.textNote}/$id',
         body: content,

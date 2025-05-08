@@ -71,6 +71,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             appBar: TAppbar(
               title: Text('Profile'),
               showBackArrow: true,
+              centerTitle: true,
             ),
 
             // Body

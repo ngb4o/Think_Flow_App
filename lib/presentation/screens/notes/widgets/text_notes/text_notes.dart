@@ -14,7 +14,10 @@ class _TextNotesPageState extends State<TextNotesPage> {
   @override
   void initState() {
     super.initState();
-    _quillController = QuillController.basic();
+    _quillController = QuillController(
+      document: Document()..insert(0, ''),
+      selection: const TextSelection.collapsed(offset: 0),
+    );
   }
 
   @override
@@ -31,7 +34,30 @@ class _TextNotesPageState extends State<TextNotesPage> {
       listener: (context, state) {
         if (state is NotesCreateSuccessActionSate) {
           final delta = _quillController.document.toDelta().toJson();
-          final content = Utils.convertDeltaToContent(delta);
+          final content = delta.isEmpty 
+            ? {
+                "text_content": [
+                  {
+                    "body": {
+                      "type": "doc",
+                      "content": [
+                        {
+                          "type": "paragraph",
+                          "content": [
+                            {
+                              "type": "text",
+                              "text": "",
+                              "marks": []
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "text_string": ""
+              }
+            : Utils.convertDeltaToContent(delta);
           
           context.read<NotesBloc>().add(
             NoteCreateTextEvent(

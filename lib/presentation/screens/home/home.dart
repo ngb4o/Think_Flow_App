@@ -74,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              leading: Icon(Iconsax.archive_23, size: 30),
+              leading: Icon(Iconsax.archive_23, size: 25),
               title: Text('Archive Note', style: Theme.of(context).textTheme.bodyLarge),
               onTap: () {
                 Navigator.pop(context);
@@ -83,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             Divider(),
             ListTile(
-              leading: Icon(Iconsax.share, size: 30),
+              leading: Icon(Iconsax.share, size: 25),
               title: Text('Share Note', style: Theme.of(context).textTheme.bodyLarge),
               onTap: () {
                 Navigator.pop(context);

@@ -102,13 +102,16 @@ class _TextDetailTabState extends State<TextDetailTab> with AutomaticKeepAliveCl
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (textContent == null || textContent.isEmpty)
-                  Column(
-                    children: [
-                      SizedBox(height: TSizes.spaceBtwSections * 2),
-                      Center(
-                        child: TEmpty(subTitle: widget.permission == 'read' ? 'No content available' : 'Tap anywhere to start editing'),
-                      ),
-                    ],
+                  GestureDetector(
+                    onTap: widget.permission == 'read' ? null : _enterEditMode,
+                    child: Column(
+                      children: [
+                        SizedBox(height: TSizes.spaceBtwSections * 2),
+                        Center(
+                          child: TEmpty(subTitle: widget.permission == 'read' ? 'No content available' : 'Tap anywhere to start editing'),
+                        ),
+                      ],
+                    ),
                   )
                 else
                   GestureDetector(
