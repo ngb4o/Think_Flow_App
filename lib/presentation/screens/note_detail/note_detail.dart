@@ -22,7 +22,7 @@ class NoteDetailScreen extends StatefulWidget {
 }
 
 class _NoteDetailScreenState extends State<NoteDetailScreen> {
-  final tabs = ["Text", "Audio"];
+  final tabs = ["Text", "Audio", "Summary", "Mindmap"];
 
   int currentTabIndex = 0;
 
@@ -159,8 +159,10 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                   SizedBox(height: TSizes.spaceBtwItems),
                   TTabBar(
                     tabs: [
-                      Tab(text: 'Text'),
-                      Tab(text: 'Audio'),
+                      Tab(icon: Icon(Iconsax.document_text, size:20,), text: tabs[0]),
+                      Tab(icon: Icon(Iconsax.microphone,size:20), text: tabs[1]),
+                      Tab(icon: Icon(Iconsax.document, size:20), text: tabs[2]),
+                      Tab(icon: Icon(Iconsax.element_4, size:20), text: tabs[3]),
                     ],
                     currentIndex: currentTabIndex,
                     onTap: (value) {
@@ -172,9 +174,6 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                     unselectedColor: Colors.grey.shade200,
                     selectedTextColor: Colors.white,
                     unselectedTextColor: Colors.black,
-                    width: MediaQuery.of(context).size.width - (TSizes.defaultSpace * 2),
-                    fullWidth: true,
-                    paddingBetweenTabs: true,
                   ),
                   SizedBox(height: TSizes.spaceBtwItems),
                   Expanded(
@@ -182,6 +181,8 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                       children: [
                         KeepAliveWrapper(child: TextDetailTab(noteId: widget.noteId, permission: widget.permission)),
                         KeepAliveWrapper(child: AudioDetailTab(noteId: widget.noteId, permission: widget.permission)),
+                        KeepAliveWrapper(child: SummaryDetailTab()),
+                        KeepAliveWrapper(child: MindmapDetailTab()),
                       ],
                     ),
                   ),

@@ -7,6 +7,7 @@ import 'package:think_flow/presentation/screens/note_detail/widgets/widget_impor
 import 'package:think_flow/presentation/screens/note_share/bloc/note_share_bloc.dart';
 import 'package:think_flow/utils/constants/colors.dart';
 import 'package:think_flow/utils/constants/sizes.dart';
+import 'package:think_flow/utils/helpers/helper_functions.dart';
 import 'package:think_flow/utils/popups/loaders.dart';
 
 import '../../../../common/widgets/appbar/appbar.dart';

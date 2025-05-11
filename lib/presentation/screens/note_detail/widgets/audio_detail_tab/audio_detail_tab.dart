@@ -1,4 +1,4 @@
-part of 'widget_imports.dart';
+part of '../widget_imports.dart';
 
 class AudioDetailTab extends StatefulWidget {
   const AudioDetailTab({super.key, required this.noteId, required this.permission});

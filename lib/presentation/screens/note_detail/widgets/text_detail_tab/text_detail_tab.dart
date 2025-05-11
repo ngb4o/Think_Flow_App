@@ -1,4 +1,4 @@
-part of 'widget_imports.dart';
+part of '../widget_imports.dart';
 
 class TextDetailTab extends StatefulWidget {
   const TextDetailTab({

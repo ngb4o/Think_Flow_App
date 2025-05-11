@@ -38,7 +38,6 @@ class TTabBar extends StatelessWidget implements PreferredSizeWidget {
         height: 40,
         width: width ?? MediaQuery.of(context).size.width,
         child: TabBar(
-          padding: fullWidth ? EdgeInsets.zero : const EdgeInsets.symmetric(horizontal: 10),
           dividerColor: Colors.transparent,
           labelColor: TColors.black,
           indicatorWeight: 1,
@@ -63,11 +62,28 @@ class TTabBar extends StatelessWidget implements PreferredSizeWidget {
                   borderRadius: BorderRadius.circular(30),
                 ),
                 child: Tab(
-                  child: Text(
-                    (tabs[index] as Tab).text ?? '',
-                    style: isSelected
-                        ? Theme.of(context).textTheme.bodyLarge?.copyWith(color: selectedTextColor ?? Colors.white)
-                        : Theme.of(context).textTheme.bodyLarge?.copyWith(color: unselectedTextColor ?? Colors.black),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      if ((tabs[index] as Tab).icon != null) ...[
+                        IconTheme(
+                          data: IconThemeData(
+                            color: isSelected
+                                ? (selectedTextColor ?? Colors.white)
+                                : (unselectedTextColor ?? Colors.black),
+                            size: ((tabs[index] as Tab).icon as Icon).size,
+                          ),
+                          child: (tabs[index] as Tab).icon!,
+                        ),
+                        const SizedBox(width: 6),
+                      ],
+                      Text(
+                        (tabs[index] as Tab).text ?? '',
+                        style: isSelected
+                            ? Theme.of(context).textTheme.bodyLarge?.copyWith(color: selectedTextColor ?? Colors.white)
+                            : Theme.of(context).textTheme.bodyLarge?.copyWith(color: unselectedTextColor ?? Colors.black),
+                      ),
+                    ],
                   ),
                 ),
               ),

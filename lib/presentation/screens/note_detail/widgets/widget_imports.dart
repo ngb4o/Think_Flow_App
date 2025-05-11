@@ -1,8 +1,13 @@
+import 'dart:math';
+
 import 'package:audio_waveforms/audio_waveforms.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart' show Document, QuillController, QuillEditor, QuillEditorConfig, QuillSimpleToolbar, QuillSimpleToolbarConfig;
+import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:mind_map/mind_map.dart';
 import 'package:think_flow/common/widgets/empty/t_empty.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:think_flow/common/widgets/loading/loading.dart';
@@ -27,5 +32,7 @@ import '../../notes/widgets/audio_notes/widgets/recording_controls.dart';
 import '../bloc/note_detail_bloc.dart';
 import 'package:think_flow/data/models/audio_note_model.dart';
 
-part 'text_detail_tab.dart';
-part 'audio_detail_tab.dart';
+part 'text_detail_tab/text_detail_tab.dart';
+part 'audio_detail_tab/audio_detail_tab.dart';
+part 'summary_detail_tab/summary_detail_tab.dart';
+part 'mindmap_detail_tab/mindmap_detail_tab.dart';

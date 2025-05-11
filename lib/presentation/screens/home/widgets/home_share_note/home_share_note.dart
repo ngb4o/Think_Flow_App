@@ -159,81 +159,100 @@ class _HomeShareNoteState extends State<HomeShareNote> {
                               buildWhen: (previous, current) => current is HomeShareNoteMemberSuccessState,
                               builder: (context, state) {
                                 if (state is HomeShareNoteMemberSuccessState && state.members?.data != null) {
+                                  final collaborators = state.members!.data!.where((member) => member.permission != 'all').toList();
                                   return Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text('Collaborators', style: Theme.of(context).textTheme.bodyLarge),
                                       SizedBox(height: TSizes.sm),
-                                      ListView.builder(
-                                        shrinkWrap: true,
-                                        physics: NeverScrollableScrollPhysics(),
-                                        itemCount: state.members!.data!.length,
-                                        itemBuilder: (context, index) {
-                                          final member = state.members!.data![index];
-                                          if (member.permission == 'all') return const SizedBox();
-                                          return ListTile(
-                                            contentPadding: EdgeInsets.zero,
-                                            leading: TCircularImage(
-                                              image: TImages.user,
-                                              height: 40,
-                                              width: 40,
-                                              isNetworkImage: member.avatar ?? false,
+                                      if (collaborators.isEmpty)
+                                        Column(
+                                          children: [
+                                            Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  'Not shared with anyone',
+                                                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                                    fontStyle: FontStyle.italic,
+                                                    color: Colors.grey,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                            title: Text('${member.firstName} ${member.lastName}',
-                                                style: Theme.of(context).textTheme.bodyMedium),
-                                            subtitle: Text(
-                                              '${member.email}',
-                                              style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 13),
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                            trailing: Container(
-                                              decoration: BoxDecoration(
-                                                  color: TColors.primary, borderRadius: BorderRadius.circular(10)),
-                                              child: Padding(
-                                                padding: const EdgeInsets.only(left: 5),
-                                                child: DropdownButton<String>(
-                                                  padding: EdgeInsets.zero,
-                                                  value: member.permission,
-                                                  iconSize: 22,
-                                                  iconEnabledColor: TColors.white,
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyMedium!
-                                                      .copyWith(color: TColors.white),
-                                                  isDense: true,
-                                                  alignment: AlignmentDirectional.centerEnd,
-                                                  dropdownColor: TColors.primary,
-                                                  items: const [
-                                                    DropdownMenuItem(
-                                                      value: 'read',
-                                                      child: Text('View only'),
-                                                    ),
-                                                    DropdownMenuItem(
-                                                      value: 'write',
-                                                      child: Text('Can edit'),
-                                                    ),
-                                                  ],
-                                                  onChanged: (value) {
-                                                    if (value != null) {
-                                                      setState(() {
-                                                        member.permission = value;
-                                                      });
-                                                      context.read<HomeShareNoteBloc>().add(
-                                                            HomeShareNoteUpdatePermissionMemberEvent(
-                                                              noteId: widget.noteId,
-                                                              userId: member.id.toString(),
-                                                              permission: value,
-                                                            ),
-                                                          );
-                                                    }
-                                                  },
+                                            SizedBox(height: TSizes.spaceBtwItems),
+                                          ],
+                                        )
+                                      else
+                                        ListView.builder(
+                                          shrinkWrap: true,
+                                          physics: NeverScrollableScrollPhysics(),
+                                          itemCount: collaborators.length,
+                                          itemBuilder: (context, index) {
+                                            final member = collaborators[index];
+                                            return ListTile(
+                                              contentPadding: EdgeInsets.zero,
+                                              leading: TCircularImage(
+                                                image: TImages.user,
+                                                height: 40,
+                                                width: 40,
+                                                isNetworkImage: member.avatar ?? false,
+                                              ),
+                                              title: Text('${member.firstName} ${member.lastName}',
+                                                  style: Theme.of(context).textTheme.bodyMedium),
+                                              subtitle: Text(
+                                                '${member.email}',
+                                                style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 13),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              trailing: Container(
+                                                decoration: BoxDecoration(
+                                                    color: TColors.primary, borderRadius: BorderRadius.circular(10)),
+                                                child: Padding(
+                                                  padding: const EdgeInsets.only(left: 5),
+                                                  child: DropdownButton<String>(
+                                                    padding: EdgeInsets.zero,
+                                                    value: member.permission,
+                                                    iconSize: 22,
+                                                    iconEnabledColor: TColors.white,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyMedium!
+                                                        .copyWith(color: TColors.white),
+                                                    isDense: true,
+                                                    alignment: AlignmentDirectional.centerEnd,
+                                                    dropdownColor: TColors.primary,
+                                                    items: const [
+                                                      DropdownMenuItem(
+                                                        value: 'read',
+                                                        child: Text('View only'),
+                                                      ),
+                                                      DropdownMenuItem(
+                                                        value: 'write',
+                                                        child: Text('Can edit'),
+                                                      ),
+                                                    ],
+                                                    onChanged: (value) {
+                                                      if (value != null) {
+                                                        setState(() {
+                                                          member.permission = value;
+                                                        });
+                                                        context.read<HomeShareNoteBloc>().add(
+                                                              HomeShareNoteUpdatePermissionMemberEvent(
+                                                                noteId: widget.noteId,
+                                                                userId: member.id.toString(),
+                                                                permission: value,
+                                                              ),
+                                                            );
+                                                      }
+                                                    },
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                          );
-                                        },
-                                      ),
+                                            );
+                                          },
+                                        ),
                                     ],
                                   );
                                 }
