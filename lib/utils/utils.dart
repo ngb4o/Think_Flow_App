@@ -6,89 +6,104 @@ import '../data/models/text_note_model.dart';
 import '../presentation/router/router_imports.gr.dart';
 
 class Utils {
-  static Map<String, dynamic> convertDeltaToContent(List<Map<String, dynamic>> delta) {
-    String plainText = '';
-    
+  static Map<String, dynamic> getEmptyContent() {
     return {
       "text_content": [
         {
           "body": {
             "type": "doc",
-            "content": delta.map((op) {
-              if (op['insert'] == '\n') {
-                plainText += '\n';
-                return {"type": "paragraph", "content": []};
-              }
-              String text = op['insert'];
-              plainText += text;
-              return {
+            "content": [
+              {
                 "type": "paragraph",
                 "content": [
                   {
                     "type": "text",
-                    "text": text,
-                    "marks": op['attributes'] != null
-                        ? (op['attributes'] as Map<String, dynamic>).entries.map((e) => {"type": e.key}).toList()
-                        : []
+                    "text": "",
+                    "marks": []
                   }
                 ]
-              };
-            }).toList()
+              }
+            ]
           }
-        },
+        }
       ],
-      "text_string": plainText.trim()
+      "text_string": ""
     };
   }
 
-  static Map<String, dynamic> convertDeltaToWebFormat(List<Map<String, dynamic>> delta) {
-    List<Map<String, dynamic>> content = [];
-    List<Map<String, dynamic>> currentParagraph = [];
-
+  static Map<String, dynamic> convertDeltaToContent(List<Map<String, dynamic>> delta) {
+    String plainText = '';
+    List<Map<String, dynamic>> paragraphs = [];
+    Map<String, dynamic> currentParagraph = {
+      "type": "paragraph",
+      "attrs": {"textAlign": null},
+      "content": []
+    };
+    
     for (var op in delta) {
       if (op['insert'] == '\n') {
-        if (currentParagraph.isNotEmpty) {
-          content.add({
-            'type': 'paragraph',
-            'attrs': {'textAlign': null},
-            'content': currentParagraph
-          });
-          currentParagraph = [];
+        if (currentParagraph['content'].isNotEmpty) {
+          paragraphs.add(currentParagraph);
+          currentParagraph = {
+            "type": "paragraph",
+            "attrs": {"textAlign": null},
+            "content": []
+          };
         }
+        plainText += '\n';
       } else {
-        Map<String, dynamic> textNode = {'type': 'text', 'text': op['insert']};
+        String text = op['insert'];
+        plainText += text;
+        
+        Map<String, dynamic> textNode = {
+          "type": "text",
+          "text": text,
+        };
 
-        if (op.containsKey('attributes')) {
+        if (op['attributes'] != null) {
           List<Map<String, dynamic>> marks = [];
-          if (op['attributes']['bold'] == true) {
-            marks.add({'type': 'bold'});
+          Map<String, dynamic> attributes = op['attributes'];
+          
+          if (attributes['bold'] == true) {
+            marks.add({"type": "bold"});
           }
-          if (op['attributes']['italic'] == true) {
-            marks.add({'type': 'italic'});
+          if (attributes['italic'] == true) {
+            marks.add({"type": "italic"});
           }
-          if (op['attributes']['underline'] == true) {
-            marks.add({'type': 'underline'});
+          if (attributes['underline'] == true) {
+            marks.add({"type": "underline"});
           }
+          if (attributes['strike'] == true) {
+            marks.add({"type": "strike"});
+          }
+          
           if (marks.isNotEmpty) {
             textNode['marks'] = marks;
           }
         }
-
-        currentParagraph.add(textNode);
+        
+        currentParagraph['content'].add(textNode);
       }
     }
-
-    if (currentParagraph.isNotEmpty) {
-      content.add({
-        'type': 'paragraph',
-        'attrs': {'textAlign': null},
-        'content': currentParagraph
-      });
+    
+    // Add the last paragraph if it has content
+    if (currentParagraph['content'].isNotEmpty) {
+      paragraphs.add(currentParagraph);
     }
 
-    return {'type': 'doc', 'content': content};
+    return {
+      "text_content": [
+        {
+          "body": {
+            "type": "doc",
+            "content": paragraphs
+          }
+        }
+      ],
+      "text_string": plainText.trim()
+    };
   }
-
+  
   static String formatDate(DateTime? date) {
     if (date == null) return '';
     final months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -191,6 +206,8 @@ class Utils {
 
         delta.insert(text, attributes);
       }
+      // Add newline after each paragraph
+      delta.insert('\n');
     }
 
     return delta;
@@ -213,7 +230,7 @@ class Utils {
       }
 
       if (!isFirstParagraph) {
-        html.write(' ');
+        html.write('</p><p>');
       }
       isFirstParagraph = false;
 

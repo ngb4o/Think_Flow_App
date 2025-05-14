@@ -42,6 +42,13 @@ class RecordingControls extends StatelessWidget {
         color: TColors.primary,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: TColors.grey),
+        boxShadow: [
+          BoxShadow(
+            color: TColors.primary.withOpacity(0.5),
+            blurRadius: 7,
+            offset: const Offset(0, 5),
+          ),
+        ],
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -54,7 +61,10 @@ class RecordingControls extends StatelessWidget {
                 children: [
                   Text(
                     _formatDuration(recordingDuration),
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(color: TColors.white),
+                    style: Theme.of(context)
+                        .textTheme
+                        .headlineMedium
+                        ?.copyWith(color: TColors.white),
                   ),
                   const SizedBox(height: TSizes.sm),
                   Container(
@@ -87,7 +97,8 @@ class RecordingControls extends StatelessWidget {
                 backgroundColor: TColors.white,
                 heroTag: 'cancel',
                 onPressed: onCancel,
-                child: Icon(Iconsax.close_circle, color: isDarkMode ? TColors.dark :TColors.primary),
+                child: Icon(Iconsax.close_circle,
+                    color: isDarkMode ? TColors.dark : TColors.primary),
               ),
               const SizedBox(width: TSizes.spaceBtwItems),
               SizedBox(
@@ -105,7 +116,8 @@ class RecordingControls extends StatelessWidget {
                 backgroundColor: TColors.white,
                 heroTag: 'pause',
                 onPressed: onPauseResume,
-                child: Icon(isPaused ? Iconsax.play : Iconsax.pause, color: isDarkMode ? TColors.dark :TColors.primary),
+                child: Icon(isPaused ? Iconsax.play : Iconsax.pause,
+                    color: isDarkMode ? TColors.dark : TColors.primary),
               ),
             ],
           ),

@@ -1,11 +1,7 @@
-import 'dart:math';
-
 import 'package:audio_waveforms/audio_waveforms.dart';
-import 'package:auto_route/auto_route.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart' show Document, QuillController, QuillEditor, QuillEditorConfig, QuillSimpleToolbar, QuillSimpleToolbarConfig;
-import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:mind_map/mind_map.dart';
 import 'package:think_flow/common/widgets/empty/t_empty.dart';
@@ -21,9 +17,11 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
 import 'package:avatar_glow/avatar_glow.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../../common/widgets/warning/t_warning_popup.dart';
 import '../../../../data/models/text_note_model.dart';
+import '../../../../services/text_recognizer.dart';
 import '../../../../utils/constants/sizes.dart';
 import '../../../../utils/constants/colors.dart';
 import '../../../../utils/utils.dart';

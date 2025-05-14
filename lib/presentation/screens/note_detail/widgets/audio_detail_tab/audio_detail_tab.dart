@@ -313,8 +313,8 @@ class _AudioDetailTabState extends State<AudioDetailTab> {
     }
     TWarningPopup.show(
       context: context,
-      title: 'Delete Note',
-      message: 'Are you sure you want to delete this note? This action cannot be undone.',
+      title: 'Delete audio',
+      message: 'Are you sure you want to delete this audio? This action cannot be undone.',
       onConfirm: () {
         context.read<NoteDetailBloc>().add(NoteClickButtonDeleteAudioEvent(audioId: audioId));
       },
@@ -362,14 +362,17 @@ class _AudioDetailTabState extends State<AudioDetailTab> {
             Column(
               children: [
                 if (widget.permission != 'read')
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      GestureDetector(
-                        onTap: () => _uploadFile(),
-                        child: Icon(Iconsax.document_upload5, color: TColors.primary, size: 30),
-                      )
-                    ],
+                  Padding(
+                    padding: const EdgeInsets.only(top: TSizes.spaceBtwItems),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        GestureDetector(
+                          onTap: () => _uploadFile(),
+                          child: Icon(Iconsax.document_upload5, color: TColors.primary, size: 30),
+                        )
+                      ],
+                    ),
                   ),
                 Expanded(
                   child: audioList.isEmpty

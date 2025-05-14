@@ -86,7 +86,6 @@ class _NotesPageState extends State<NotesPage> with SingleTickerProviderStateMix
                   Expanded(
                     child: Column(
                       children: [
-                        Divider(),
                         // Tabs bar
                         Material(
                           color: dark ? TColors.black : TColors.white,
@@ -99,6 +98,7 @@ class _NotesPageState extends State<NotesPage> with SingleTickerProviderStateMix
                                         child: Text(
                                           tab,
                                           textAlign: TextAlign.center,
+                                          style: TextStyle(fontWeight: FontWeight.w500),
                                         ),
                                       ),
                                     ))

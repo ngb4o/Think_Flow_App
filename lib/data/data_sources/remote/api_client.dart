@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:auto_route/auto_route.dart';
 
+import '../../../presentation/router/router_imports.gr.dart';
 import '../../../utils/utils.dart';
 import 'api_constant.dart';
 import 'api_exception.dart';
@@ -31,10 +33,18 @@ class ApiClient {
     ));
   }
 
+  void _handleUnauthorizedError(BuildContext? context) {
+    Utils.clearAllSavedData();
+    if (context != null) {
+      AutoRouter.of(context).replace(LoginScreenRoute());
+    }
+  }
+
   // GET REQUEST
   Future<Response> getRequest({
     required String path,
     Map<String, dynamic>? queryParameters,
+    BuildContext? context,
   }) async {
     try {
       debugPrint('🚀 ========== API REQUEST ========= 🚀');
@@ -57,6 +67,10 @@ class ApiClient {
         debugPrint(e.response!.data.toString());
         debugPrint(e.response!.headers.toString());
         debugPrint(e.response!.requestOptions.toString());
+        
+        if (e.response?.statusCode == 401) {
+          _handleUnauthorizedError(context);
+        }
         throw ApiException.fromDioError(e);
       } else {
         debugPrint(e.requestOptions.toString());
@@ -70,6 +84,7 @@ class ApiClient {
   Future<Response> postRequest({
     required String path,
     dynamic body,
+    BuildContext? context,
   }) async {
     try {
       debugPrint('🚀 ========== API REQUEST ========= 🚀');
@@ -93,6 +108,10 @@ class ApiClient {
         debugPrint(e.response!.data.toString());
         debugPrint(e.response!.headers.toString());
         debugPrint(e.response!.requestOptions.toString());
+        
+        if (e.response?.statusCode == 401) {
+          _handleUnauthorizedError(context);
+        }
         throw ApiException.fromDioError(e);
       } else {
         debugPrint(e.requestOptions.toString());
@@ -105,6 +124,7 @@ class ApiClient {
   Future<Response> patchRequest({
     required String path,
     dynamic body,
+    BuildContext? context,
   }) async {
     try {
       debugPrint('🚀 ========== API REQUEST ========= 🚀');
@@ -128,6 +148,10 @@ class ApiClient {
         debugPrint(e.response!.data.toString());
         debugPrint(e.response!.headers.toString());
         debugPrint(e.response!.requestOptions.toString());
+        
+        if (e.response?.statusCode == 401) {
+          _handleUnauthorizedError(context);
+        }
         throw ApiException.fromDioError(e);
       } else {
         debugPrint(e.requestOptions.toString());
@@ -140,6 +164,7 @@ class ApiClient {
   // DELETE REQUEST
   Future<Response> deleteRequest({
     required String path,
+    BuildContext? context,
   }) async {
     try {
       debugPrint('🚀 ========== API REQUEST ========= 🚀');
@@ -162,6 +187,10 @@ class ApiClient {
         debugPrint(e.response!.data.toString());
         debugPrint(e.response!.headers.toString());
         debugPrint(e.response!.requestOptions.toString());
+        
+        if (e.response?.statusCode == 401) {
+          _handleUnauthorizedError(context);
+        }
         throw ApiException.fromDioError(e);
       } else {
         debugPrint(e.requestOptions.toString());
@@ -170,5 +199,4 @@ class ApiClient {
       }
     }
   }
-
 }

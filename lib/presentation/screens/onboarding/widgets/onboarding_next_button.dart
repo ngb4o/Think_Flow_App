@@ -12,8 +12,11 @@ class OnboardingNextButton extends StatelessWidget {
       bottom: TDeviceUtils.getBottomNavigationBarHeight(),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12)),
           backgroundColor: dark ? TColors.primary : TColors.primary,
+          elevation: 6,
+          shadowColor: dark ? TColors.primary.withOpacity(0.5) : TColors.primary.withOpacity(0.5),
         ),
         onPressed: () {
           controller.nextPage(context);
@@ -21,13 +24,33 @@ class OnboardingNextButton extends StatelessWidget {
         child: Observer(
           builder: (_) => controller.currentPageIndex == 2
               ? const Padding(
-            padding: EdgeInsets.symmetric(horizontal: TSizes.md),
-            child: Text('Get Started'),
-          )
-              : const Icon(
-            Iconsax.arrow_right_3,
-            color: TColors.white,
-          ),
+                  padding: EdgeInsets.symmetric(horizontal: TSizes.md),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Get Started'),
+                      SizedBox(width: TSizes.sm),
+                      Icon(
+                        Iconsax.arrow_right_3,
+                        color: TColors.white,
+                      ),
+                    ],
+                  ),
+                )
+              : Padding(
+                  padding: EdgeInsets.symmetric(horizontal: TSizes.md),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Continue'),
+                      SizedBox(width: TSizes.sm),
+                      Icon(
+                        Iconsax.arrow_right_3,
+                        color: TColors.white,
+                      ),
+                    ],
+                  ),
+                ),
         ),
       ),
     );

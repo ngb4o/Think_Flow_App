@@ -9,93 +9,125 @@ NoteMemberModel noteMemberModelFromJson(String str) => NoteMemberModel.fromJson(
 String noteMemberModelToJson(NoteMemberModel data) => json.encode(data.toJson());
 
 class NoteMemberModel {
-  List<Datum>? data;
-  Paging? paging;
+    List<Datum>? data;
+    Paging? paging;
 
-  NoteMemberModel({
-    this.data,
-    this.paging,
-  });
+    NoteMemberModel({
+        this.data,
+        this.paging,
+    });
 
-  factory NoteMemberModel.fromJson(Map<String, dynamic> json) => NoteMemberModel(
-    data: json["data"] == null ? [] : List<Datum>.from(json["data"]!.map((x) => Datum.fromJson(x))),
-    paging: json["paging"] == null ? null : Paging.fromJson(json["paging"]),
-  );
+    factory NoteMemberModel.fromJson(Map<String, dynamic> json) => NoteMemberModel(
+        data: json["data"] == null ? [] : List<Datum>.from(json["data"]!.map((x) => Datum.fromJson(x))),
+        paging: json["paging"] == null ? null : Paging.fromJson(json["paging"]),
+    );
 
-  Map<String, dynamic> toJson() => {
-    "data": data == null ? [] : List<dynamic>.from(data!.map((x) => x.toJson())),
-    "paging": paging?.toJson(),
-  };
+    Map<String, dynamic> toJson() => {
+        "data": data == null ? [] : List<dynamic>.from(data!.map((x) => x.toJson())),
+        "paging": paging?.toJson(),
+    };
 }
 
 class Datum {
-  String? id;
-  String? email;
-  String? lastName;
-  String? firstName;
-  dynamic avatar;
-  String? role;
-  String? permission;
+    String? id;
+    String? email;
+    String? lastName;
+    String? firstName;
+    Avatar? avatar;
+    String? role;
+    String? permission;
 
-  Datum({
-    this.id,
-    this.email,
-    this.lastName,
-    this.firstName,
-    this.avatar,
-    this.role,
-    this.permission,
-  });
+    Datum({
+        this.id,
+        this.email,
+        this.lastName,
+        this.firstName,
+        this.avatar,
+        this.role,
+        this.permission,
+    });
 
-  factory Datum.fromJson(Map<String, dynamic> json) => Datum(
-    id: json["id"],
-    email: json["email"],
-    lastName: json["last_name"],
-    firstName: json["first_name"],
-    avatar: json["avatar"],
-    role: json["role"],
-    permission: json["permission"],
-  );
+    factory Datum.fromJson(Map<String, dynamic> json) => Datum(
+        id: json["id"],
+        email: json["email"],
+        lastName: json["last_name"],
+        firstName: json["first_name"],
+        avatar: json["avatar"] == null ? null : Avatar.fromJson(json["avatar"]),
+        role: json["role"],
+        permission: json["permission"],
+    );
 
-  Map<String, dynamic> toJson() => {
-    "id": id,
-    "email": email,
-    "last_name": lastName,
-    "first_name": firstName,
-    "avatar": avatar,
-    "role": role,
-    "permission": permission,
-  };
+    Map<String, dynamic> toJson() => {
+        "id": id,
+        "email": email,
+        "last_name": lastName,
+        "first_name": firstName,
+        "avatar": avatar?.toJson(),
+        "role": role,
+        "permission": permission,
+    };
+}
+
+class Avatar {
+    dynamic id;
+    String? url;
+    int? width;
+    int? height;
+    String? extension;
+
+    Avatar({
+        this.id,
+        this.url,
+        this.width,
+        this.height,
+        this.extension,
+    });
+
+    factory Avatar.fromJson(Map<String, dynamic> json) => Avatar(
+        id: json["id"],
+        url: json["url"],
+        width: json["width"],
+        height: json["height"],
+        extension: json["extension"],
+    );
+
+    Map<String, dynamic> toJson() => {
+        "id": id,
+        "url": url,
+        "width": width,
+        "height": height,
+        "extension": extension,
+    };
 }
 
 class Paging {
-  int? page;
-  int? limit;
-  int? total;
-  String? cursor;
-  String? nextCursor;
+    int? page;
+    int? limit;
+    int? total;
+    String? cursor;
+    String? nextCursor;
 
-  Paging({
-    this.page,
-    this.limit,
-    this.total,
-    this.cursor,
-    this.nextCursor,
-  });
+    Paging({
+        this.page,
+        this.limit,
+        this.total,
+        this.cursor,
+        this.nextCursor,
+    });
 
-  factory Paging.fromJson(Map<String, dynamic> json) => Paging(
-    page: json["page"],
-    limit: json["limit"],
-    total: json["total"],
-    cursor: json["cursor"],
-    nextCursor: json["next_cursor"],
-  );
+    factory Paging.fromJson(Map<String, dynamic> json) => Paging(
+        page: json["page"],
+        limit: json["limit"],
+        total: json["total"],
+        cursor: json["cursor"],
+        nextCursor: json["next_cursor"],
+    );
 
-  Map<String, dynamic> toJson() => {
-    "page": page,
-    "limit": limit,
-    "total": total,
-    "cursor": cursor,
-    "next_cursor": nextCursor,
-  };
+    Map<String, dynamic> toJson() => {
+        "page": page,
+        "limit": limit,
+        "total": total,
+        "cursor": cursor,
+        "next_cursor": nextCursor,
+    };
 }

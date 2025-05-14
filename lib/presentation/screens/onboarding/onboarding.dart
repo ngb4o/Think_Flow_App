@@ -42,12 +42,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ],
           ),
           // Skip Button
-           OnboardingSkippButton(controller: onboardingController),
+          //  OnboardingSkippButton(controller: onboardingController),
 
           // Dot Navigation SmoothPageIndicator
            OnboardingDotNavigation(controller: onboardingController),
 
-          // Circular Button
+          // Button
           OnboardingNextButton(controller: onboardingController),
         ],
       ),

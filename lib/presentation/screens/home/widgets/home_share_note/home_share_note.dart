@@ -190,13 +190,14 @@ class _HomeShareNoteState extends State<HomeShareNote> {
                                           itemCount: collaborators.length,
                                           itemBuilder: (context, index) {
                                             final member = collaborators[index];
+                                            final image = member.avatar?.url;
                                             return ListTile(
                                               contentPadding: EdgeInsets.zero,
                                               leading: TCircularImage(
-                                                image: TImages.user,
+                                                image: image ?? TImages.user,
                                                 height: 40,
                                                 width: 40,
-                                                isNetworkImage: member.avatar ?? false,
+                                                isNetworkImage: image?.isNotEmpty ?? false,
                                               ),
                                               title: Text('${member.firstName} ${member.lastName}',
                                                   style: Theme.of(context).textTheme.bodyMedium),
@@ -210,7 +211,7 @@ class _HomeShareNoteState extends State<HomeShareNote> {
                                                 decoration: BoxDecoration(
                                                     color: TColors.primary, borderRadius: BorderRadius.circular(10)),
                                                 child: Padding(
-                                                  padding: const EdgeInsets.only(left: 5),
+                                                  padding: const EdgeInsets.only(left: 10, right: 5),
                                                   child: DropdownButton<String>(
                                                     padding: EdgeInsets.zero,
                                                     value: member.permission,
@@ -259,6 +260,7 @@ class _HomeShareNoteState extends State<HomeShareNote> {
                                 return const SizedBox();
                               },
                             ),
+                            SizedBox(height: TSizes.spaceBtwSections),
                             Text('Shared with anyone', style: Theme.of(context).textTheme.bodyLarge),
                             SizedBox(height: TSizes.sm),
                             Row(

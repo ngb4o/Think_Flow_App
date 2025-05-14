@@ -69,6 +69,13 @@ class _AudioPlayerControlsState extends State<AudioPlayerControls> {
       decoration: BoxDecoration(
         color: TColors.primary,
         borderRadius: BorderRadius.circular(TSizes.cardRadiusLg),
+        boxShadow: [
+          BoxShadow(
+            color: TColors.primary.withOpacity(0.5),
+            blurRadius: 7,
+            offset: const Offset(0, 5),
+          ),
+        ],
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -79,7 +86,10 @@ class _AudioPlayerControlsState extends State<AudioPlayerControls> {
               Expanded(
                 child: Text(
                   widget.fileName,
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: TColors.white),
+                  style: Theme.of(context)
+                      .textTheme
+                      .headlineSmall
+                      ?.copyWith(color: TColors.white),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -94,7 +104,10 @@ class _AudioPlayerControlsState extends State<AudioPlayerControls> {
             children: [
               Text(
                 _formatDuration(widget.currentPosition),
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: TColors.white),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium
+                    ?.copyWith(color: TColors.white),
               ),
               Expanded(
                 child: widget.totalDuration > Duration.zero
@@ -117,7 +130,10 @@ class _AudioPlayerControlsState extends State<AudioPlayerControls> {
               ),
               Text(
                 _formatDuration(widget.totalDuration),
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: TColors.white),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium
+                    ?.copyWith(color: TColors.white),
               ),
             ],
           ),
@@ -135,7 +151,8 @@ class _AudioPlayerControlsState extends State<AudioPlayerControls> {
                         style: const TextStyle(color: TColors.white),
                       ),
                       onSelected: widget.onSpeedChanged,
-                      itemBuilder: (BuildContext context) => widget.availableSpeeds.map((double speed) {
+                      itemBuilder: (BuildContext context) =>
+                          widget.availableSpeeds.map((double speed) {
                         return PopupMenuItem<double>(
                           value: speed,
                           child: Text('${speed}x'),
@@ -146,7 +163,8 @@ class _AudioPlayerControlsState extends State<AudioPlayerControls> {
                 ),
               ),
               IconButton(
-                icon: const Icon(Iconsax.backward_15_seconds, color: TColors.white),
+                icon: const Icon(Iconsax.backward_15_seconds,
+                    color: TColors.white),
                 onPressed: widget.onBackward,
               ),
               const SizedBox(width: TSizes.spaceBtwItems),
@@ -165,7 +183,8 @@ class _AudioPlayerControlsState extends State<AudioPlayerControls> {
               ),
               const SizedBox(width: TSizes.spaceBtwItems),
               IconButton(
-                icon: const Icon(Iconsax.forward_15_seconds, color: TColors.white),
+                icon: const Icon(Iconsax.forward_15_seconds,
+                    color: TColors.white),
                 onPressed: widget.onForward,
               ),
               Expanded(
@@ -175,7 +194,8 @@ class _AudioPlayerControlsState extends State<AudioPlayerControls> {
                   children: [
                     IconButton(
                       onPressed: () {},
-                      icon: Icon(Iconsax.document_download5, color: TColors.white),
+                      icon: Icon(Iconsax.document_download5,
+                          color: TColors.white),
                     ),
                   ],
                 ),
@@ -186,4 +206,4 @@ class _AudioPlayerControlsState extends State<AudioPlayerControls> {
       ),
     );
   }
-} 
+}

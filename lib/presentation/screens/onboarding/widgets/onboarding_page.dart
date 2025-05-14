@@ -21,8 +21,8 @@ class OnboardingPage extends StatelessWidget {
             children: [
               // Image
               Image(
-                width: THelperFunctions.screenWidth(context) * 0.8, // 80%
-                height: THelperFunctions.screenHeight(context) * 0.6, // 60%
+                width: THelperFunctions.screenWidth(context),
+                height: THelperFunctions.screenHeight(context) * 0.65,
                 image: AssetImage(image),
               ),
 

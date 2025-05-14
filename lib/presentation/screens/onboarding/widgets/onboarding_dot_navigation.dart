@@ -15,7 +15,7 @@ final OnboardingController controller;
         count: 3,
         effect: ExpandingDotsEffect(
           activeDotColor: dark ? TColors.primary : TColors.primary,
-          dotHeight: 6,
+          dotHeight: 9,
         ),
       ),
     );

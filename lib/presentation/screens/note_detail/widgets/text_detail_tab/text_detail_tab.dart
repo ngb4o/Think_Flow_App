@@ -18,6 +18,7 @@ class _TextDetailTabState extends State<TextDetailTab> with AutomaticKeepAliveCl
   late QuillController _quillController;
   bool _isEditing = false;
   TextNoteModel? _cachedTextNoteModel;
+  final TextRecognizerService _textRecognizerService = TextRecognizerService();
 
   @override
   bool get wantKeepAlive => true;
@@ -63,9 +64,60 @@ class _TextDetailTabState extends State<TextDetailTab> with AutomaticKeepAliveCl
         );
   }
 
+  Future<void> _processImage(ImageSource source) async {
+    try {
+      final recognizedText = await _textRecognizerService.processImage(source);
+      if (recognizedText != null) {
+        final doc = _quillController.document;
+        _quillController.document.insert(doc.length - 1, recognizedText + '\n');
+        setState(() {}); 
+      }
+    } catch (e) {
+      TLoaders.errorSnackBar(context, title: 'Error', message: 'Failed to process image');
+    }
+  }
+  
+  void importImageBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(TSizes.defaultSpace),
+        decoration: BoxDecoration(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Iconsax.camera, size: 25),
+              title: Text('Take photo', style: Theme.of(context).textTheme.bodyLarge),
+              onTap: () {
+                Navigator.pop(context);
+                _processImage(ImageSource.camera);
+              },
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Iconsax.gallery, size: 25),
+              title: Text('Choose from gallery', style: Theme.of(context).textTheme.bodyLarge),
+              onTap: () {
+                Navigator.pop(context);
+                _processImage(ImageSource.gallery);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   void dispose() {
     _quillController.dispose();
+    _textRecognizerService.dispose();
     super.dispose();
   }
 
@@ -123,6 +175,9 @@ class _TextDetailTabState extends State<TextDetailTab> with AutomaticKeepAliveCl
                           margin: html.Margins.zero,
                           padding: html.HtmlPaddings.zero,
                         ),
+                        'body': html.Style(
+                          fontSize: html.FontSize(15),
+                        ),
                       },
                     ),
                   ),
@@ -133,34 +188,65 @@ class _TextDetailTabState extends State<TextDetailTab> with AutomaticKeepAliveCl
 
         return Stack(
           children: [
-            SingleChildScrollView(
-              child: Column(
-                children: [
-                  QuillSimpleToolbar(
-                    controller: _quillController,
-                    config: QuillSimpleToolbarConfig(
-                      color: Colors.transparent,
-                      multiRowsDisplay: false,
-                      showAlignmentButtons: true,
-                      showFontFamily: false,
-                      showFontSize: false,
-                      showInlineCode: false,
-                      showColorButton: false,
-                      showBackgroundColorButton: false,
-                      showClearFormat: false,
-                      showListCheck: false,
-                      showCodeBlock: false,
-                      showIndent: false,
-                      showSearchButton: false,
-                      showSubscript: false,
-                      showSuperscript: false,
+            Padding(
+              padding: const EdgeInsets.only(top: TSizes.defaultSpace*2),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    QuillEditor.basic(
+                      controller: _quillController,
+                      config: QuillEditorConfig(),
                     ),
-                  ),
-                  QuillEditor.basic(
-                    controller: _quillController,
-                    config: QuillEditorConfig(),
-                  ),
-                ],
+                  ],
+                ),
+              ),
+            ),
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: QuillSimpleToolbar(
+                        controller: _quillController,
+                        config: QuillSimpleToolbarConfig(
+                          color: Colors.transparent,
+                          multiRowsDisplay: false,
+                          showAlignmentButtons: true,
+                          showFontFamily: false,
+                          showFontSize: false,
+                          showInlineCode: false,
+                          showColorButton: false,
+                          showBackgroundColorButton: false,
+                          showClearFormat: false,
+                          showListCheck: false,
+                          showCodeBlock: false,
+                          showIndent: false,
+                          showSearchButton: false,
+                          showSubscript: false,
+                          showSuperscript: false,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Iconsax.gallery_import4),
+                      onPressed: () => importImageBottomSheet(),
+                    ),
+                  ],
+                ),
               ),
             ),
             if (state is NoteUpdateTextDetailLoadingState)
@@ -176,9 +262,15 @@ class _TextDetailTabState extends State<TextDetailTab> with AutomaticKeepAliveCl
                 child: GestureDetector(
                   onTap: () => _updateText(_cachedTextNoteModel!.data!.id.toString()),
                   child: Container(
-                    decoration: BoxDecoration(color: TColors.primary, borderRadius: BorderRadius.circular(20)),
+                    decoration: BoxDecoration(
+                      color: TColors.primary,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
                     padding: EdgeInsets.symmetric(horizontal: TSizes.md, vertical: TSizes.sm),
-                    child: Text('Save', style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: TColors.white)),
+                    child: Text(
+                      'Save',
+                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: TColors.white),
+                    ),
                   ),
                 ),
               ),

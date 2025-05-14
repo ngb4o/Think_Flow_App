@@ -398,7 +398,7 @@ class _AudioNotesPageState extends State<AudioNotesPage> {
                 children: [
                   GestureDetector(
                     onTap: () => _uploadFile(),
-                    child: Icon(Iconsax.document_upload5, color: TColors.primary, size: 30),
+                    child: Icon(Iconsax.document_download, size: 30),
                   )
                 ],
               ),

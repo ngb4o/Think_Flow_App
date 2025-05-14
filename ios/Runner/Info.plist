@@ -46,10 +46,10 @@
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>NSMicrophoneUsageDescription</key>
-    <string>Think Flow needs access to your microphone to record audio notes. Your recordings will be stored locally on your device.</string>
+    <string>Think Flow needs access to your microphone to record audio notes</string>
     <key>NSPhotoLibraryUsageDescription</key>
-    <string>Pick an image from gallery</string>
+    <string>Think Flow needs access to your gallery to pick an image from gallery</string>
     <key>NSCameraUsageDescription</key>
-    <string>Pick image from camera</string>
+    <string>Think Flow needs access to your gallery to pick an image from camera</string>
 </dict>
 </plist>
