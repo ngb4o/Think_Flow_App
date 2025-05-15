@@ -5,7 +5,7 @@ import 'package:meta/meta.dart';
 import 'package:think_flow/data/data_sources/remote/api_exception.dart';
 import 'package:think_flow/data/repositories/note_repo.dart';
 
-import '../../../../data/models/note_model.dart';
+import '../../../../data/models/list_note_model.dart';
 
 part 'note_share_event.dart';
 

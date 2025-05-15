@@ -30,6 +30,7 @@ class Data {
   DateTime? updatedAt;
   int? noteId;
   List<TextContent>? textContent;
+  Summary? summary;
 
   Data({
     this.id,
@@ -37,6 +38,7 @@ class Data {
     this.updatedAt,
     this.noteId,
     this.textContent,
+    this.summary,
   });
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
@@ -45,6 +47,7 @@ class Data {
     updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
     noteId: json["note_id"],
     textContent: json["text_content"] == null ? [] : List<TextContent>.from(json["text_content"]!.map((x) => TextContent.fromJson(x))),
+    summary: json["summary"] == null ? null : Summary.fromJson(json["summary"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -53,6 +56,7 @@ class Data {
     "updated_at": updatedAt?.toIso8601String(),
     "note_id": noteId,
     "text_content": textContent == null ? [] : List<dynamic>.from(textContent!.map((x) => x.toJson())),
+    "summary": summary?.toJson(),
   };
 }
 
@@ -184,4 +188,24 @@ class EnumValues<T> {
     reverseMap = map.map((k, v) => MapEntry(v, k));
     return reverseMap;
   }
+}
+
+class Summary {
+  String? id;
+  String? summaryText;
+
+  Summary({
+    this.id,
+    this.summaryText,
+  });
+
+  factory Summary.fromJson(Map<String, dynamic> json) => Summary(
+    id: json["id"],
+    summaryText: json["summary_text"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "summary_text": summaryText,
+  };
 }

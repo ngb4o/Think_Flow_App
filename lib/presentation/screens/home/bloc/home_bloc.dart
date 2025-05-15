@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:think_flow/data/data_sources/remote/api_exception.dart';
-import 'package:think_flow/data/models/note_model.dart';
+import 'package:think_flow/data/models/list_note_model.dart';
 import 'package:think_flow/data/repositories/note_repo.dart';
 
 part 'home_event.dart';
@@ -55,7 +55,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       hasMoreData = nextCursor != null && nextCursor!.isNotEmpty;
       notes.addAll(noteData.data);
       emit(HomeSuccessState(
-        noteModel: NoteModel(
+        noteModel: ListNoteModel(
           data: notes,
           paging: noteData.paging,
           extra: noteData.extra,

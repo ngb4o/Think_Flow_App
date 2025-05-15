@@ -3,50 +3,110 @@ part of '../widget_imports.dart';
 class MindmapNode {
   String text;
   List<MindmapNode> children;
-  MindmapNode({required this.text, List<MindmapNode>? children}) : children = children ?? [];
+  MindmapNode({required this.text, List<MindmapNode>? children})
+      : children = children ?? [];
 }
 
 class MindmapDetailTab extends StatefulWidget {
-  const MindmapDetailTab({super.key});
+  const MindmapDetailTab({
+    super.key,
+    required this.noteId,
+    required this.permission,
+  });
 
+  final String noteId;
+  final String permission;
   @override
   State<MindmapDetailTab> createState() => _MindmapDetailTabState();
 }
 
 class _MindmapDetailTabState extends State<MindmapDetailTab> {
   late MindmapNode root;
-  final TransformationController _transformationController = TransformationController();
+  final TransformationController _transformationController =
+      TransformationController();
   double _scale = 1.0;
-  static const double _defaultZoom = 0.7; // Set default zoom to 80%
+  static const double _defaultZoom = 0.5; // Set default zoom to 50%
+  MindmapNode? _rootNode;
+  String? _mindmapId;
 
   @override
   void initState() {
     super.initState();
-    root = MindmapNode(text: 'Main Idea', children: [
-      MindmapNode(text: 'Sub Idea 1', children: [
-        MindmapNode(text: 'Sub Idea 1.1'),
-        MindmapNode(text: 'Sub Idea 1.2'),
-      ]),
-      MindmapNode(text: 'Sub Idea 2', children: [
-        MindmapNode(text: 'Sub Idea 2.1'),
-      ]),
-      MindmapNode(text: 'Sub Idea 3'),
-      MindmapNode(text: 'Sub Idea 4', children: [
-        MindmapNode(text: 'Sub Idea 4.1'),
-        MindmapNode(text: 'Sub Idea 4.2'),
-      ]),
-      MindmapNode(text: 'Sub Idea 5'),
-      MindmapNode(text: 'Sub Idea 6', children: [
-        MindmapNode(text: 'Sub Idea 6.1'),
-        MindmapNode(text: 'Sub Idea 6.2'),
-        MindmapNode(text: 'Sub Idea 6.3'),
-      ]),
-    ]);
+    // Initialize with empty root
+    root = MindmapNode(text: 'Loading...');
+
     // Set initial zoom
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _scale = _defaultZoom;
       _transformationController.value = Matrix4.identity()..scale(_scale);
+
+      // Fetch mindmap data
+      context
+          .read<NoteDetailBloc>()
+          .add(NoteInitialFetchDataMindmapEvent(noteId: widget.noteId));
     });
+  }
+
+  MindmapNode _convertToMindmapNode(ParentContent content) {
+    return MindmapNode(
+      text: content.content ?? '',
+      children: content.children
+              ?.map((child) => _convertToMindmapNode(child))
+              .toList() ??
+          [],
+    );
+  }
+
+  void _updateMindmapFromData(NoteModel noteData) {
+    if (noteData.data?.mindmap?.mindmapData?.parentContent?.isNotEmpty ==
+        true) {
+      final parentContent =
+          noteData.data!.mindmap!.mindmapData!.parentContent!.first;
+      final rootNode = _convertToMindmapNode(parentContent);
+      setState(() {
+        _rootNode = rootNode;
+        _mindmapId = noteData.data!.mindmap!.id!;
+      });
+    }
+  }
+
+  void _handleMindmapUpdate(String mindmapId) {
+    if (widget.permission == 'read') {
+      TLoaders.errorSnackBar(context,
+          title: 'Error',
+          message: 'You do not have permission to edit this note');
+      return;
+    }
+    if (_rootNode != null) {
+      final mindmapData = {
+        'mindmap_data': {
+          'parent_content': [_convertToApiFormat(_rootNode!)],
+          'total_branches': _countBranches(_rootNode!)
+        }
+      };
+      context.read<NoteDetailBloc>().add(
+            NoteDetailUpdateMindmapEvent(
+              mindmapId: mindmapId,
+              mindmapData: mindmapData,
+            ),
+          );
+    }
+  }
+
+  int _countBranches(MindmapNode node) {
+    int count = 1; // Count the current node
+    for (var child in node.children) {
+      count += _countBranches(child);
+    }
+    return count;
+  }
+
+  Map<String, dynamic> _convertToApiFormat(MindmapNode node) {
+    return {
+      'content': node.text,
+      'children':
+          node.children.map((child) => _convertToApiFormat(child)).toList(),
+    };
   }
 
   @override
@@ -69,12 +129,30 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
     });
   }
 
+  void _resetMindmap() {
+    if (widget.permission == 'read') {
+      TLoaders.errorSnackBar(context,
+          title: 'Error',
+          message: 'You do not have permission to edit this note');
+      return;
+    }
+    context
+        .read<NoteDetailBloc>()
+        .add(NoteDetailCreateMindmapEvent(noteId: widget.noteId));
+  }
+
   void _showNodeOptions({
     required MindmapNode node,
     required VoidCallback onUpdate,
     bool isRoot = false,
     MindmapNode? parent,
   }) {
+    if (widget.permission == 'read') {
+      TLoaders.errorSnackBar(context,
+          title: 'Error',
+          message: 'You do not have permission to edit this note');
+      return;
+    }
     showModalBottomSheet(
       context: context,
       builder: (context) {
@@ -84,7 +162,8 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
             children: [
               ListTile(
                 leading: Icon(Iconsax.edit),
-                title: Text('Edit', style: Theme.of(context).textTheme.bodyLarge),
+                title:
+                    Text('Edit', style: Theme.of(context).textTheme.bodyLarge),
                 onTap: () {
                   Navigator.pop(context);
                   _editNodeText(node: node, onUpdate: onUpdate);
@@ -92,48 +171,61 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
               ),
               ListTile(
                 leading: Icon(Iconsax.add_square),
-                title: Text('Add child', style: Theme.of(context).textTheme.bodyLarge),
+                title: Text('Add child',
+                    style: Theme.of(context).textTheme.bodyLarge),
                 onTap: () async {
                   Navigator.pop(context);
                   final controller = TextEditingController();
                   final result = await showDialog<String>(
                     context: context,
                     builder: (context) => Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: TSizes.sm),
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: TSizes.md),
                       child: Dialog(
                         insetPadding: EdgeInsets.zero,
                         child: Container(
                           width: MediaQuery.of(context).size.width,
                           padding: const EdgeInsets.all(TSizes.defaultSpace),
+                          decoration: BoxDecoration(
+                            color: TColors.light,
+                            borderRadius:
+                                BorderRadius.circular(TSizes.borderRadiusLg),
+                          ),
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                   Text(
+                                  Text(
                                     'Add child',
-                                    style: Theme.of(context).textTheme.headlineSmall,
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(Icons.close),
-                                    onPressed: () => Navigator.pop(context),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headlineSmall,
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 16),
+                              SizedBox(height: TSizes.spaceBtwItems),
+                              Divider(),
+                              SizedBox(height: TSizes.spaceBtwItems),
                               TextField(
                                 controller: controller,
                                 autofocus: true,
-                                maxLines: 5,
-                                minLines: 5,
+                                maxLines: 8,
+                                minLines: 8,
                                 decoration: const InputDecoration(
                                   hintText: 'Enter child content',
-                                  border: OutlineInputBorder(),
+                                  hintStyle: TextStyle(color: TColors.darkGrey),
+                                  border: InputBorder.none,
+                                  enabledBorder: InputBorder.none,
+                                  focusedBorder: InputBorder.none,
+                                  errorBorder: InputBorder.none,
+                                  disabledBorder: InputBorder.none,
+                                  contentPadding: EdgeInsets.zero,
                                 ),
                               ),
-                              const SizedBox(height: 16),
+                              SizedBox(height: TSizes.spaceBtwItems),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
@@ -143,10 +235,18 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
                                   ),
                                   const SizedBox(width: 8),
                                   ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                        shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    )),
                                     onPressed: () {
                                       Navigator.pop(context, controller.text);
                                     },
-                                    child: const Text('Save'),
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 0, horizontal: TSizes.lg),
+                                      child: const Text('Save'),
+                                    ),
                                   ),
                                 ],
                               ),
@@ -167,7 +267,11 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
               if (!isRoot)
                 ListTile(
                   leading: Icon(Iconsax.trash, color: Colors.red),
-                  title: Text('Delete', style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.red)),
+                  title: Text('Delete',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyLarge!
+                          .copyWith(color: Colors.red)),
                   onTap: () {
                     if (parent != null) {
                       setState(() {
@@ -193,40 +297,49 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
     final result = await showDialog<String>(
       context: context,
       builder: (context) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: TSizes.sm),
+        padding: const EdgeInsets.symmetric(horizontal: TSizes.md),
         child: Dialog(
           insetPadding: EdgeInsets.zero,
           child: Container(
             width: MediaQuery.of(context).size.width,
-            padding:  EdgeInsets.all(TSizes.defaultSpace),
+            padding: const EdgeInsets.all(TSizes.defaultSpace),
+            decoration: BoxDecoration(
+              color: TColors.light,
+              borderRadius: BorderRadius.circular(TSizes.borderRadiusLg),
+            ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                     Text(
+                    Text(
                       'Edit Node',
                       style: Theme.of(context).textTheme.headlineSmall,
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () => Navigator.pop(context),
-                    ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: TSizes.spaceBtwItems),
+                Divider(),
+                SizedBox(height: TSizes.spaceBtwItems),
                 TextField(
                   controller: controller,
                   autofocus: true,
-                  maxLines: 5,
-                  minLines: 5,
+                  maxLines: 8,
+                  minLines: 8,
                   decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
+                    hintText: 'Enter node content',
+                    hintStyle: TextStyle(color: TColors.darkGrey),
+                    border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    errorBorder: InputBorder.none,
+                    disabledBorder: InputBorder.none,
+                    contentPadding: EdgeInsets.zero,
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: TSizes.spaceBtwItems),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -236,13 +349,20 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
                     ),
                     const SizedBox(width: 8),
                     ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      )),
                       onPressed: () {
                         node.text = controller.text.trim();
-                        Navigator.pop(context, controller.text);
+                        Navigator.pop(context, node.text);
                         onUpdate();
-                        setState(() {});
                       },
-                      child: const Text('Save'),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                            vertical: 0, horizontal: TSizes.lg),
+                        child: const Text('Save'),
+                      ),
                     ),
                   ],
                 ),
@@ -252,17 +372,19 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
         ),
       ),
     );
-    if (result != null && result.trim().isNotEmpty) {
-      setState(() {});
-      onUpdate();
-    }
   }
 
-  Widget _buildMindMapNode(MindmapNode node, {bool isRoot = false, MindmapNode? parent}) {
+  Widget _buildMindMapNode(MindmapNode node,
+      {bool isRoot = false, MindmapNode? parent}) {
     return GestureDetector(
       onTap: () => _showNodeOptions(
         node: node,
-        onUpdate: () {},
+        onUpdate: () {
+          setState(() {});
+          if (_mindmapId != null) {
+            _handleMindmapUpdate(_mindmapId!);
+          }
+        },
         isRoot: isRoot,
         parent: parent,
       ),
@@ -281,7 +403,7 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
         margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
         child: SizedBox(
-          width: 160,
+          width: 250,
           child: Text(
             node.text,
             style: TextStyle(
@@ -297,7 +419,9 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
     );
   }
 
-  Widget _buildMindMapBranch(MindmapNode node, {bool isRoot = false, MindmapNode? parent}) {
+  Widget _buildMindMapBranch(MindmapNode node,
+      {bool isRoot = false, MindmapNode? parent}) {
+        final isDarkMode = THelperFunctions.isDarkMode(context);
     if (node.children.isEmpty) {
       return _buildMindMapNode(node, isRoot: isRoot, parent: parent);
     }
@@ -305,11 +429,11 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
       children: [
         _buildMindMapNode(node, isRoot: isRoot, parent: parent),
         MindMap(
-          padding: const EdgeInsets.only(left: 50),
-          dotRadius: 4,
+          lineColor: isDarkMode ? TColors.white : TColors.black,
           children: node.children
               .map((child) => _buildMindMapBranch(child, parent: node))
               .toList(),
+          
         ),
       ],
     );
@@ -317,66 +441,101 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: InteractiveViewer(
-              transformationController: _transformationController,
-              minScale: 0.1,
-              maxScale: 2,
-              boundaryMargin: const EdgeInsets.all(800),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
+    final isDarkTheme = THelperFunctions.isDarkMode(context);
+    return BlocConsumer<NoteDetailBloc, NoteDetailState>(
+      listener: (context, state) {
+        if (state is NoteMindmapSuccessState) {
+          _updateMindmapFromData(state.noteModel!);
+        }
+      },
+      builder: (context, state) {
+        if (state is NoteMindmapLoadingState ||
+            state is NoteUpdateMindmapLoadingState) {
+          return const Center(child: LoadingSpinkit.loadingPage);
+        }
+
+        if (_rootNode == null) {
+          return const Center(child: LoadingSpinkit.loadingPage);
+        }
+
+        return Stack(
+          children: [
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: InteractiveViewer(
+                  transformationController: _transformationController,
+                  minScale: 0.1,
+                  maxScale: 2,
+                  boundaryMargin: const EdgeInsets.all(800),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      children: [
+                        _buildMindMapBranch(_rootNode!, isRoot: true),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              right: 16,
+              bottom: 16,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: isDarkTheme ? TColors.darkerGrey : Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
                 child: Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    _buildMindMapBranch(root, isRoot: true),
+                    if (state is NoteCreateMindmapLoadingState)
+                      Padding(
+                        padding: const EdgeInsets.all(TSizes.sm),
+                        child: LoadingSpinkit.loadingButton,
+                      )
+                    else
+                      IconButton(
+                        icon: Icon(Iconsax.refresh),
+                        onPressed: _resetMindmap,
+                        tooltip: 'Zoom in',
+                      ),
+                    Container(
+                      width: 1,
+                      height: 24,
+                      color: Colors.grey.withOpacity(0.3),
+                    ),
+                    IconButton(
+                      icon: const Icon(Iconsax.search_zoom_out),
+                      onPressed: _zoomOut,
+                      tooltip: 'Zoom out',
+                    ),
+                    Container(
+                      width: 1,
+                      height: 24,
+                      color: Colors.grey.withOpacity(0.3),
+                    ),
+                    IconButton(
+                      icon: Icon(Iconsax.search_zoom_in_1,),
+                      onPressed: _zoomIn,
+                      tooltip: 'Zoom in',
+                    ),
                   ],
                 ),
               ),
             ),
-          ),
-        ),
-        Positioned(
-          right: 16,
-          bottom: 16,
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  icon: const Icon(Iconsax.search_zoom_out),
-                  onPressed: _zoomOut,
-                  tooltip: 'Zoom out',
-                ),
-                Container(
-                  width: 1,
-                  height: 24,
-                  color: Colors.grey.withOpacity(0.3),
-                ),
-                IconButton(
-                  icon: Icon(Iconsax.search_zoom_in_1),
-                  onPressed: _zoomIn,
-                  tooltip: 'Zoom in',
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
+          ],
+        );
+      },
     );
   }
 }

@@ -22,4 +22,8 @@ class ApiEndpointUrls {
   static const String noteShareWithMe = "/note/v1/notes/shared-with-me";
   static const String members = "/members";
   static const String image = "/media/v1/images";
+  static const String createSummaryNote = "/summary";
+  static const String summary = "/gen/v1/gen/summaries";
+  static const String createmindmapNote = "/mindmap";
+  static const String mindmap = "/gen/v1/gen/mindmaps";
 }

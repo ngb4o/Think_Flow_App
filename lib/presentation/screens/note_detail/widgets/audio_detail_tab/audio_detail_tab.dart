@@ -369,14 +369,14 @@ class _AudioDetailTabState extends State<AudioDetailTab> {
                       children: [
                         GestureDetector(
                           onTap: () => _uploadFile(),
-                          child: Icon(Iconsax.document_upload5, color: TColors.primary, size: 30),
+                          child: Icon(Iconsax.document_download, size: 30),
                         )
                       ],
                     ),
                   ),
                 Expanded(
                   child: audioList.isEmpty
-                      ? TEmpty(subTitle: 'No audio recordings yet')
+                      ? Center(child: TEmpty(subTitle: 'No audio recordings yet'))
                       : ListView.builder(
                           itemCount: audioList.length,
                           itemBuilder: (context, index) {

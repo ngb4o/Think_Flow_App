@@ -195,8 +195,8 @@ class _HomeShareNoteState extends State<HomeShareNote> {
                                               contentPadding: EdgeInsets.zero,
                                               leading: TCircularImage(
                                                 image: image ?? TImages.user,
-                                                height: 40,
-                                                width: 40,
+                                                height: 50,
+                                                width: 50,
                                                 isNetworkImage: image?.isNotEmpty ?? false,
                                               ),
                                               title: Text('${member.firstName} ${member.lastName}',
@@ -260,74 +260,84 @@ class _HomeShareNoteState extends State<HomeShareNote> {
                                 return const SizedBox();
                               },
                             ),
-                            SizedBox(height: TSizes.spaceBtwSections),
-                            Text('Shared with anyone', style: Theme.of(context).textTheme.bodyLarge),
-                            SizedBox(height: TSizes.sm),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                if (state is HomeShareNoteCreateLinkNoteLoadingState)
-                                  LoadingSpinkit.loadingButton
-                                else if (_copiedLink != null)
-                                  OutlinedButton(
-                                    style: ButtonStyle(
-                                      side: WidgetStateProperty.all(BorderSide(color: TColors.primary)),
-                                    ),
-                                    onPressed: () => _copyLinkToClipboard(_copiedLink!),
-                                    child: Row(
-                                      children: [
-                                        Icon(Iconsax.tick_square),
-                                        SizedBox(width: TSizes.md),
-                                        Text(
-                                          'Copied!',
-                                          style:
-                                              Theme.of(context).textTheme.bodyLarge!.copyWith(color: TColors.primary),
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                else
-                                  OutlinedButton(
-                                    style: ButtonStyle(
-                                      side: WidgetStateProperty.all(BorderSide(color: TColors.primary)),
-                                    ),
-                                    onPressed: () => _createLinkNote(),
-                                    child: Row(
-                                      children: [
-                                        Icon(Iconsax.copy),
-                                        SizedBox(width: TSizes.sm),
-                                        Text(
-                                          'Copy link',
-                                          style:
-                                              Theme.of(context).textTheme.bodyLarge!.copyWith(color: TColors.primary),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                if (state is HomeShareNoteShareLinkNoteToEmailLoadingState)
-                                  LoadingSpinkit.loadingButton
-                                else
-                                  ElevatedButton(
-                                    onPressed: () => _shareLinkNoteToEmail(),
-                                    child: Padding(
-                                      padding: EdgeInsets.symmetric(horizontal: TSizes.md),
-                                      child: Row(
-                                        children: [
-                                          Icon(Iconsax.direct_right, color: TColors.white),
-                                          SizedBox(width: TSizes.sm),
-                                          Text(
-                                            'Send',
-                                            style:
-                                                Theme.of(context).textTheme.bodyLarge!.copyWith(color: TColors.white),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                              ],
-                            ),
                           ],
                         )
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(TSizes.md),
+                    decoration: BoxDecoration(
+                      color: isDarkMode ? TColors.dark : TColors.white,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Shared with anyone', style: Theme.of(context).textTheme.bodyLarge),
+                        SizedBox(height: TSizes.sm),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            if (state is HomeShareNoteCreateLinkNoteLoadingState)
+                              LoadingSpinkit.loadingButton
+                            else if (_copiedLink != null)
+                              OutlinedButton(
+                                style: ButtonStyle(
+                                  side: WidgetStateProperty.all(BorderSide(color: TColors.primary)),
+                                ),
+                                onPressed: () => _copyLinkToClipboard(_copiedLink!),
+                                child: Row(
+                                  children: [
+                                    Icon(Iconsax.tick_square),
+                                    SizedBox(width: TSizes.md),
+                                    Text(
+                                      'Copied!',
+                                      style:
+                                          Theme.of(context).textTheme.bodyLarge!.copyWith(color: TColors.primary),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            else
+                              OutlinedButton(
+                                style: ButtonStyle(
+                                  side: WidgetStateProperty.all(BorderSide(color: TColors.primary)),
+                                ),
+                                onPressed: () => _createLinkNote(),
+                                child: Row(
+                                  children: [
+                                    Icon(Iconsax.copy),
+                                    SizedBox(width: TSizes.sm),
+                                    Text(
+                                      'Copy link',
+                                      style:
+                                          Theme.of(context).textTheme.bodyLarge!.copyWith(color: TColors.primary),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            if (state is HomeShareNoteShareLinkNoteToEmailLoadingState)
+                              LoadingSpinkit.loadingButton
+                            else
+                              ElevatedButton(
+                                onPressed: () => _shareLinkNoteToEmail(),
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: TSizes.md),
+                                  child: Row(
+                                    children: [
+                                      Icon(Iconsax.direct_right, color: TColors.white),
+                                      SizedBox(width: TSizes.sm),
+                                      Text(
+                                        'Send',
+                                        style:
+                                            Theme.of(context).textTheme.bodyLarge!.copyWith(color: TColors.white),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
                       ],
                     ),
                   ),

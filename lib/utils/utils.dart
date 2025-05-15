@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_quill/quill_delta.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/material.dart';
 
 import '../data/models/text_note_model.dart';
 import '../presentation/router/router_imports.gr.dart';
@@ -267,5 +268,55 @@ class Utils {
 
     html.write('</p>');
     return html.toString();
+  }
+
+  static Widget buildSummaryText(BuildContext context, String text) {
+    final lines = text.split('\n');
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: lines.map((line) {
+        if (line.isEmpty) return const SizedBox(height: 8);
+
+        // Check the level of the line and replace numbers with bullets
+        if (line.startsWith(RegExp(r'^\d+\.\s'))) {
+          // Main level (1., 2., etc.)
+          final content = line.replaceFirst(RegExp(r'^\d+\.\s'), '');
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Text(
+              content,
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 15, fontWeight: FontWeight.w600),
+            ),
+          );
+        } else if (line.startsWith(RegExp(r'^\d+\.\d+\.\s'))) {
+          // Sub level (1.1., 2.1., etc.)
+          final content = line.replaceFirst(RegExp(r'^\d+\.\d+\.\s'), '• ');
+          return Padding(
+            padding: const EdgeInsets.only(left: 16, bottom: 8),
+            child: Text(content, style: Theme.of(context).textTheme.bodyLarge),
+          );
+        } else if (line.startsWith(RegExp(r'^\d+\.\d+\.\d+\.\s'))) {
+          // Sub-sub level (1.1.1., etc.)
+          final content =
+              line.replaceFirst(RegExp(r'^\d+\.\d+\.\d+\.\s'), '• ');
+          return Padding(
+            padding: const EdgeInsets.only(left: 16, bottom: 8),
+            child: Text(
+              content,
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+          );
+        } else {
+          // Regular text
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Text(
+              line,
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+          );
+        }
+      }).toList(),
+    );
   }
 }

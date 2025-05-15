@@ -189,7 +189,7 @@ class _TextDetailTabState extends State<TextDetailTab> with AutomaticKeepAliveCl
         return Stack(
           children: [
             Padding(
-              padding: const EdgeInsets.only(top: TSizes.defaultSpace*2),
+              padding: const EdgeInsets.only(top: TSizes.spaceBtwSections*2),
               child: SingleChildScrollView(
                 child: Column(
                   children: [

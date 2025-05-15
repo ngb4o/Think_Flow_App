@@ -10,7 +10,7 @@ abstract class HomeActionState extends HomeState {}
 class HomeLoadingState extends HomeState {}
 
 class HomeSuccessState extends HomeState {
-  final NoteModel noteModel;
+  final ListNoteModel noteModel;
 
   HomeSuccessState({required this.noteModel});
 }

@@ -4,150 +4,198 @@
 
 import 'dart:convert';
 
+NoteModel noteModelFromJson(String str) => NoteModel.fromJson(json.decode(str));
+
+String noteModelToJson(NoteModel data) => json.encode(data.toJson());
+
 class NoteModel {
-  final List<Note> data;
-  final Paging paging;
-  final Extra extra;
+    Data? data;
 
-  NoteModel({
-    required this.data,
-    required this.paging,
-    required this.extra,
-  });
+    NoteModel({
+        this.data,
+    });
 
-  factory NoteModel.fromJson(Map<String, dynamic> json) => NoteModel(
-        data: List<Note>.from(json["data"].map((x) => Note.fromJson(x))),
-        paging: Paging.fromJson(json["paging"]),
-        extra: Extra.fromJson(json["extra"]),
-      );
+    factory NoteModel.fromJson(Map<String, dynamic> json) => NoteModel(
+        data: json["data"] == null ? null : Data.fromJson(json["data"]),
+    );
 
-  Map<String, dynamic> toJson() => {
-        "data": List<dynamic>.from(data.map((x) => x.toJson())),
-        "paging": paging.toJson(),
-        "extra": extra.toJson(),
-      };
+    Map<String, dynamic> toJson() => {
+        "data": data?.toJson(),
+    };
 }
 
-class Note {
-  final String id;
-  final String title;
-  final bool archived;
-  final User user;
-  final String createdAt;
-  final String updatedAt;
-  final String permission;
+class Data {
+    String? id;
+    String? title;
+    bool? archived;
+    User? user;
+    String? permission;
+    Mindmap? mindmap;
+    String? createdAt;
+    String? updatedAt;
 
-  Note({
-    required this.id,
-    required this.title,
-    required this.archived,
-    required this.user,
-    required this.createdAt,
-    required this.updatedAt,
-    required this.permission,
-  });
+    Data({
+        this.id,
+        this.title,
+        this.archived,
+        this.user,
+        this.permission,
+        this.mindmap,
+        this.createdAt,
+        this.updatedAt,
+    });
 
-  factory Note.fromJson(Map<String, dynamic> json) => Note(
+    factory Data.fromJson(Map<String, dynamic> json) => Data(
         id: json["id"],
         title: json["title"],
         archived: json["archived"],
-        user: User.fromJson(json["user"]),
+        user: json["user"] == null ? null : User.fromJson(json["user"]),
+        permission: json["permission"],
+        mindmap: json["mindmap"] == null ? null : Mindmap.fromJson(json["mindmap"]),
         createdAt: json["created_at"],
         updatedAt: json["updated_at"],
-        permission: json["permission"],
-      );
+    );
 
-  Map<String, dynamic> toJson() => {
+    Map<String, dynamic> toJson() => {
         "id": id,
         "title": title,
         "archived": archived,
-        "user": user.toJson(),
+        "user": user?.toJson(),
+        "permission": permission,
+        "mindmap": mindmap?.toJson(),
         "created_at": createdAt,
         "updated_at": updatedAt,
-        "permission": permission,
-      };
+    };
+}
+
+class Mindmap {
+    String? id;
+    MindmapData? mindmapData;
+
+    Mindmap({
+        this.id,
+        this.mindmapData,
+    });
+
+    factory Mindmap.fromJson(Map<String, dynamic> json) => Mindmap(
+        id: json["id"],
+        mindmapData: json["mindmap_data"] == null ? null : MindmapData.fromJson(json["mindmap_data"]),
+    );
+
+    Map<String, dynamic> toJson() => {
+        "id": id,
+        "mindmap_data": mindmapData?.toJson(),
+    };
+}
+
+class MindmapData {
+    List<ParentContent>? parentContent;
+    int? totalBranches;
+
+    MindmapData({
+        this.parentContent,
+        this.totalBranches,
+    });
+
+    factory MindmapData.fromJson(Map<String, dynamic> json) => MindmapData(
+        parentContent: json["parent_content"] == null ? [] : List<ParentContent>.from(json["parent_content"]!.map((x) => ParentContent.fromJson(x))),
+        totalBranches: json["total_branches"],
+    );
+
+    Map<String, dynamic> toJson() => {
+        "parent_content": parentContent == null ? [] : List<dynamic>.from(parentContent!.map((x) => x.toJson())),
+        "total_branches": totalBranches,
+    };
+}
+
+class ParentContent {
+    String? branch;
+    String? parent;
+    String? content;
+    List<ParentContent>? children;
+
+    ParentContent({
+        this.branch,
+        this.parent,
+        this.content,
+        this.children,
+    });
+
+    factory ParentContent.fromJson(Map<String, dynamic> json) => ParentContent(
+        branch: json["branch"],
+        parent: json["parent"],
+        content: json["content"],
+        children: json["children"] == null ? [] : List<ParentContent>.from(json["children"]!.map((x) => ParentContent.fromJson(x))),
+    );
+
+    Map<String, dynamic> toJson() => {
+        "branch": branch,
+        "parent": parent,
+        "content": content,
+        "children": children == null ? [] : List<dynamic>.from(children!.map((x) => x.toJson())),
+    };
 }
 
 class User {
-  final String id;
-  final String email;
-  final String lastName;
-  final String firstName;
-  final dynamic avatar;
+    String? id;
+    String? email;
+    String? lastName;
+    String? firstName;
+    Avatar? avatar;
 
-  User({
-    required this.id,
-    required this.email,
-    required this.lastName,
-    required this.firstName,
-    this.avatar,
-  });
+    User({
+        this.id,
+        this.email,
+        this.lastName,
+        this.firstName,
+        this.avatar,
+    });
 
-  factory User.fromJson(Map<String, dynamic> json) => User(
+    factory User.fromJson(Map<String, dynamic> json) => User(
         id: json["id"],
         email: json["email"],
         lastName: json["last_name"],
         firstName: json["first_name"],
-        avatar: json["avatar"],
-      );
+        avatar: json["avatar"] == null ? null : Avatar.fromJson(json["avatar"]),
+    );
 
-  Map<String, dynamic> toJson() => {
+    Map<String, dynamic> toJson() => {
         "id": id,
         "email": email,
         "last_name": lastName,
         "first_name": firstName,
-        "avatar": avatar,
-      };
+        "avatar": avatar?.toJson(),
+    };
 }
 
-class Extra {
-  final String userId;
+class Avatar {
+    String? id;
+    String? url;
+    int? width;
+    int? height;
+    String? extension;
 
-  Extra({
-    required this.userId,
-  });
+    Avatar({
+        this.id,
+        this.url,
+        this.width,
+        this.height,
+        this.extension,
+    });
 
-  factory Extra.fromJson(Map<String, dynamic> json) => Extra(
-        userId: json["user_id"],
-      );
+    factory Avatar.fromJson(Map<String, dynamic> json) => Avatar(
+        id: json["id"],
+        url: json["url"],
+        width: json["width"],
+        height: json["height"],
+        extension: json["extension"],
+    );
 
-  Map<String, dynamic> toJson() => {
-        "user_id": userId,
-      };
+    Map<String, dynamic> toJson() => {
+        "id": id,
+        "url": url,
+        "width": width,
+        "height": height,
+        "extension": extension,
+    };
 }
-
-class Paging {
-  final int page;
-  final int limit;
-  final int total;
-  final String cursor;
-  final String nextCursor;
-
-  Paging({
-    required this.page,
-    required this.limit,
-    required this.total,
-    required this.cursor,
-    required this.nextCursor,
-  });
-
-  factory Paging.fromJson(Map<String, dynamic> json) => Paging(
-        page: json["page"],
-        limit: json["limit"],
-        total: json["total"],
-        cursor: json["cursor"],
-        nextCursor: json["next_cursor"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "page": page,
-        "limit": limit,
-        "total": total,
-        "cursor": cursor,
-        "next_cursor": nextCursor,
-      };
-}
-
-NoteModel noteModelFromJson(String str) => NoteModel.fromJson(json.decode(str));
-
-String noteModelToJson(NoteModel data) => json.encode(data.toJson());

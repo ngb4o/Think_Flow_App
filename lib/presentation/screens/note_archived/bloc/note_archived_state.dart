@@ -10,7 +10,7 @@ abstract class NoteArchivedActionState  extends NoteArchivedState {}
 class NoteArchivedLoadingState extends NoteArchivedState {}
 
 class NoteArchivedSuccessState extends NoteArchivedState {
-  final NoteModel noteModel;
+  final ListNoteModel noteModel;
 
   NoteArchivedSuccessState({required this.noteModel});
 }

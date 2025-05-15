@@ -10,7 +10,7 @@ abstract class NoteShareActionState extends NoteShareState {}
 class NoteShareLoadingState extends NoteShareState {}
 
 class NoteShareSuccessState extends NoteShareState {
-  final NoteModel noteModel;
+  final ListNoteModel noteModel;
 
   NoteShareSuccessState({required this.noteModel});
 }

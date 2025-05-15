@@ -1,3 +1,5 @@
+import 'dart:core';
+
 import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +12,7 @@ import 'package:think_flow/common/widgets/loading/loading.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:think_flow/presentation/screens/notes/widgets/audio_notes/widgets/audio_player_controls.dart';
 import 'package:flutter_html/flutter_html.dart' as html;
+import 'package:think_flow/utils/helpers/helper_functions.dart';
 import 'package:think_flow/utils/popups/loaders.dart';
 import 'dart:async';
 import 'dart:io';
@@ -21,6 +24,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../../common/widgets/warning/t_warning_popup.dart';
 import '../../../../data/models/text_note_model.dart';
+import '../../../../data/models/note_model.dart';
 import '../../../../services/text_recognizer.dart';
 import '../../../../utils/constants/sizes.dart';
 import '../../../../utils/constants/colors.dart';

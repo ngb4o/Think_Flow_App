@@ -111,7 +111,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                   EditableText(
                     controller: _titleController,
                     focusNode: _titleFocusNode,
-                    style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.w600),
+                    style: Theme.of(context).textTheme.headlineMedium!.copyWith(),
                     cursorColor: Theme.of(context).primaryColor,
                     backgroundCursorColor: Colors.grey,
                     onChanged: (value) {
@@ -181,8 +181,8 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                       children: [
                         KeepAliveWrapper(child: TextDetailTab(noteId: widget.noteId, permission: widget.permission)),
                         KeepAliveWrapper(child: AudioDetailTab(noteId: widget.noteId, permission: widget.permission)),
-                        KeepAliveWrapper(child: SummaryDetailTab()),
-                        KeepAliveWrapper(child: MindmapDetailTab()),
+                        KeepAliveWrapper(child: SummaryDetailTab(noteId: widget.noteId, permission: widget.permission)),
+                        KeepAliveWrapper(child: MindmapDetailTab(noteId: widget.noteId, permission: widget.permission,)),
                       ],
                     ),
                   ),

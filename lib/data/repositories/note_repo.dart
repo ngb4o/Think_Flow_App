@@ -5,20 +5,21 @@ import 'package:dio/dio.dart';
 import 'package:think_flow/data/data_sources/remote/api_client.dart';
 import 'package:think_flow/data/models/create_link_note_model.dart';
 import 'package:think_flow/data/models/data_model.dart';
-import 'package:think_flow/data/models/note_model.dart';
+import 'package:think_flow/data/models/list_note_model.dart';
 import 'package:think_flow/data/models/text_note_model.dart';
 
 import '../data_sources/remote/api_endpoint_urls.dart';
 import '../data_sources/remote/api_exception.dart';
 import '../models/audio_note_model.dart';
 import '../models/note_member_model.dart';
+import '../models/note_model.dart';
 
 class NoteRepo extends ApiClient {
   NoteRepo();
 
   // ---------- GET ---------- //
   // Get list note
-  Future<NoteModel> getListNotes({String? cursor}) async {
+  Future<ListNoteModel> getListNotes({String? cursor}) async {
     try {
       final queryParams = cursor != null ? {'cursor': cursor} : null;
       final response = await getRequest(
@@ -27,10 +28,27 @@ class NoteRepo extends ApiClient {
       );
 
       if (response.statusCode == 200) {
-        final responseData = noteModelFromJson(jsonEncode(response.data));
+        final responseData = listNoteModelFromJson(jsonEncode(response.data));
         return responseData;
       } else {
         throw ApiException(message: 'Failed to get list notes');
+      }
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      throw ApiException(message: 'An unexpected error occurred');
+    }
+  }
+
+  // Get note
+  Future<NoteModel> getNote(String noteId) async {
+    try {
+      final response = await getRequest(path: '${ApiEndpointUrls.note}/$noteId');
+      if (response.statusCode == 200) {
+        final responseData = noteModelFromJson(jsonEncode(response.data));
+        return responseData;
+      } else {
+        throw ApiException(message: 'Fail to get note');
       }
     } on ApiException {
       rethrow;
@@ -76,7 +94,7 @@ class NoteRepo extends ApiClient {
   }
 
   // Get list archived
-  Future<NoteModel> getListArchived({String? cursor}) async {
+  Future<ListNoteModel> getListArchived({String? cursor}) async {
     try {
       final queryParams = cursor != null ? {'cursor': cursor} : null;
       final response = await getRequest(
@@ -85,7 +103,7 @@ class NoteRepo extends ApiClient {
       );
 
       if (response.statusCode == 200) {
-        final responseData = noteModelFromJson(jsonEncode(response.data));
+        final responseData = listNoteModelFromJson(jsonEncode(response.data));
         return responseData;
       } else {
         throw ApiException(message: 'Failed to get list notes');
@@ -98,7 +116,7 @@ class NoteRepo extends ApiClient {
   }
 
   // Get note share with me
-  Future<NoteModel> getNoteShareWithMe({String? cursor}) async {
+  Future<ListNoteModel> getNoteShareWithMe({String? cursor}) async {
     try {
       final queryParams = cursor != null ? {'cursor': cursor} : null;
       final response = await getRequest(
@@ -107,7 +125,7 @@ class NoteRepo extends ApiClient {
       );
 
       if (response.statusCode == 200) {
-        final responseData = noteModelFromJson(jsonEncode(response.data));
+        final responseData = listNoteModelFromJson(jsonEncode(response.data));
         return responseData;
       } else {
         throw ApiException(message: 'Failed to get list notes');
@@ -257,6 +275,42 @@ class NoteRepo extends ApiClient {
     }
   }
 
+  Future<DataModel> createSummaryNote(String id) async {
+    try {
+      final response = await postRequest(
+        path: '${ApiEndpointUrls.text}/$id${ApiEndpointUrls.createSummaryNote}',
+      );
+      if (response.statusCode == 200) {
+        final responseData = dataModelFromJson(jsonEncode(response.data));
+        return responseData;
+      } else {
+        throw ApiException(message: 'Create summary note failed');
+      }
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      throw ApiException(message: 'An unexpected error occurred');
+    }
+  }
+
+  Future<NoteModel> createMindmapNote(String id) async {
+    try {
+      final response = await postRequest(
+        path: '${ApiEndpointUrls.note}/$id${ApiEndpointUrls.createmindmapNote}',
+      );
+      if (response.statusCode == 200) {
+        final responseData = noteModelFromJson(jsonEncode(response.data));
+        return responseData;
+      } else {
+        throw ApiException(message: 'Create mindmap note failed');
+      }
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      throw ApiException(message: 'An unexpected error occurred');
+    }
+  }
+
   // ---------- PATCH ---------- //
   // Update note
   Future<DataModel> updateNote(String noteId, String title) async {
@@ -362,6 +416,48 @@ class NoteRepo extends ApiClient {
     }
   }
 
+  // Update summary note
+  Future<DataModel> updateSummaryNote(String id, String summaryText) async {
+    Map body = {
+      "summary_text": summaryText,
+    };
+    try {
+      final response = await patchRequest(
+        path: '${ApiEndpointUrls.summary}/$id',
+        body: body,
+      );
+      if (response.statusCode == 200) {
+        final responseData = dataModelFromJson(jsonEncode(response.data));
+        return responseData;
+      } else {
+        throw ApiException(message: 'Update summary note failed');
+      }
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      throw ApiException(message: 'An unexpected error occurred');
+    }
+  }
+
+  // Update mindmap note
+  Future<NoteModel> updateMindmapNote(String mindmapId, Map<String, dynamic> mindmapData) async {
+    try {
+      final response = await patchRequest(
+        path: '${ApiEndpointUrls.mindmap}/$mindmapId',
+        body: mindmapData,
+      );
+      if (response.statusCode == 200) {
+        final responseData = noteModelFromJson(jsonEncode(response.data));
+        return responseData;
+      } else {
+        throw ApiException(message: 'Update mindmap note failed');
+      }
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      throw ApiException(message: 'An unexpected error occurred');
+    }
+  }
 
   // ---------- DELETE ---------- //
   // Delete note
