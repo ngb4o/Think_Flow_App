@@ -183,6 +183,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(10),
                                         border: Border.all(color: TColors.grey, width: 1),
+                                        color: TColors.white,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: TColors.primary.withOpacity(0.5),
+                                            blurRadius: 8,
+                                            offset: const Offset(0, 2),
+                                          ),
+                                        ]
                                       ),
                                       padding: EdgeInsets.all(TSizes.spaceBtwItems),
                                       child: Column(
@@ -234,37 +242,51 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ],
               ),
-              floatingActionButton: SpeedDial(
-                icon: Iconsax.note_favorite5,
-                activeIcon: Iconsax.close_square,
-                iconTheme: IconThemeData(color: TColors.primary, size: 40),
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                spacing: 10,
-                spaceBetweenChildren: 10,
-                children: [
-                  SpeedDialChild(
-                    child: Icon(Iconsax.archive_23),
-                    label: 'Archived',
-                    onTap: () {
-                      context.read<HomeBloc>().add(HomeClickButtonNavigationToArchivedPageEvent());
-                    },
+              floatingActionButton: Container(
+                height: 50,
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
-                  SpeedDialChild(
-                    child: Icon(Iconsax.share),
-                    label: 'Share with me',
-                    onTap: () {
-                      context.read<HomeBloc>().add(HomeClickButtonNavigationToShareNotePageEvent());
-                    },
-                  ),
-                  SpeedDialChild(
-                    child: Icon(Iconsax.note_21),
-                    label: 'Notes',
-                    onTap: () {
-                      context.read<HomeBloc>().add(HomeClickButtonNavigationToCreateNotesPageEvent());
-                    },
-                  ),
-                ],
+                child: SpeedDial(
+                  icon: Iconsax.note_favorite5,
+                  activeIcon: Iconsax.close_square,
+                  iconTheme: IconThemeData(size: 40),
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  spacing: 5,
+                  spaceBetweenChildren: 5,
+                  children: [
+                    SpeedDialChild(
+                      child: Icon(Iconsax.archive_23),
+                      label: 'Archived',
+                      onTap: () {
+                        context.read<HomeBloc>().add(HomeClickButtonNavigationToArchivedPageEvent());
+                      },
+                    ),
+                    SpeedDialChild(
+                      child: Icon(Iconsax.share),
+                      label: 'Share with me',
+                      onTap: () {
+                        context.read<HomeBloc>().add(HomeClickButtonNavigationToShareNotePageEvent());
+                      },
+                    ),
+                    SpeedDialChild(
+                      child: Icon(Iconsax.note_21),
+                      label: 'Notes',
+                      onTap: () {
+                        context.read<HomeBloc>().add(HomeClickButtonNavigationToCreateNotesPageEvent());
+                      },
+                    ),
+                  ],
+                ),
               ),
             );
           case HomeErrorState:

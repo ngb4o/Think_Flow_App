@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../presentation/screens/login/bloc/login_bloc.dart';
 import '../../../utils/constants/colors.dart';
 import '../../../utils/constants/image_strings.dart';
 import '../../../utils/constants/sizes.dart';
@@ -20,6 +22,7 @@ class TSocialButtons extends StatelessWidget {
           ),
           child: IconButton(
             onPressed: () {
+              context.read<LoginBloc>().add(LoginWithGoogleEvent());
             },
             icon: const Image(
               width: TSizes.iconMd,

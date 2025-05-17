@@ -31,6 +31,7 @@ class Data {
     User? user;
     String? permission;
     Mindmap? mindmap;
+    Summary? summary;
     String? createdAt;
     String? updatedAt;
 
@@ -41,6 +42,7 @@ class Data {
         this.user,
         this.permission,
         this.mindmap,
+        this.summary,
         this.createdAt,
         this.updatedAt,
     });
@@ -52,6 +54,7 @@ class Data {
         user: json["user"] == null ? null : User.fromJson(json["user"]),
         permission: json["permission"],
         mindmap: json["mindmap"] == null ? null : Mindmap.fromJson(json["mindmap"]),
+        summary: json["summary"] == null ? null : Summary.fromJson(json["summary"]),
         createdAt: json["created_at"],
         updatedAt: json["updated_at"],
     );
@@ -63,6 +66,7 @@ class Data {
         "user": user?.toJson(),
         "permission": permission,
         "mindmap": mindmap?.toJson(),
+        "summary": summary?.toJson(),
         "created_at": createdAt,
         "updated_at": updatedAt,
     };
@@ -197,5 +201,25 @@ class Avatar {
         "width": width,
         "height": height,
         "extension": extension,
+    };
+}
+
+class Summary {
+    String? id;
+    String? summaryText;
+
+    Summary({
+        this.id,
+        this.summaryText,
+    });
+
+    factory Summary.fromJson(Map<String, dynamic> json) => Summary(
+        id: json["id"],
+        summaryText: json["summary_text"],
+    );
+
+    Map<String, dynamic> toJson() => {
+        "id": id,
+        "summary_text": summaryText,
     };
 }

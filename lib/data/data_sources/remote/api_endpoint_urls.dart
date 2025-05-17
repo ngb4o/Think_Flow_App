@@ -2,6 +2,7 @@ class ApiEndpointUrls {
   ApiEndpointUrls._();
 
   static const String loginWithEmailAndPassword = "/auth/v1/authenticate";
+  static const String loginWithGoogle = "/auth/v1/google/login";
   static const String signupWithEmailAndPassword = "/auth/v1/register";
   static const String verifyEmail = "/auth/v1/verify-email";
   static const String resendVerifyEmail = "/auth/v1/verify-email/send-otp";

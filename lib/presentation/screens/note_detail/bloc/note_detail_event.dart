@@ -26,10 +26,10 @@ class NoteAudioDetailInitialFetchDataEvent extends NoteDetailEvent {
 }
 
 // ==================== SUMMARY FEATURE ====================
-class NoteInitialFetchDataSummaryEvent extends NoteDetailEvent {
+class NoteInitialFetchDataSummaryNoteEvent extends NoteDetailEvent {
   final String noteId;
 
-  NoteInitialFetchDataSummaryEvent({required this.noteId});
+  NoteInitialFetchDataSummaryNoteEvent({required this.noteId});
 }
 
 // ==================== MINDMAP FEATURE ====================
@@ -71,18 +71,18 @@ class NoteClickButtonDeleteAudioEvent extends NoteDetailEvent {
 }
 
 // ==================== SUMMARY UPDATE FEATURE ====================
-class NoteClickButtonUpdateSummaryEvent extends NoteDetailEvent {
+class NoteClickButtonUpdateSummaryNoteEvent extends NoteDetailEvent {
   final String noteId;
   final String summaryText;
 
-  NoteClickButtonUpdateSummaryEvent({required this.noteId, required this.summaryText});
+  NoteClickButtonUpdateSummaryNoteEvent({required this.noteId, required this.summaryText});
 }
 
 // ==================== SUMMARY CREATE FEATURE ====================
-class NoteDetailCreateSummaryEvent extends NoteDetailEvent {
-  final String textId;
+class NoteDetailCreateSummaryNoteEvent extends NoteDetailEvent {
+  final String noteId;
 
-  NoteDetailCreateSummaryEvent({required this.textId});
+  NoteDetailCreateSummaryNoteEvent({required this.noteId});
 }
 
 // ==================== MINDMAP CREATE FEATURE ====================
@@ -98,4 +98,10 @@ class NoteDetailUpdateMindmapEvent extends NoteDetailEvent {
   final Map<String, dynamic> mindmapData;
 
   NoteDetailUpdateMindmapEvent({required this.mindmapId, required this.mindmapData});
+}
+
+class NoteDetaiClickButtonNavigationToSummaryTextEvent extends NoteDetailEvent {
+  final String textId;
+
+  NoteDetaiClickButtonNavigationToSummaryTextEvent({required this.textId});
 }

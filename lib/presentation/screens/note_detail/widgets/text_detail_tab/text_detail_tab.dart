@@ -5,16 +5,19 @@ class TextDetailTab extends StatefulWidget {
     super.key,
     required this.noteId,
     required this.permission,
+    required this.titleNote,
   });
 
   final String noteId;
   final String permission;
+  final String titleNote;
 
   @override
   State<TextDetailTab> createState() => _TextDetailTabState();
 }
 
-class _TextDetailTabState extends State<TextDetailTab> with AutomaticKeepAliveClientMixin {
+class _TextDetailTabState extends State<TextDetailTab>
+    with AutomaticKeepAliveClientMixin {
   late QuillController _quillController;
   bool _isEditing = false;
   TextNoteModel? _cachedTextNoteModel;
@@ -31,16 +34,21 @@ class _TextDetailTabState extends State<TextDetailTab> with AutomaticKeepAliveCl
   }
 
   void _loadTextContent() {
-    context.read<NoteDetailBloc>().add(NoteTextDetailInitialFetchDataEvent(noteId: widget.noteId));
+    context
+        .read<NoteDetailBloc>()
+        .add(NoteTextDetailInitialFetchDataEvent(noteId: widget.noteId));
   }
 
   void _enterEditMode() {
     if (widget.permission == 'read') {
-      TLoaders.errorSnackBar(context, title: 'Error', message: 'You do not have permission to edit this note');
+      TLoaders.errorSnackBar(context,
+          title: 'Error',
+          message: 'You do not have permission to edit this note');
       return;
     }
     if (_cachedTextNoteModel?.data?.textContent != null) {
-      final delta = Utils.convertProseMirrorToDelta(_cachedTextNoteModel?.data?.textContent);
+      final delta = Utils.convertProseMirrorToDelta(
+          _cachedTextNoteModel?.data?.textContent);
       _quillController.document = Document.fromDelta(delta);
     }
     setState(() {
@@ -50,7 +58,9 @@ class _TextDetailTabState extends State<TextDetailTab> with AutomaticKeepAliveCl
 
   _updateText(String textId) {
     if (widget.permission == 'read') {
-      TLoaders.errorSnackBar(context, title: 'Error', message: 'You do not have permission to edit this note');
+      TLoaders.errorSnackBar(context,
+          title: 'Error',
+          message: 'You do not have permission to edit this note');
       return;
     }
     final delta = _quillController.document.toDelta().toJson();
@@ -70,13 +80,14 @@ class _TextDetailTabState extends State<TextDetailTab> with AutomaticKeepAliveCl
       if (recognizedText != null) {
         final doc = _quillController.document;
         _quillController.document.insert(doc.length - 1, recognizedText + '\n');
-        setState(() {}); 
+        setState(() {});
       }
     } catch (e) {
-      TLoaders.errorSnackBar(context, title: 'Error', message: 'Failed to process image');
+      TLoaders.errorSnackBar(context,
+          title: 'Error', message: 'Failed to process image');
     }
   }
-  
+
   void importImageBottomSheet() {
     showModalBottomSheet(
       context: context,
@@ -93,7 +104,8 @@ class _TextDetailTabState extends State<TextDetailTab> with AutomaticKeepAliveCl
           children: [
             ListTile(
               leading: const Icon(Iconsax.camera, size: 25),
-              title: Text('Take photo', style: Theme.of(context).textTheme.bodyLarge),
+              title: Text('Take photo',
+                  style: Theme.of(context).textTheme.bodyLarge),
               onTap: () {
                 Navigator.pop(context);
                 _processImage(ImageSource.camera);
@@ -102,7 +114,8 @@ class _TextDetailTabState extends State<TextDetailTab> with AutomaticKeepAliveCl
             const Divider(),
             ListTile(
               leading: const Icon(Iconsax.gallery, size: 25),
-              title: Text('Choose from gallery', style: Theme.of(context).textTheme.bodyLarge),
+              title: Text('Choose from gallery',
+                  style: Theme.of(context).textTheme.bodyLarge),
               onTap: () {
                 Navigator.pop(context);
                 _processImage(ImageSource.gallery);
@@ -131,14 +144,21 @@ class _TextDetailTabState extends State<TextDetailTab> with AutomaticKeepAliveCl
         if (state is NoteUpdateTextDetailSuccessActionSate) {
           setState(() {
             _isEditing = false;
+            _cachedTextNoteModel = null;
+            _quillController.document = Document();
           });
           _loadTextContent();
         } else if (state is NoteUpdateDetailErrorActionState) {
-          TLoaders.errorSnackBar(context, title: 'Error', message: state.message);
+          TLoaders.errorSnackBar(context,
+              title: 'Error', message: state.message);
+        } else if (state is NoteDetailNavigationToSummaryTextPageActionState) {
+          AutoRouter.of(context).push(TextSummaryScreenRoute(noteId: widget.noteId, permission: widget.permission, titleSummary: widget.titleNote));
         }
       },
       builder: (context, state) {
-        if (state is NoteTextDetailLoadingState && _cachedTextNoteModel == null) {
+        if (state is NoteTextDetailLoadingState) {
+          _cachedTextNoteModel = null;
+          _quillController.document = Document();
           return const Center(child: LoadingSpinkit.loadingPage);
         }
 
@@ -149,47 +169,91 @@ class _TextDetailTabState extends State<TextDetailTab> with AutomaticKeepAliveCl
         final textContent = _cachedTextNoteModel?.data?.textContent;
 
         if (!_isEditing) {
-          return SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (textContent == null || textContent.isEmpty)
-                  GestureDetector(
-                    onTap: widget.permission == 'read' ? null : _enterEditMode,
-                    child: Column(
-                      children: [
-                        SizedBox(height: TSizes.spaceBtwSections * 2),
-                        Center(
-                          child: TEmpty(subTitle: widget.permission == 'read' ? 'No content available' : 'Tap anywhere to start editing'),
+          return Stack(
+            children: [
+              SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (textContent == null || textContent.isEmpty)
+                      GestureDetector(
+                        onTap:
+                            widget.permission == 'read' ? null : _enterEditMode,
+                        child: Column(
+                          children: [
+                            SizedBox(height: TSizes.spaceBtwSections * 2),
+                            Center(
+                              child: TEmpty(
+                                  subTitle: widget.permission == 'read'
+                                      ? 'No content available'
+                                      : 'Tap anywhere to start editing'),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  )
-                else
-                  GestureDetector(
-                    onTap: widget.permission == 'read' ? null : _enterEditMode,
-                    child: html.Html(
-                      data: Utils.convertProseMirrorToHtml(textContent),
-                      style: {
-                        'p': html.Style(
-                          margin: html.Margins.zero,
-                          padding: html.HtmlPaddings.zero,
+                      )
+                    else
+                      GestureDetector(
+                        onTap:
+                            widget.permission == 'read' ? null : _enterEditMode,
+                        child: html.Html(
+                          data: Utils.convertProseMirrorToHtml(textContent),
+                          style: {
+                            'p': html.Style(
+                              margin: html.Margins.zero,
+                              padding: html.HtmlPaddings.zero,
+                            ),
+                            'body': html.Style(
+                              fontSize: html.FontSize(15),
+                            ),
+                          },
                         ),
-                        'body': html.Style(
-                          fontSize: html.FontSize(15),
-                        ),
-                      },
-                    ),
+                      ),
+                  ],
+                ),
+              ),
+              Positioned(
+                right: 16,
+                bottom: 16,
+                child: Container(
+                  height: 45,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
-              ],
-            ),
+                  child: SpeedDial(
+                    icon: Icons.auto_awesome,
+                    activeIcon: Iconsax.close_square,
+                    iconTheme: IconThemeData(color: TColors.black, size: 30),
+                    backgroundColor: Colors.transparent,
+                    elevation: 0,
+                    spacing: 10,
+                    children: [
+                      SpeedDialChild(
+                        child: Icon(Iconsax.flash_1),
+                        label: 'Summary text',
+                        onTap: () {
+                          context.read<NoteDetailBloc>().add(NoteDetaiClickButtonNavigationToSummaryTextEvent(textId: _cachedTextNoteModel!.data!.id.toString()));
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           );
         }
 
         return Stack(
           children: [
             Padding(
-              padding: const EdgeInsets.only(top: TSizes.spaceBtwSections*2),
+              padding: const EdgeInsets.only(top: TSizes.spaceBtwSections * 2),
               child: SingleChildScrollView(
                 child: Column(
                   children: [
@@ -260,16 +324,21 @@ class _TextDetailTabState extends State<TextDetailTab> with AutomaticKeepAliveCl
                 bottom: 10,
                 right: 0,
                 child: GestureDetector(
-                  onTap: () => _updateText(_cachedTextNoteModel!.data!.id.toString()),
+                  onTap: () =>
+                      _updateText(_cachedTextNoteModel!.data!.id.toString()),
                   child: Container(
                     decoration: BoxDecoration(
                       color: TColors.primary,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    padding: EdgeInsets.symmetric(horizontal: TSizes.md, vertical: TSizes.sm),
+                    padding: EdgeInsets.symmetric(
+                        horizontal: TSizes.md, vertical: TSizes.sm),
                     child: Text(
                       'Save',
-                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: TColors.white),
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyLarge!
+                          .copyWith(color: TColors.white),
                     ),
                   ),
                 ),

@@ -1,15 +1,18 @@
 import 'dart:core';
 
 import 'package:audio_waveforms/audio_waveforms.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart' show Document, QuillController, QuillEditor, QuillEditorConfig, QuillSimpleToolbar, QuillSimpleToolbarConfig;
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:mind_map/mind_map.dart';
 import 'package:think_flow/common/widgets/empty/t_empty.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:think_flow/common/widgets/loading/loading.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:think_flow/presentation/router/router_imports.gr.dart';
 import 'package:think_flow/presentation/screens/notes/widgets/audio_notes/widgets/audio_player_controls.dart';
 import 'package:flutter_html/flutter_html.dart' as html;
 import 'package:think_flow/utils/helpers/helper_functions.dart';
@@ -21,6 +24,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter/gestures.dart';
 
 import '../../../../common/widgets/warning/t_warning_popup.dart';
 import '../../../../data/models/text_note_model.dart';

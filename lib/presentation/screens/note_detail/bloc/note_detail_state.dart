@@ -89,18 +89,18 @@ class NoteUpdateSummaryDetailErrorActionState extends NoteDetailActionState {
 }
 
 // ==================== SUMMARY CREATE FEATURE ====================
-class NoteDetailCreateSummaryLoadingState extends NoteDetailState {}
-class NoteDetailCreateSummarySuccessActionState extends NoteDetailActionState {}
-class NoteDetailCreateSummaryErrorActionState extends NoteDetailActionState {
+class NoteDetailCreateSummaryNoteLoadingState extends NoteDetailState {}
+class NoteDetailCreateSummaryNoteSuccessActionState extends NoteDetailActionState {}
+class NoteDetailCreateSummaryNoteErrorActionState extends NoteDetailActionState {
   final String message;
-  NoteDetailCreateSummaryErrorActionState({required this.message});
+  NoteDetailCreateSummaryNoteErrorActionState({required this.message});
 }
 
 // ==================== SUMMARY FEATURE ====================
 class NoteSummaryLoadingState extends NoteDetailState {}
 class NoteSummarySuccessState extends NoteDetailState {
-  final TextNoteModel? textNoteModel;
-  NoteSummarySuccessState({this.textNoteModel});
+  final NoteModel? noteModel;
+  NoteSummarySuccessState({this.noteModel});
 }
 class NoteSummaryErrorState extends NoteDetailState {}
 class NoteSummaryErrorActionState extends NoteDetailActionState {
@@ -135,4 +135,6 @@ class NoteUpdateMindmapErrorActionState extends NoteDetailActionState {
   final String message;
   NoteUpdateMindmapErrorActionState({required this.message});
 } 
+
+class NoteDetailNavigationToSummaryTextPageActionState extends NoteDetailActionState {}
 

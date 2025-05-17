@@ -1,5 +1,6 @@
 part of 'text_notes_imports.dart';
 
+
 @RoutePage()
 class TextNotesPage extends StatefulWidget {
   const TextNotesPage({super.key});
@@ -101,27 +102,27 @@ class _TextNotesPageState extends State<TextNotesPage> {
       },
       builder: (context, state) {
         return Scaffold(
-          resizeToAvoidBottomInset: false,
           body: Stack(
             children: [
               SingleChildScrollView(
                 child: Column(
                   children: [
-                    SizedBox(height: TSizes.sm),
-                    SizedBox(
-                      height: THelperFunctions.screenHeight(context) ,
-                      child: QuillEditor.basic(
-                        controller: _quillController,
-                        config: QuillEditorConfig(),
+                    SizedBox(height: TSizes.spaceBtwItems * 3),
+                    QuillEditor.basic(
+                      controller: _quillController,
+                      config: QuillEditorConfig(
+                        autoFocus: true,
+                        expands: false,
+                        padding: const EdgeInsets.all(16),
                       ),
                     ),
                   ],
                 ),
               ),
               Positioned(
+                top: 0,
                 left: 0,
                 right: 0,
-                bottom: 0,
                 child: Container(
                   decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
@@ -134,7 +135,7 @@ class _TextNotesPageState extends State<TextNotesPage> {
                     ],
                   ),
                   child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Expanded(
                         child: QuillSimpleToolbar(

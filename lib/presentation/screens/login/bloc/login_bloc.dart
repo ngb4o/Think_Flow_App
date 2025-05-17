@@ -14,6 +14,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   LoginBloc(this.authRepo) : super(LoginInitial()) {
     on<LoginButtonClickEvent>(loginButtonClickEvent);
+    on<LoginWithGoogleEvent>(loginWithGoogleEvent);
     on<LoginClickButtonNavigationToSignupPageEvent>(loginClickButtonNavigateToSignupPageEvent);
     on<LoginClickButtonNavigationToForgetPasswordPageEvent>(loginClickButtonNavigateToForgetPasswordPageEvent);
   }
@@ -31,6 +32,23 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         await authRepo.resendVerifyEmail(event.email);
         emit(LoginNavigationToVerifyEmailPage(email: event.email));
       }
+      emit(LoginErrorState());
+      emit(LoginErrorActionState(message: e.message));
+    } catch (e) {
+      emit(LoginErrorState());
+      emit(LoginErrorActionState(message: 'An unexpected error occurred'));
+    }
+  }
+
+  FutureOr<void> loginWithGoogleEvent(LoginWithGoogleEvent event, Emitter<LoginState> emit) async {
+    emit(LoginLoadingState());
+    try {
+      var loginData = await authRepo.loginWithGoogle();
+      if (loginData.data != null) {
+        emit(LoginSuccessState());
+        emit(LoginSuccessActionState());
+      }
+    } on ApiException catch (e) {
       emit(LoginErrorState());
       emit(LoginErrorActionState(message: e.message));
     } catch (e) {

@@ -17,7 +17,7 @@ class SummaryDetailTab extends StatefulWidget {
 class _SummaryDetailTabState extends State<SummaryDetailTab>
     with AutomaticKeepAliveClientMixin {
   bool _isEditing = false;
-  TextNoteModel? _cachedTextNoteModel;
+  NoteModel? _cachedNoteModel;
   final TextEditingController _summaryController = TextEditingController();
 
   @override
@@ -32,7 +32,7 @@ class _SummaryDetailTabState extends State<SummaryDetailTab>
   void _loadSummaryContent() {
     context
         .read<NoteDetailBloc>()
-        .add(NoteInitialFetchDataSummaryEvent(noteId: widget.noteId));
+        .add(NoteInitialFetchDataSummaryNoteEvent(noteId: widget.noteId));
   }
 
   void _resetSummary() {
@@ -42,14 +42,8 @@ class _SummaryDetailTabState extends State<SummaryDetailTab>
           message: 'You do not have permission to edit this note');
       return;
     }
-    if (_cachedTextNoteModel?.data?.id == null) {
-      TLoaders.errorSnackBar(context,
-          title: 'Error',
-          message: 'Cannot reset summary: Text note data not loaded');
-      return;
-    }
     context.read<NoteDetailBloc>().add(
-          NoteDetailCreateSummaryEvent(textId: _cachedTextNoteModel!.data!.id!),
+          NoteDetailCreateSummaryNoteEvent(noteId: widget.noteId),
         );
   }
 
@@ -60,9 +54,8 @@ class _SummaryDetailTabState extends State<SummaryDetailTab>
           message: 'You do not have permission to edit this note');
       return;
     }
-    if (_cachedTextNoteModel?.data?.summary?.summaryText != null) {
-      _summaryController.text =
-          _cachedTextNoteModel!.data!.summary!.summaryText!;
+    if (_cachedNoteModel?.data?.summary?.summaryText != null) {
+      _summaryController.text = _cachedNoteModel!.data!.summary!.summaryText!;
     }
     setState(() {
       _isEditing = true;
@@ -78,7 +71,7 @@ class _SummaryDetailTabState extends State<SummaryDetailTab>
     }
 
     context.read<NoteDetailBloc>().add(
-          NoteClickButtonUpdateSummaryEvent(
+          NoteClickButtonUpdateSummaryNoteEvent(
             noteId: textId,
             summaryText: _summaryController.text,
           ),
@@ -106,24 +99,21 @@ class _SummaryDetailTabState extends State<SummaryDetailTab>
         } else if (state is NoteUpdateDetailErrorActionState) {
           TLoaders.errorSnackBar(context,
               title: 'Error', message: state.message);
-        } else if (state is NoteDetailCreateSummaryErrorActionState) {
+        } else if (state is NoteDetailCreateSummaryNoteErrorActionState) {
           TLoaders.errorSnackBar(context,
               title: 'Error', message: state.message);
-        } else if(state is NoteDetailCreateSummarySuccessActionState) {
-          context.read<NoteDetailBloc>().add(NoteInitialFetchDataSummaryEvent(noteId: widget.noteId));
         }
       },
       builder: (context, state) {
-        if (state is NoteSummaryLoadingState &&
-            _cachedTextNoteModel?.data?.summary?.summaryText == null) {
+        if (state is NoteSummaryLoadingState && _cachedNoteModel == null) {
           return const Center(child: LoadingSpinkit.loadingPage);
         }
 
         if (state is NoteSummarySuccessState) {
-          _cachedTextNoteModel = state.textNoteModel;
+          _cachedNoteModel = state.noteModel;
         }
 
-        final summaryText = _cachedTextNoteModel?.data?.summary?.summaryText;
+        final summaryText = _cachedNoteModel?.data?.summary?.summaryText;
 
         if (!_isEditing) {
           return Stack(
@@ -139,7 +129,8 @@ class _SummaryDetailTabState extends State<SummaryDetailTab>
                       )
                     else
                       GestureDetector(
-                        onTap: widget.permission == 'read' ? null : _enterEditMode,
+                        onTap:
+                            widget.permission == 'read' ? null : _enterEditMode,
                         child: Padding(
                           padding: const EdgeInsets.all(TSizes.sm),
                           child: Utils.buildSummaryText(context, summaryText),
@@ -148,39 +139,40 @@ class _SummaryDetailTabState extends State<SummaryDetailTab>
                   ],
                 ),
               ),
-              Positioned(
-                right: 16,
-                bottom: 16,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (state is NoteDetailCreateSummaryLoadingState)
-                        Padding(
-                          padding: const EdgeInsets.all(TSizes.sm),
-                          child: LoadingSpinkit.loadingButton,
-                        )
-                      else
-                        IconButton(
-                          icon: Icon(Iconsax.refresh),
-                          onPressed: _resetSummary,
-                          tooltip: 'Reset Summary',
+              if (summaryText != null)
+                Positioned(
+                  right: 16,
+                  bottom: 16,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
                         ),
-                    ],
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (state is NoteDetailCreateSummaryNoteLoadingState)
+                          Padding(
+                            padding: const EdgeInsets.all(TSizes.sm),
+                            child: LoadingSpinkit.loadingButton,
+                          )
+                        else
+                          IconButton(
+                            icon: Icon(Iconsax.refresh),
+                            onPressed: _resetSummary,
+                            tooltip: 'Reset Summary',
+                          ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
             ],
           );
         }
@@ -206,7 +198,7 @@ class _SummaryDetailTabState extends State<SummaryDetailTab>
               ),
             ),
             if (state is NoteUpdateSummaryDetailLoadingState ||
-                state is NoteDetailCreateSummaryLoadingState)
+                state is NoteDetailCreateSummaryNoteLoadingState)
               Positioned(
                 bottom: 10,
                 right: 0,
@@ -218,7 +210,7 @@ class _SummaryDetailTabState extends State<SummaryDetailTab>
                 right: 0,
                 child: GestureDetector(
                   onTap: () => _updateSummary(
-                      _cachedTextNoteModel!.data!.summary!.id.toString()),
+                      _cachedNoteModel!.data!.summary!.id.toString()),
                   child: Container(
                     decoration: BoxDecoration(
                       color: TColors.primary,

@@ -280,30 +280,30 @@ class Utils {
         // Check the level of the line and replace numbers with bullets
         if (line.startsWith(RegExp(r'^\d+\.\s'))) {
           // Main level (1., 2., etc.)
-          final content = line.replaceFirst(RegExp(r'^\d+\.\s'), '');
+          final content = line.replaceFirst(RegExp(r'^\d+\.\s'), '• ');
           return Padding(
             padding: const EdgeInsets.only(bottom: 8),
             child: Text(
               content,
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 15, fontWeight: FontWeight.w600),
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 15),
             ),
           );
         } else if (line.startsWith(RegExp(r'^\d+\.\d+\.\s'))) {
           // Sub level (1.1., 2.1., etc.)
-          final content = line.replaceFirst(RegExp(r'^\d+\.\d+\.\s'), '• ');
+          final content = line.replaceFirst(RegExp(r'^\d+\.\d+\.\s'), '- ');
           return Padding(
             padding: const EdgeInsets.only(left: 16, bottom: 8),
-            child: Text(content, style: Theme.of(context).textTheme.bodyLarge),
+            child: Text(content, style: Theme.of(context).textTheme.bodyMedium),
           );
         } else if (line.startsWith(RegExp(r'^\d+\.\d+\.\d+\.\s'))) {
           // Sub-sub level (1.1.1., etc.)
           final content =
-              line.replaceFirst(RegExp(r'^\d+\.\d+\.\d+\.\s'), '• ');
+              line.replaceFirst(RegExp(r'^\d+\.\d+\.\d+\.\s'), '- ');
           return Padding(
             padding: const EdgeInsets.only(left: 16, bottom: 8),
             child: Text(
               content,
-              style: Theme.of(context).textTheme.bodyLarge,
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
           );
         } else {

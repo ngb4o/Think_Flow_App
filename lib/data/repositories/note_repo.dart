@@ -275,10 +275,28 @@ class NoteRepo extends ApiClient {
     }
   }
 
-  Future<DataModel> createSummaryNote(String id) async {
+  Future<DataModel> createSummaryText(String id) async {
     try {
       final response = await postRequest(
         path: '${ApiEndpointUrls.text}/$id${ApiEndpointUrls.createSummaryNote}',
+      );
+      if (response.statusCode == 200) {
+        final responseData = dataModelFromJson(jsonEncode(response.data));
+        return responseData;
+      } else {
+        throw ApiException(message: 'Create summary note failed');
+      }
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      throw ApiException(message: 'An unexpected error occurred');
+    }
+  }
+
+  Future<DataModel> createSummaryNote(String id) async {
+    try {
+      final response = await postRequest(
+        path: '${ApiEndpointUrls.note}/$id${ApiEndpointUrls.createSummaryNote}',
       );
       if (response.statusCode == 200) {
         final responseData = dataModelFromJson(jsonEncode(response.data));

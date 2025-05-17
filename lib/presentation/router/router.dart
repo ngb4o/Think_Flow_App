@@ -27,6 +27,7 @@ class AppRouter extends $AppRouter {
     AutoRoute(page: NoteDetailScreenRoute.page),
     AutoRoute(page: NoteArchivedScreenRoute.page),
     AutoRoute(page: NoteShareScreenRoute.page),
+    AutoRoute(page: TextSummaryScreenRoute.page),
   ];
 
 }

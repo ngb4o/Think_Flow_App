@@ -27,6 +27,31 @@ class _AudioNotesPageState extends State<AudioNotesPage> {
   double playbackSpeed = 1.0;
   final List<double> availableSpeeds = [0.5, 0.75, 1.0, 1.25, 1.5, 2.0];
 
+  Future<String?> _convertM4aToMp3(String m4aPath) async {
+    try {
+      final Directory appDocumentsDir = await getApplicationDocumentsDirectory();
+      final String mp3Path = p.join(appDocumentsDir.path, 'recording_${DateTime.now().millisecondsSinceEpoch}.mp3');
+      
+      final session = await FFmpegKit.execute('-i $m4aPath -c:a libmp3lame -q:a 2 $mp3Path');
+      final returnCode = await session.getReturnCode();
+      
+      if (returnCode?.isValueSuccess() ?? false) {
+        // Delete the original M4A file
+        final m4aFile = File(m4aPath);
+        if (await m4aFile.exists()) {
+          await m4aFile.delete();
+        }
+        return mp3Path;
+      } else {
+        debugPrint('FFmpeg conversion failed: ${await session.getOutput()}');
+        return null;
+      }
+    } catch (e) {
+      debugPrint('Error converting M4A to MP3: $e');
+      return null;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -210,20 +235,27 @@ class _AudioNotesPageState extends State<AudioNotesPage> {
       await recorderController.stop();
       String? filePath = await audioRecorder.stop();
       recordingTimer?.cancel();
+      
       if (mounted && filePath != null) {
-        await audioPlayer.setFilePath(filePath);
-        final duration = audioPlayer.duration ?? Duration.zero;
-        setState(() {
-          isRecording = false;
-          isPaused = false;
-          currentRecordingPath = filePath;
-          recordings.add(AudioRecording(
-            path: filePath,
-            name: AudioUtils.getFileNameFromPath(filePath),
-            duration: duration,
-            createdAt: DateTime.now(),
-          ));
-        });
+        // Convert M4A to MP3
+        final mp3Path = await _convertM4aToMp3(filePath);
+        if (mp3Path != null) {
+          await audioPlayer.setFilePath(mp3Path);
+          final duration = audioPlayer.duration ?? Duration.zero;
+          setState(() {
+            isRecording = false;
+            isPaused = false;
+            currentRecordingPath = mp3Path;
+            recordings.add(AudioRecording(
+              path: mp3Path,
+              name: AudioUtils.getFileNameFromPath(mp3Path),
+              duration: duration,
+              createdAt: DateTime.now(),
+            ));
+          });
+        } else {
+          throw Exception('Failed to convert audio to MP3');
+        }
       }
     } catch (e) {
       if (mounted) {
@@ -333,7 +365,7 @@ class _AudioNotesPageState extends State<AudioNotesPage> {
   _uploadFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['mp3', 'wav', 'm4a', 'aac'],
+      allowedExtensions: ['mp3'],
     );
 
     if (result != null && result.files.isNotEmpty) {

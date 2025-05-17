@@ -58,11 +58,15 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
   }
 
   void _updateMindmapFromData(NoteModel noteData) {
-    if (noteData.data?.mindmap?.mindmapData?.parentContent?.isNotEmpty ==
-        true) {
-      final parentContent =
-          noteData.data!.mindmap!.mindmapData!.parentContent!.first;
-      final rootNode = _convertToMindmapNode(parentContent);
+    if (noteData.data?.mindmap?.mindmapData?.parentContent?.isNotEmpty == true) {
+      // Create a root node to hold all branches
+      final rootNode = MindmapNode(text: 'Root');
+      
+      // Convert all parent content to mindmap nodes
+      for (var content in noteData.data!.mindmap!.mindmapData!.parentContent!) {
+        rootNode.children.add(_convertToMindmapNode(content));
+      }
+      
       setState(() {
         _rootNode = rootNode;
         _mindmapId = noteData.data!.mindmap!.id!;
@@ -454,6 +458,35 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
           return const Center(child: LoadingSpinkit.loadingPage);
         }
 
+        if (state is NoteMindmapErrorState) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Failed to load mindmap',
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                const SizedBox(height: TSizes.spaceBtwItems),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    context
+                        .read<NoteDetailBloc>()
+                        .add(NoteInitialFetchDataMindmapEvent(noteId: widget.noteId));
+                  },
+                  icon: const Icon(Iconsax.refresh),
+                  label: const Text('Reload'),
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+
         if (_rootNode == null) {
           return const Center(child: LoadingSpinkit.loadingPage);
         }
@@ -464,17 +497,27 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
               scrollDirection: Axis.horizontal,
               child: SingleChildScrollView(
                 scrollDirection: Axis.vertical,
-                child: InteractiveViewer(
-                  transformationController: _transformationController,
-                  minScale: 0.1,
-                  maxScale: 2,
-                  boundaryMargin: const EdgeInsets.all(800),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Row(
-                      children: [
-                        _buildMindMapBranch(_rootNode!, isRoot: true),
-                      ],
+                child: GestureDetector(
+                  onScaleUpdate: (details) {
+                    setState(() {
+                      _scale = (_scale * details.scale).clamp(0.1, 2.0);
+                      _transformationController.value = Matrix4.identity()..scale(_scale);
+                    });
+                  },
+                  child: InteractiveViewer(
+                    transformationController: _transformationController,
+                    minScale: 0.1,
+                    maxScale: 1.5,
+                    scaleEnabled: true,
+                    panEnabled: true,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: _rootNode!.children.map((node) => 
+                          _buildMindMapBranch(node, isRoot: true)
+                        ).toList(),
+                      ),
                     ),
                   ),
                 ),

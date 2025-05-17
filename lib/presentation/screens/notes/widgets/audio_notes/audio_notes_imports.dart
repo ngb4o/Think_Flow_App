@@ -12,6 +12,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:audio_waveforms/audio_waveforms.dart';
+import 'package:ffmpeg_kit_flutter_new/ffmpeg_kit.dart';
 import 'package:think_flow/common/widgets/empty/t_empty.dart';
 import 'package:think_flow/presentation/screens/notes/bloc/notes_bloc.dart';
 import 'package:think_flow/utils/popups/loaders.dart';

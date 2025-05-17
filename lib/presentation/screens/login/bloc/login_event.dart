@@ -10,6 +10,8 @@ class LoginButtonClickEvent extends LoginEvent {
   LoginButtonClickEvent({required this.email, required this.password});
 }
 
+class LoginWithGoogleEvent extends LoginEvent {}
+
 class LoginClickButtonNavigationToSignupPageEvent extends LoginEvent {}
 
 class LoginClickButtonNavigationToForgetPasswordPageEvent extends LoginEvent {}

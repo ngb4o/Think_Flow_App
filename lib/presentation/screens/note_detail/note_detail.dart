@@ -22,7 +22,7 @@ class NoteDetailScreen extends StatefulWidget {
 }
 
 class _NoteDetailScreenState extends State<NoteDetailScreen> {
-  final tabs = ["Text", "Audio", "Summary", "Mindmap"];
+  final tabs = ["Text", "Audio", "Summary Note", "Mindmap Note"];
 
   int currentTabIndex = 0;
 
@@ -161,8 +161,8 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                     tabs: [
                       Tab(icon: Icon(Iconsax.document_text, size:20,), text: tabs[0]),
                       Tab(icon: Icon(Iconsax.microphone,size:20), text: tabs[1]),
-                      Tab(icon: Icon(Iconsax.document, size:20), text: tabs[2]),
-                      Tab(icon: Icon(Iconsax.element_4, size:20), text: tabs[3]),
+                      Tab(icon: Icon(Iconsax.flash, size:20), text: tabs[2]),
+                      Tab(icon: Icon(Iconsax.hierarchy_3, size:20), text: tabs[3]),
                     ],
                     currentIndex: currentTabIndex,
                     onTap: (value) {
@@ -178,8 +178,9 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                   SizedBox(height: TSizes.spaceBtwItems),
                   Expanded(
                     child: TabBarView(
+                      physics: NeverScrollableScrollPhysics(),
                       children: [
-                        KeepAliveWrapper(child: TextDetailTab(noteId: widget.noteId, permission: widget.permission)),
+                        KeepAliveWrapper(child: TextDetailTab(noteId: widget.noteId, permission: widget.permission, titleNote: widget.title)),
                         KeepAliveWrapper(child: AudioDetailTab(noteId: widget.noteId, permission: widget.permission)),
                         KeepAliveWrapper(child: SummaryDetailTab(noteId: widget.noteId, permission: widget.permission)),
                         KeepAliveWrapper(child: MindmapDetailTab(noteId: widget.noteId, permission: widget.permission,)),
