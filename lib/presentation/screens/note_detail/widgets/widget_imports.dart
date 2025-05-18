@@ -29,7 +29,7 @@ import 'package:flutter/gestures.dart';
 import '../../../../common/widgets/warning/t_warning_popup.dart';
 import '../../../../data/models/text_note_model.dart';
 import '../../../../data/models/note_model.dart';
-import '../../../../services/text_recognizer.dart';
+import '../../../../services/text_recognizer_service.dart';
 import '../../../../utils/constants/sizes.dart';
 import '../../../../utils/constants/colors.dart';
 import '../../../../utils/utils.dart';

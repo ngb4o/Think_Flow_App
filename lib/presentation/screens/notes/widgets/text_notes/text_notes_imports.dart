@@ -5,7 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter_quill/flutter_quill.dart' show Document, QuillController, QuillEditor, QuillEditorConfig, QuillSimpleToolbar, QuillSimpleToolbarConfig;
 import 'package:iconsax/iconsax.dart';
 
-import '../../../../../services/text_recognizer.dart';
+import '../../../../../services/text_recognizer_service.dart';
 import '../../../../../utils/constants/sizes.dart';
 import '../../../../../utils/helpers/helper_functions.dart';
 import '../../../../../utils/popups/loaders.dart';

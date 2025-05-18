@@ -113,7 +113,7 @@ class _TextNotesPageState extends State<TextNotesPage> {
                       config: QuillEditorConfig(
                         autoFocus: true,
                         expands: false,
-                        padding: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(TSizes.sm),
                       ),
                     ),
                   ],

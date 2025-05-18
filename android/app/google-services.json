@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "959652301982",
+    "project_id": "thinkflow-e26e1",
+    "storage_bucket": "thinkflow-e26e1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:959652301982:android:0e88178842274a57fbbf8f",
+        "android_client_info": {
+          "package_name": "com.example.think_flow"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDunCeI7V6ssieIK2WZ7HSHWa4fCkOt7eo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

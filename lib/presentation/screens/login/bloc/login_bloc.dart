@@ -5,6 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:think_flow/data/data_sources/remote/api_exception.dart';
 import 'package:think_flow/data/repositories/auth_repo.dart';
 
+import '../../../../services/firebase_messaging_service.dart';
+
 part 'login_event.dart';
 
 part 'login_state.dart';
@@ -26,6 +28,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       if (loginData.data != null) {
         emit(LoginSuccessState());
         emit(LoginSuccessActionState());
+        await FirebaseMessagingService.instance().registerPendingToken();
       }
     } on ApiException catch (e) {
       if (e.code == 403) {
@@ -47,6 +50,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       if (loginData.data != null) {
         emit(LoginSuccessState());
         emit(LoginSuccessActionState());
+        await FirebaseMessagingService.instance().registerPendingToken();
       }
     } on ApiException catch (e) {
       emit(LoginErrorState());
