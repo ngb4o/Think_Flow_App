@@ -26,10 +26,15 @@ class TextSummaryBloc extends Bloc<TextSummaryEvent, TextSummaryState> {
       if (textData.data?.summary?.summaryText != null) {
         emit(TextSummarySuccessState(textNoteModel: textData));
       } else {
-        add(TextSummaryCreateTextEvent(
-          textId: textData.data!.id.toString(),
-          noteId: event.noteId,
-        ));
+        if (event.permission != 'read') {
+          add(TextSummaryCreateTextEvent(
+            textId: textData.data!.id.toString(),
+            noteId: event.noteId,
+            permission: event.permission,
+          ));
+        } else {
+          emit(TextSummarySuccessState(textNoteModel: textData));
+        }
       }
     } on ApiException catch (e) {
       emit(TextSummaryErrorActionState(message: e.message));
@@ -40,12 +45,18 @@ class TextSummaryBloc extends Bloc<TextSummaryEvent, TextSummaryState> {
 
   FutureOr<void> textSummaryCreateTextEvent(
       TextSummaryCreateTextEvent event, Emitter<TextSummaryState> emit) async {
+    if (event.permission == 'read') {
+      emit(TextSummaryCreateTextErrorActionState(
+          message: 'Access denied. Please contact the owner to update permissions.'));
+      return;
+    }
+
     emit(TextSummaryCreateTextLoadingState());
     try {
       final textData = await noteRepo.createSummaryText(event.textId);
       if (textData.data != null) {
         emit(TextSummaryCreateTextSuccessState());
-        add(TextSummaryInitialFetchDataEvent(noteId: event.noteId!));
+        add(TextSummaryInitialFetchDataEvent(noteId: event.noteId!, permission: event.permission));
       }
     } on ApiException catch (e) {
       emit(TextSummaryCreateTextErrorActionState(message: e.message));
@@ -56,6 +67,12 @@ class TextSummaryBloc extends Bloc<TextSummaryEvent, TextSummaryState> {
 
   FutureOr<void> textSummaryClickButtonUpdateSummaryTextEvent(
       TextSummaryClickButtonUpdateSummaryTextEvent event, Emitter<TextSummaryState> emit) async {
+    if (event.permission == 'read') {
+      emit(TextSummaryUpdateSummaryDetailErrorActionState(
+          message: 'Access denied. Please contact the owner to update permissions.'));
+      return;
+    }
+
     emit(TextSummaryUpdateSummaryDetailLoadingState());
     try {
       var noteUpdateSummaryData = await noteRepo.updateSummaryNote(event.textId, event.summaryText);

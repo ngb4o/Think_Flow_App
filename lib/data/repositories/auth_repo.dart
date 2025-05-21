@@ -17,13 +17,15 @@ class AuthRepo extends ApiClient {
   }
 
   // Login with email and password
-  Future<DataModel> loginWithEmailAndPassword(String email, String password) async {
+  Future<DataModel> loginWithEmailAndPassword(
+      String email, String password) async {
     Map body = {
       "email": email,
       "password": password,
     };
     try {
-      final response = await postRequest(path: ApiEndpointUrls.loginWithEmailAndPassword, body: body);
+      final response = await postRequest(
+          path: ApiEndpointUrls.loginWithEmailAndPassword, body: body);
       if (response.statusCode == 200) {
         final responseData = dataModelFromJson(jsonEncode(response.data));
         return responseData;
@@ -41,17 +43,19 @@ class AuthRepo extends ApiClient {
   Future<DataModel> loginWithGoogle() async {
     try {
       // Launch Google login URL in browser
-      final Uri url = Uri.parse('${ApiConstant.mainUrl}${ApiEndpointUrls.loginWithGoogle}');
+      final Uri url =
+          Uri.parse('${ApiConstant.mainUrl}${ApiEndpointUrls.loginWithGoogle}');
       if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
         throw ApiException(message: 'Could not launch Google login');
       }
-      
+
       // Wait for the response from the server
       final response = await getRequest(path: ApiEndpointUrls.loginWithGoogle);
       if (response.statusCode == 200) {
         final responseData = dataModelFromJson(jsonEncode(response.data));
         // Save access token cookie
-        if (responseData.data != null && responseData.data['accessToken'] != null) {
+        if (responseData.data != null &&
+            responseData.data['accessToken'] != null) {
           await setCookie('accessToken', responseData.data['accessToken']);
         }
         return responseData;
@@ -81,7 +85,8 @@ class AuthRepo extends ApiClient {
       "last_name": lastName,
     };
     try {
-      final response = await postRequest(path: ApiEndpointUrls.signupWithEmailAndPassword, body: body);
+      final response = await postRequest(
+          path: ApiEndpointUrls.signupWithEmailAndPassword, body: body);
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseMap = response.data;
         return responseMap['data'] == true;
@@ -102,7 +107,8 @@ class AuthRepo extends ApiClient {
       "otp": otp,
     };
     try {
-      final response = await postRequest(path: ApiEndpointUrls.verifyEmail, body: body);
+      final response =
+          await postRequest(path: ApiEndpointUrls.verifyEmail, body: body);
       if (response.statusCode == 200) {
         // Parse response and check if data is true
         final responseData = dataModelFromJson(jsonEncode(response.data));
@@ -123,7 +129,8 @@ class AuthRepo extends ApiClient {
       "email": email,
     };
     try {
-      final response = await postRequest(path: ApiEndpointUrls.resendVerifyEmail, body: body);
+      final response = await postRequest(
+          path: ApiEndpointUrls.resendVerifyEmail, body: body);
       if (response.statusCode == 200) {
         // Parse response and check if data is true
         final responseData = dataModelFromJson(jsonEncode(response.data));
@@ -147,6 +154,51 @@ class AuthRepo extends ApiClient {
         return responseData;
       } else {
         throw ApiException(message: 'Logout failed');
+      }
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      throw ApiException(message: 'An unexpected error occurred');
+    }
+  }
+
+  // Forgot password
+  Future<DataModel> forgotPassword(String email) async {
+    Map body = {
+      "email": email,
+    };
+    try {
+      final response =
+          await postRequest(path: ApiEndpointUrls.forgotPassword, body: body);
+      if (response.statusCode == 200) {
+        final responseData = dataModelFromJson(jsonEncode(response.data));
+        return responseData;
+      } else {
+        throw ApiException(message: 'Forgot password failed');
+      }
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      throw ApiException(message: 'An unexpected error occurred');
+    }
+  }
+
+  // Reset password
+  Future<DataModel> resetPassword(
+      String email, String otp, String newPassword) async {
+    Map body = {
+      "email": email,
+      "otp": otp,
+      "new_password": newPassword,
+    };
+    try {
+      final response =
+          await postRequest(path: ApiEndpointUrls.resetPassword, body: body);
+      if (response.statusCode == 200) {
+        final responseData = dataModelFromJson(jsonEncode(response.data));
+        return responseData;
+      } else {
+        throw ApiException(message: 'Reset password failed');
       }
     } on ApiException {
       rethrow;

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
@@ -181,8 +182,13 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
     try {
       var noteData = await noteRepo.getNote(event.noteId);
       if (noteData.data?.summary == null) {
-        // If summary is empty, create a new one
-        add(NoteDetailCreateSummaryTextEvent(noteId: event.noteId));
+        // If summary is empty and user has write permission, create a new one
+        if (event.permission != 'read') {
+          add(NoteDetailCreateSummaryTextEvent(noteId: event.noteId, permission: event.permission));
+        } else {
+          // If user has read permission, just show the empty state
+          emit(NoteSummarySuccessState(noteModel: noteData));
+        }
       } else {
         emit(NoteSummarySuccessState(noteModel: noteData));
       }
@@ -197,13 +203,19 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
 
   FutureOr<void> noteDetailCreateSummaryNoteEvent(
       NoteDetailCreateSummaryTextEvent event, Emitter<NoteDetailState> emit) async {
+    if (event.permission == 'read') {
+      emit(NoteDetailCreateSummaryNoteErrorActionState(
+          message: 'Access denied. Please contact the owner to update permissions.'));
+      return;
+    }
+
     emit(NoteDetailCreateSummaryNoteLoadingState());
     try {
       var createSummaryData = await noteRepo.createSummaryNote(event.noteId);
       if (createSummaryData.data != null) {
         emit(NoteDetailCreateSummaryNoteSuccessActionState());
 
-        add(NoteDetailInitialFetchDataSummaryNoteEvent(noteId: event.noteId));
+        add(NoteDetailInitialFetchDataSummaryNoteEvent(noteId: event.noteId, permission: event.permission));
       }
     } on ApiException catch (e) {
       emit(NoteDetailCreateSummaryNoteErrorActionState(message: e.message));
@@ -234,8 +246,13 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
     try {
       var noteData = await noteRepo.getNote(event.noteId);
       if (noteData.data?.mindmap == null) {
-        // If mindmap is empty, create a new one
-        add(NoteDetailCreateMindmapEvent(noteId: event.noteId));
+        // If mindmap is empty and user has write permission, create a new one
+        if (event.permission != 'read') {
+          add(NoteDetailCreateMindmapEvent(noteId: event.noteId, permission: event.permission));
+        } else {
+          // If user has read permission, just show the empty state
+          emit(NoteMindmapSuccessState(noteModel: noteData));
+        }
       } else {
         emit(NoteMindmapSuccessState(noteModel: noteData));
       }
@@ -250,13 +267,19 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
 
   FutureOr<void> noteDetailCreateMindmapEvent(
       NoteDetailCreateMindmapEvent event, Emitter<NoteDetailState> emit) async {
+    if (event.permission == 'read') {
+      emit(NoteCreateMindmapErrorActionState(
+          message: 'Access denied. Please contact the owner to update permissions.'));
+      return;
+    }
+
     emit(NoteCreateMindmapLoadingState());
     try {
       var createMindmapData = await noteRepo.createMindmapNote(event.noteId);
       if (createMindmapData.data != null) {
         emit(NoteCreateMindmapSuccessActionState());
         // Reload the mindmap data after creating
-        add(NoteDetailInitialFetchDataMindmapEvent(noteId: event.noteId));
+        add(NoteDetailInitialFetchDataMindmapEvent(noteId: event.noteId, permission: event.permission));
       }
     } on ApiException catch (e) {
       emit(NoteCreateMindmapErrorActionState(message: e.message));
@@ -273,7 +296,7 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
       if (updateMindmapData.data != null) {
         emit(NoteUpdateMindmapSuccessActionState());
         // Reload the mindmap data after updating
-        add(NoteDetailInitialFetchDataMindmapEvent(noteId: event.mindmapId));
+        add(NoteDetailInitialFetchDataMindmapEvent(noteId: event.mindmapId, permission: event.permission));
       }
     } on ApiException catch (e) {
       emit(NoteUpdateMindmapErrorActionState(message: e.message));

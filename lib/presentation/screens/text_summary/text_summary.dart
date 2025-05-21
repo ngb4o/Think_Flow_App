@@ -27,14 +27,14 @@ class _TextSummaryScreenState extends State<TextSummaryScreen> {
     super.initState();
     context
         .read<TextSummaryBloc>()
-        .add(TextSummaryInitialFetchDataEvent(noteId: widget.noteId));
+        .add(TextSummaryInitialFetchDataEvent(noteId: widget.noteId, permission: widget.permission));
   }
 
   void _resetSummary() {
     if (widget.permission == 'read') {
       TLoaders.errorSnackBar(context,
           title: 'Error',
-          message: 'You do not have permission to edit this note');
+          message: 'You do not have permission to edit this note. Please contact the owner to update permissions.');
       return;
     }
     if (_cachedTextNoteModel?.data?.id == null) {
@@ -46,6 +46,7 @@ class _TextSummaryScreenState extends State<TextSummaryScreen> {
           TextSummaryCreateTextEvent(
             textId: _cachedTextNoteModel!.data!.id.toString(),
             noteId: widget.noteId,
+            permission: widget.permission,
           ),
         );
   }
@@ -54,7 +55,7 @@ class _TextSummaryScreenState extends State<TextSummaryScreen> {
     if (widget.permission == 'read') {
       TLoaders.errorSnackBar(context,
           title: 'Error',
-          message: 'You do not have permission to edit this note');
+          message: 'You do not have permission to edit this note. Please contact the owner to update permissions.');
       return;
     }
     if (_cachedTextNoteModel?.data?.summary?.summaryText != null) {
@@ -70,7 +71,7 @@ class _TextSummaryScreenState extends State<TextSummaryScreen> {
     if (widget.permission == 'read') {
       TLoaders.errorSnackBar(context,
           title: 'Error',
-          message: 'You do not have permission to edit this note');
+          message: 'You do not have permission to edit this note. Please contact the owner to update permissions.');
       return;
     }
     if (_cachedTextNoteModel?.data?.summary?.id == null) {
@@ -83,6 +84,7 @@ class _TextSummaryScreenState extends State<TextSummaryScreen> {
           TextSummaryClickButtonUpdateSummaryTextEvent(
             textId: textId,
             summaryText: _summaryController.text,
+            permission: widget.permission,
           ),
         );
   }
@@ -113,7 +115,7 @@ class _TextSummaryScreenState extends State<TextSummaryScreen> {
           });
           context
               .read<TextSummaryBloc>()
-              .add(TextSummaryInitialFetchDataEvent(noteId: widget.noteId));
+              .add(TextSummaryInitialFetchDataEvent(noteId: widget.noteId, permission: widget.permission));
         }
       },
       builder: (context, state) {
@@ -163,9 +165,36 @@ class _TextSummaryScreenState extends State<TextSummaryScreen> {
                                                 THelperFunctions.screenHeight(
                                                         context) *
                                                     0.6,
-                                            child: const Center(
-                                                child:
-                                                    LoadingSpinkit.loadingPage),
+                                            child: widget.permission == 'read'
+                                                ? Center(
+                                                    child: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Icon(Icons.lock_outline,
+                                                            size: 48,
+                                                            color: Colors.grey),
+                                                        const SizedBox(
+                                                            height: 16),
+                                                        Text(
+                                                          'Text summary has not been created yet. Please contact the owner to create.',
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style: Theme.of(context)
+                                                              .textTheme
+                                                              .bodyMedium
+                                                              ?.copyWith(
+                                                                color:
+                                                                    Colors.grey,
+                                                              ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  )
+                                                : const Center(
+                                                    child:
+                                                        LoadingSpinkit.loadingPage),
                                           )
                                         : SingleChildScrollView(
                                             child: GestureDetector(
@@ -182,7 +211,7 @@ class _TextSummaryScreenState extends State<TextSummaryScreen> {
                                   ),
                                 ],
                               ),
-                              if (summaryText != null)
+                              if (summaryText != null && widget.permission != 'read')
                                 Positioned(
                                   right: 0,
                                   bottom: 0,

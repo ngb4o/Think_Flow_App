@@ -433,6 +433,7 @@ class _AudioDetailTabState extends State<AudioDetailTab> {
                               onDelete: widget.permission == 'read' ? () {} : () => _deleteAudioWarningPopup(audio.id!),
                               showMore: true,
                               onMore: () => _showAudioModalBottomSheet(audio.id!),
+                              permission: widget.permission,
                             );
                           },
                         ),

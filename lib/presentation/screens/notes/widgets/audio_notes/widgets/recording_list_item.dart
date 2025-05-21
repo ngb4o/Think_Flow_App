@@ -10,6 +10,7 @@ class RecordingListItem extends StatelessWidget {
   final VoidCallback onPlayPause;
   final VoidCallback onDelete;
   final VoidCallback? onMore;
+  final String? permission;
 
   const RecordingListItem({
     Key? key,
@@ -20,6 +21,7 @@ class RecordingListItem extends StatelessWidget {
     required this.onPlayPause,
     required this.onDelete,
     this.onMore,
+    this.permission,
   }) : super(key: key);
 
   @override
@@ -62,13 +64,15 @@ class RecordingListItem extends StatelessWidget {
               ),
             ),
           ],
-          SizedBox(width: TSizes.md),
-          GestureDetector(
-            onTap: onDelete,
-            child: Icon(
-              Iconsax.trash,
+          if (permission != 'read') ...[
+            SizedBox(width: TSizes.md),
+            GestureDetector(
+              onTap: onDelete,
+              child: Icon(
+                Iconsax.trash,
+              ),
             ),
-          ),
+          ]
         ],
       ),
     );

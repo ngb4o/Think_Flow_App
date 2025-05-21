@@ -9,105 +9,101 @@ AudioNoteModel audioNoteModelFromJson(String str) => AudioNoteModel.fromJson(jso
 String audioNoteModelToJson(AudioNoteModel data) => json.encode(data.toJson());
 
 class AudioNoteModel {
-  List<Datum>? data;
-  Paging? paging;
-  Extra? extra;
+    Data? data;
 
-  AudioNoteModel({
-    this.data,
-    this.paging,
-    this.extra,
-  });
+    AudioNoteModel({
+        this.data,
+    });
 
-  factory AudioNoteModel.fromJson(Map<String, dynamic> json) => AudioNoteModel(
-    data: json["data"] == null ? [] : List<Datum>.from(json["data"]!.map((x) => Datum.fromJson(x))),
-    paging: json["paging"] == null ? null : Paging.fromJson(json["paging"]),
-    extra: json["extra"] == null ? null : Extra.fromJson(json["extra"]),
-  );
+    factory AudioNoteModel.fromJson(Map<String, dynamic> json) => AudioNoteModel(
+        data: json["data"] == null ? null : Data.fromJson(json["data"]),
+    );
 
-  Map<String, dynamic> toJson() => {
-    "data": data == null ? [] : List<dynamic>.from(data!.map((x) => x.toJson())),
-    "paging": paging?.toJson(),
-    "extra": extra?.toJson(),
-  };
+    Map<String, dynamic> toJson() => {
+        "data": data?.toJson(),
+    };
 }
 
-class Datum {
-  String? id;
-  DateTime? createdAt;
-  DateTime? updatedAt;
-  String? fileUrl;
-  String? format;
+class Data {
+    String? id;
+    DateTime? createdAt;
+    DateTime? updatedAt;
+    String? name;
+    String? fileUrl;
+    String? format;
+    Transcript? transcript;
+    Summary? summary;
 
-  Datum({
-    this.id,
-    this.createdAt,
-    this.updatedAt,
-    this.fileUrl,
-    this.format,
-  });
+    Data({
+        this.id,
+        this.createdAt,
+        this.updatedAt,
+        this.name,
+        this.fileUrl,
+        this.format,
+        this.transcript,
+        this.summary,
+    });
 
-  factory Datum.fromJson(Map<String, dynamic> json) => Datum(
-    id: json["id"],
-    createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
-    updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
-    fileUrl: json["file_url"],
-    format: json["format"],
-  );
+    factory Data.fromJson(Map<String, dynamic> json) => Data(
+        id: json["id"],
+        createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
+        updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
+        name: json["name"],
+        fileUrl: json["file_url"],
+        format: json["format"],
+        transcript: json["transcript"] == null ? null : Transcript.fromJson(json["transcript"]),
+        summary: json["summary"] == null ? null : Summary.fromJson(json["summary"]),
+    );
 
-  Map<String, dynamic> toJson() => {
-    "id": id,
-    "created_at": createdAt?.toIso8601String(),
-    "updated_at": updatedAt?.toIso8601String(),
-    "file_url": fileUrl,
-    "format": format,
-  };
+    Map<String, dynamic> toJson() => {
+        "id": id,
+        "created_at": createdAt?.toIso8601String(),
+        "updated_at": updatedAt?.toIso8601String(),
+        "name": name,
+        "file_url": fileUrl,
+        "format": format,
+        "transcript": transcript?.toJson(),
+        "summary": summary?.toJson(),
+    };
 }
 
-class Extra {
-  int? noteId;
+class Summary {
+    String? id;
+    String? summaryText;
 
-  Extra({
-    this.noteId,
-  });
+    Summary({
+        this.id,
+        this.summaryText,
+    });
 
-  factory Extra.fromJson(Map<String, dynamic> json) => Extra(
-    noteId: json["note_id"],
-  );
+    factory Summary.fromJson(Map<String, dynamic> json) => Summary(
+        id: json["id"],
+        summaryText: json["summary_text"],
+    );
 
-  Map<String, dynamic> toJson() => {
-    "note_id": noteId,
-  };
+    Map<String, dynamic> toJson() => {
+        "id": id,
+        "summary_text": summaryText,
+    };
 }
 
-class Paging {
-  int? page;
-  int? limit;
-  int? total;
-  String? cursor;
-  String? nextCursor;
+class Transcript {
+    String? id;
+    String? content;
 
-  Paging({
-    this.page,
-    this.limit,
-    this.total,
-    this.cursor,
-    this.nextCursor,
-  });
+    Transcript({
+        this.id,
+        this.content,
+    });
 
-  factory Paging.fromJson(Map<String, dynamic> json) => Paging(
-    page: json["page"],
-    limit: json["limit"],
-    total: json["total"],
-    cursor: json["cursor"],
-    nextCursor: json["next_cursor"],
-  );
+    factory Transcript.fromJson(Map<String, dynamic> json) => Transcript(
+        id: json["id"],
+        content: json["content"],
+    );
 
-  Map<String, dynamic> toJson() => {
-    "page": page,
-    "limit": limit,
-    "total": total,
-    "cursor": cursor,
-    "next_cursor": nextCursor,
-  };
+    Map<String, dynamic> toJson() => {
+        "id": id,
+        "content": content,
+    };
 }

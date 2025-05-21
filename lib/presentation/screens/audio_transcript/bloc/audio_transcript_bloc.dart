@@ -24,7 +24,9 @@ class AudioTranscriptBloc extends Bloc<AudioTranscriptEvent, AudioTranscriptStat
     emit(AudioTranscriptLoadingState());
     try {
       var noteAudioDetailData = await noteRepo.getAudio(event.audioId);
-      if (noteAudioDetailData.data?.summary?.summaryText != null) {
+      if (noteAudioDetailData.data?.transcript?.content != null) {
+        emit(AudioTranscriptSuccessState(audioNoteModel: noteAudioDetailData));
+      } else {
         emit(AudioTranscriptSuccessState(audioNoteModel: noteAudioDetailData));
       }
     } on ApiException catch (e) {

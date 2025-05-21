@@ -15,7 +15,7 @@ class TAppbar extends StatelessWidget implements PreferredSizeWidget {
     this.leadingOnPressed,
     this.centerTitle = false,
     this.paddingTitle = TSizes.md,
-    this.colorBackArrow = TColors.primary
+    this.colorBackArrow = TColors.black
   });
 
   final Widget? title;

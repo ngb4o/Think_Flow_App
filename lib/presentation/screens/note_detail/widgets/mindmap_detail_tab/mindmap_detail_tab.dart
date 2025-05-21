@@ -43,7 +43,7 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
       // Fetch mindmap data
       context
           .read<NoteDetailBloc>()
-          .add(NoteDetailInitialFetchDataMindmapEvent(noteId: widget.noteId));
+          .add(NoteDetailInitialFetchDataMindmapEvent(noteId: widget.noteId, permission: widget.permission));
     });
   }
 
@@ -58,15 +58,16 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
   }
 
   void _updateMindmapFromData(NoteModel noteData) {
-    if (noteData.data?.mindmap?.mindmapData?.parentContent?.isNotEmpty == true) {
+    if (noteData.data?.mindmap?.mindmapData?.parentContent?.isNotEmpty ==
+        true) {
       // Create a root node to hold all branches
       final rootNode = MindmapNode(text: 'Root');
-      
+
       // Convert all parent content to mindmap nodes
       for (var content in noteData.data!.mindmap!.mindmapData!.parentContent!) {
         rootNode.children.add(_convertToMindmapNode(content));
       }
-      
+
       setState(() {
         _rootNode = rootNode;
         _mindmapId = noteData.data!.mindmap!.id!;
@@ -92,6 +93,7 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
             NoteDetailUpdateMindmapEvent(
               mindmapId: mindmapId,
               mindmapData: mindmapData,
+              permission: widget.permission,
             ),
           );
     }
@@ -142,7 +144,7 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
     }
     context
         .read<NoteDetailBloc>()
-        .add(NoteDetailCreateMindmapEvent(noteId: widget.noteId));
+        .add(NoteDetailCreateMindmapEvent(noteId: widget.noteId, permission: widget.permission));
   }
 
   void _showNodeOptions({
@@ -154,7 +156,7 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
     if (widget.permission == 'read') {
       TLoaders.errorSnackBar(context,
           title: 'Error',
-          message: 'You do not have permission to edit this note');
+          message: 'You do not have permission to edit this note. Please contact the owner to update permissions.');
       return;
     }
     showModalBottomSheet(
@@ -425,7 +427,7 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
 
   Widget _buildMindMapBranch(MindmapNode node,
       {bool isRoot = false, MindmapNode? parent}) {
-        final isDarkMode = THelperFunctions.isDarkMode(context);
+    final isDarkMode = THelperFunctions.isDarkMode(context);
     if (node.children.isEmpty) {
       return _buildMindMapNode(node, isRoot: isRoot, parent: parent);
     }
@@ -437,7 +439,6 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
           children: node.children
               .map((child) => _buildMindMapBranch(child, parent: node))
               .toList(),
-          
         ),
       ],
     );
@@ -470,9 +471,9 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
                 const SizedBox(height: TSizes.spaceBtwItems),
                 ElevatedButton.icon(
                   onPressed: () {
-                    context
-                        .read<NoteDetailBloc>()
-                        .add(NoteDetailInitialFetchDataMindmapEvent(noteId: widget.noteId));
+                    context.read<NoteDetailBloc>().add(
+                        NoteDetailInitialFetchDataMindmapEvent(
+                            noteId: widget.noteId, permission: widget.permission));
                   },
                   icon: const Icon(Iconsax.refresh),
                   label: const Text('Reload'),
@@ -488,7 +489,24 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
         }
 
         if (_rootNode == null) {
-          return const Center(child: LoadingSpinkit.loadingPage);
+          return Center(
+            child: (widget.permission == 'read'
+                ? Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.lock_outline, size: 48, color: Colors.grey),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Mindmap note has not been created yet. Please contact the owner to create.',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  )
+                : LoadingSpinkit.loadingPage),
+          );
         }
 
         return Stack(
@@ -501,7 +519,8 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
                   onScaleUpdate: (details) {
                     setState(() {
                       _scale = (_scale * details.scale).clamp(0.1, 2.0);
-                      _transformationController.value = Matrix4.identity()..scale(_scale);
+                      _transformationController.value = Matrix4.identity()
+                        ..scale(_scale);
                     });
                   },
                   child: InteractiveViewer(
@@ -514,9 +533,10 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: _rootNode!.children.map((node) => 
-                          _buildMindMapBranch(node, isRoot: true)
-                        ).toList(),
+                        children: _rootNode!.children
+                            .map((node) =>
+                                _buildMindMapBranch(node, isRoot: true))
+                            .toList(),
                       ),
                     ),
                   ),
@@ -546,17 +566,18 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
                         padding: const EdgeInsets.all(TSizes.sm),
                         child: LoadingSpinkit.loadingButton,
                       )
-                    else
+                    else if (widget.permission != 'read') ...[
                       IconButton(
                         icon: Icon(Iconsax.refresh),
                         onPressed: _resetMindmap,
                         tooltip: 'Zoom in',
                       ),
-                    Container(
-                      width: 1,
-                      height: 24,
-                      color: Colors.grey.withOpacity(0.3),
-                    ),
+                      Container(
+                        width: 1,
+                        height: 24,
+                        color: Colors.grey.withOpacity(0.3),
+                      ),
+                    ],
                     IconButton(
                       icon: const Icon(Iconsax.search_zoom_out),
                       onPressed: _zoomOut,
@@ -568,7 +589,9 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
                       color: Colors.grey.withOpacity(0.3),
                     ),
                     IconButton(
-                      icon: Icon(Iconsax.search_zoom_in_1,),
+                      icon: Icon(
+                        Iconsax.search_zoom_in_1,
+                      ),
                       onPressed: _zoomIn,
                       tooltip: 'Zoom in',
                     ),

@@ -46,10 +46,13 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
 
   _updateNote(String noteId, String title) {
     if (widget.permission == 'read') {
-      TLoaders.errorSnackBar(context, title: 'Error', message: 'You do not have permission to edit this note');
+      TLoaders.errorSnackBar(context,
+          title: 'Error',
+          message: 'You do not have permission to edit this note');
       return;
     }
-    context.read<NoteDetailBloc>().add(NoteDetailClickButtonUpdateTitleEvent(noteId: noteId, title: title));
+    context.read<NoteDetailBloc>().add(
+        NoteDetailClickButtonUpdateTitleEvent(noteId: noteId, title: title));
   }
 
   void shareNoteBottomSheet(String noteId) {
@@ -71,7 +74,8 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
           Navigator.pop(context);
           TLoaders.successSnackBar(context, title: 'Update successfully');
         } else if (state is NoteUpdateDetailErrorActionState) {
-          TLoaders.errorSnackBar(context, title: 'Update failed', message: state.message);
+          TLoaders.errorSnackBar(context,
+              title: 'Update failed', message: state.message);
         } else if (state is NotesUpdateNotifyUpdateActionState) {
           context.read<HomeBloc>().add(HomeInitialFetchDataEvent());
           context.read<NoteShareBloc>().add(NoteShareInitialFetchDataEvent());
@@ -85,12 +89,14 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
               if (state is NoteUpdateDetailLoadingState)
                 LoadingSpinkit.loadingButton
               else if (widget.permission != 'read') ...[
+                if (widget.permission != 'write')
+                  IconButton(
+                    onPressed: () => shareNoteBottomSheet(widget.noteId),
+                    icon: Icon(Iconsax.share),
+                  ),
                 IconButton(
-                  onPressed: () => shareNoteBottomSheet(widget.noteId),
-                  icon: Icon(Iconsax.share),
-                ),
-                IconButton(
-                  onPressed: () => _updateNote(widget.noteId, _titleController.text.trim()),
+                  onPressed: () =>
+                      _updateNote(widget.noteId, _titleController.text.trim()),
                   icon: Icon(Iconsax.tick_square4),
                 ),
               ],
@@ -111,7 +117,8 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                   EditableText(
                     controller: _titleController,
                     focusNode: _titleFocusNode,
-                    style: Theme.of(context).textTheme.headlineMedium!.copyWith(),
+                    style:
+                        Theme.of(context).textTheme.headlineMedium!.copyWith(),
                     cursorColor: Theme.of(context).primaryColor,
                     backgroundCursorColor: Colors.grey,
                     onChanged: (value) {
@@ -142,16 +149,20 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                       ),
                     ],
                   ),
-                  if (widget.permission == 'read' || widget.permission == 'write')
+                  if (widget.permission == 'read' ||
+                      widget.permission == 'write')
                     Column(
                       children: [
                         SizedBox(height: TSizes.sm),
                         Row(
                           children: [
-                            Text('Share by ', style: Theme.of(context).textTheme.bodySmall),
+                            Text('Share by ',
+                                style: Theme.of(context).textTheme.bodySmall),
                             SizedBox(width: TSizes.xs),
-                            TCircularImage(image: TImages.user, height: 30, width: 30),
-                            Text(' ${widget.ownerName}', style: Theme.of(context).textTheme.bodySmall),
+                            TCircularImage(
+                                image: TImages.user, height: 30, width: 30),
+                            Text(' ${widget.ownerName}',
+                                style: Theme.of(context).textTheme.bodySmall),
                           ],
                         ),
                       ],
@@ -159,10 +170,19 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                   SizedBox(height: TSizes.spaceBtwItems),
                   TTabBar(
                     tabs: [
-                      Tab(icon: Icon(Iconsax.document_text, size:20,), text: tabs[0]),
-                      Tab(icon: Icon(Iconsax.microphone,size:20), text: tabs[1]),
-                      Tab(icon: Icon(Iconsax.flash, size:20), text: tabs[2]),
-                      Tab(icon: Icon(Iconsax.hierarchy_3, size:20), text: tabs[3]),
+                      Tab(
+                          icon: Icon(
+                            Iconsax.document_text,
+                            size: 20,
+                          ),
+                          text: tabs[0]),
+                      Tab(
+                          icon: Icon(Iconsax.microphone, size: 20),
+                          text: tabs[1]),
+                      Tab(icon: Icon(Iconsax.flash, size: 20), text: tabs[2]),
+                      Tab(
+                          icon: Icon(Iconsax.hierarchy_3, size: 20),
+                          text: tabs[3]),
                     ],
                     currentIndex: currentTabIndex,
                     onTap: (value) {
@@ -180,10 +200,24 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                     child: TabBarView(
                       physics: NeverScrollableScrollPhysics(),
                       children: [
-                        KeepAliveWrapper(child: TextDetailTab(noteId: widget.noteId, permission: widget.permission, titleNote: widget.title)),
-                        KeepAliveWrapper(child: AudioDetailTab(noteId: widget.noteId, permission: widget.permission)),
-                        KeepAliveWrapper(child: SummaryDetailTab(noteId: widget.noteId, permission: widget.permission)),
-                        KeepAliveWrapper(child: MindmapDetailTab(noteId: widget.noteId, permission: widget.permission,)),
+                        KeepAliveWrapper(
+                            child: TextDetailTab(
+                                noteId: widget.noteId,
+                                permission: widget.permission,
+                                titleNote: widget.title)),
+                        KeepAliveWrapper(
+                            child: AudioDetailTab(
+                                noteId: widget.noteId,
+                                permission: widget.permission)),
+                        KeepAliveWrapper(
+                            child: SummaryDetailTab(
+                                noteId: widget.noteId,
+                                permission: widget.permission)),
+                        KeepAliveWrapper(
+                            child: MindmapDetailTab(
+                          noteId: widget.noteId,
+                          permission: widget.permission,
+                        )),
                       ],
                     ),
                   ),

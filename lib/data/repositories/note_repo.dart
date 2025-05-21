@@ -11,6 +11,7 @@ import 'package:think_flow/data/models/text_note_model.dart';
 import '../data_sources/remote/api_endpoint_urls.dart';
 import '../data_sources/remote/api_exception.dart';
 import '../models/audio_note_model.dart';
+import '../models/list_audio_note_model.dart';
 import '../models/note_member_model.dart';
 import '../models/note_model.dart';
 
@@ -75,13 +76,32 @@ class NoteRepo extends ApiClient {
   }
 
   // Get audio note
-  Future<AudioNoteModel> getListAudioNote(String noteId) async {
+  Future<AudioNoteModel> getAudio(String audioId) async {
+    try {
+      final response = await getRequest(path: '${ApiEndpointUrls.audio}/$audioId');
+      if (response.statusCode == 200) {
+      
+        final responseData = audioNoteModelFromJson(jsonEncode(response.data));
+        return responseData;
+      } else {
+        throw ApiException(message: 'Get audio failed');
+      }
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      print('Error in getAudio: $e');
+      throw ApiException(message: 'An unexpected error occurred');
+    }
+  }
+
+  // Get listaudio note
+  Future<ListAudioNoteModel> getListAudioNote(String noteId) async {
     try {
       final response = await getRequest(
-        path: '${ApiEndpointUrls.listAudioNote}?note-id=$noteId',
+        path: '${ApiEndpointUrls.audio}?note-id=$noteId',
       );
       if (response.statusCode == 200) {
-        final responseData = audioNoteModelFromJson(jsonEncode(response.data));
+        final responseData = listAudioNoteModelFromJson(jsonEncode(response.data));
         return responseData;
       } else {
         throw ApiException(message: 'Fail to get audio note');
@@ -314,13 +334,31 @@ class NoteRepo extends ApiClient {
   Future<NoteModel> createMindmapNote(String id) async {
     try {
       final response = await postRequest(
-        path: '${ApiEndpointUrls.note}/$id${ApiEndpointUrls.createmindmapNote}',
+        path: '${ApiEndpointUrls.note}/$id${ApiEndpointUrls.createMindmapNote}',
       );
       if (response.statusCode == 200) {
         final responseData = noteModelFromJson(jsonEncode(response.data));
         return responseData;
       } else {
         throw ApiException(message: 'Create mindmap note failed');
+      }
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      throw ApiException(message: 'An unexpected error occurred');
+    }
+  }
+
+  Future<DataModel> createAudioSummaryText(String audioId) async {
+    try {
+      final response = await postRequest(
+        path: '${ApiEndpointUrls.audio}/$audioId${ApiEndpointUrls.createSummaryNote}',
+      );
+      if (response.statusCode == 200) {
+        final responseData = dataModelFromJson(jsonEncode(response.data));
+        return responseData;
+      } else {
+        throw ApiException(message: 'Create audio summary note failed');
       }
     } on ApiException {
       rethrow;
@@ -477,6 +515,29 @@ class NoteRepo extends ApiClient {
     }
   }
 
+  // Update transcript note
+  Future<DataModel> updateTranscriptNote(String transcriptId, String content) async {
+    Map body = {
+      "content": content,
+    };
+    try {
+      final response = await patchRequest(
+        path: '${ApiEndpointUrls.transcript}/$transcriptId',
+        body: body,
+      );
+      if (response.statusCode == 200) {
+        final responseData = dataModelFromJson(jsonEncode(response.data));
+        return responseData;
+      } else {
+        throw ApiException(message: 'Update transcript audio failed');
+      }
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      throw ApiException(message: 'An unexpected error occurred');
+    }
+  }
+
   // ---------- DELETE ---------- //
   // Delete note
   Future<DataModel> deleteNote(String noteId) async {
@@ -498,7 +559,7 @@ class NoteRepo extends ApiClient {
   // Delete audio
   Future<DataModel> deleteAudio(String audioId) async {
     try {
-      final response = await deleteRequest(path: '${ApiEndpointUrls.listAudioNote}/$audioId');
+      final response = await deleteRequest(path: '${ApiEndpointUrls.audio}/$audioId');
       if (response.statusCode == 200) {
         final responseData = dataModelFromJson(jsonEncode(response.data));
         return responseData;

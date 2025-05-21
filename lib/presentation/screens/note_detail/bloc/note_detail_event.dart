@@ -28,15 +28,17 @@ class NoteDetailInitialFetchDataListAudioEvent extends NoteDetailEvent {
 // ==================== SUMMARY FEATURE ====================
 class NoteDetailInitialFetchDataSummaryNoteEvent extends NoteDetailEvent {
   final String noteId;
+  final String permission;
 
-  NoteDetailInitialFetchDataSummaryNoteEvent({required this.noteId});
+  NoteDetailInitialFetchDataSummaryNoteEvent({required this.noteId, required this.permission});
 }
 
 // ==================== MINDMAP FEATURE ====================
 class NoteDetailInitialFetchDataMindmapEvent extends NoteDetailEvent {
   final String noteId;
+  final String permission;
 
-  NoteDetailInitialFetchDataMindmapEvent({required this.noteId});
+  NoteDetailInitialFetchDataMindmapEvent({required this.noteId, required this.permission});
 }
 
 // ==================== NOTE UPDATE FEATURE ====================
@@ -81,23 +83,26 @@ class NoteDetailClickButtonUpdateSummaryTextEvent extends NoteDetailEvent {
 // ==================== SUMMARY CREATE FEATURE ====================
 class NoteDetailCreateSummaryTextEvent extends NoteDetailEvent {
   final String noteId;
+  final String permission;
 
-  NoteDetailCreateSummaryTextEvent({required this.noteId});
+  NoteDetailCreateSummaryTextEvent({required this.noteId, required this.permission});
 }
 
 // ==================== MINDMAP CREATE FEATURE ====================
 class NoteDetailCreateMindmapEvent extends NoteDetailEvent {
   final String noteId;
+  final String permission;
 
-  NoteDetailCreateMindmapEvent({required this.noteId});
+  NoteDetailCreateMindmapEvent({required this.noteId, required this.permission});
 }
 
 // ==================== MINDMAP UPDATE FEATURE ====================
 class NoteDetailUpdateMindmapEvent extends NoteDetailEvent {
   final String mindmapId;
   final Map<String, dynamic> mindmapData;
+  final String permission;
 
-  NoteDetailUpdateMindmapEvent({required this.mindmapId, required this.mindmapData});
+  NoteDetailUpdateMindmapEvent({required this.mindmapId, required this.mindmapData, required this.permission});
 }
 
 class NoteDetaiClickButtonNavigationToSummaryTextEvent extends NoteDetailEvent {

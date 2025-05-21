@@ -17,11 +17,7 @@ class Utils {
               {
                 "type": "paragraph",
                 "content": [
-                  {
-                    "type": "text",
-                    "text": "",
-                    "marks": []
-                  }
+                  {"type": "text", "text": "", "marks": []}
                 ]
               }
             ]
@@ -32,7 +28,8 @@ class Utils {
     };
   }
 
-  static Map<String, dynamic> convertDeltaToContent(List<Map<String, dynamic>> delta) {
+  static Map<String, dynamic> convertDeltaToContent(
+      List<Map<String, dynamic>> delta) {
     String plainText = '';
     List<Map<String, dynamic>> paragraphs = [];
     Map<String, dynamic> currentParagraph = {
@@ -40,7 +37,7 @@ class Utils {
       "attrs": {"textAlign": null},
       "content": []
     };
-    
+
     for (var op in delta) {
       if (op['insert'] == '\n') {
         if (currentParagraph['content'].isNotEmpty) {
@@ -55,7 +52,7 @@ class Utils {
       } else {
         String text = op['insert'];
         plainText += text;
-        
+
         Map<String, dynamic> textNode = {
           "type": "text",
           "text": text,
@@ -64,7 +61,7 @@ class Utils {
         if (op['attributes'] != null) {
           List<Map<String, dynamic>> marks = [];
           Map<String, dynamic> attributes = op['attributes'];
-          
+
           if (attributes['bold'] == true) {
             marks.add({"type": "bold"});
           }
@@ -77,16 +74,16 @@ class Utils {
           if (attributes['strike'] == true) {
             marks.add({"type": "strike"});
           }
-          
+
           if (marks.isNotEmpty) {
             textNode['marks'] = marks;
           }
         }
-        
+
         currentParagraph['content'].add(textNode);
       }
     }
-    
+
     // Add the last paragraph if it has content
     if (currentParagraph['content'].isNotEmpty) {
       paragraphs.add(currentParagraph);
@@ -95,19 +92,29 @@ class Utils {
     return {
       "text_content": [
         {
-          "body": {
-            "type": "doc",
-            "content": paragraphs
-          }
+          "body": {"type": "doc", "content": paragraphs}
         }
       ],
       "text_string": plainText.trim()
     };
   }
-  
+
   static String formatDate(DateTime? date) {
     if (date == null) return '';
-    final months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    final months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
+    ];
     return '${months[date.month - 1]} ${date.day}';
   }
 
@@ -169,7 +176,8 @@ class Utils {
     if (content == null || content.isEmpty) return Delta()..insert('\n');
 
     final bodyContent = content[0].body?.content;
-    if (bodyContent == null || bodyContent.isEmpty) return Delta()..insert('\n');
+    if (bodyContent == null || bodyContent.isEmpty)
+      return Delta()..insert('\n');
 
     final delta = Delta();
 
@@ -285,7 +293,8 @@ class Utils {
             padding: const EdgeInsets.only(bottom: 8),
             child: Text(
               content,
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 15),
+              style:
+                  Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 15),
             ),
           );
         } else if (line.startsWith(RegExp(r'^\d+\.\d+\.\s'))) {
@@ -319,4 +328,26 @@ class Utils {
       }).toList(),
     );
   }
+
+  static String getTimeAgo(DateTime? dateTime) {
+  if (dateTime == null) return '';
+
+  final now = DateTime.now();
+  final difference = now.difference(dateTime);
+
+  if (difference.inDays > 365) {
+    return '${(difference.inDays / 365).floor()} year${(difference.inDays / 365).floor() > 1 ? 's' : ''} ago';
+  } else if (difference.inDays > 30) {
+    return '${(difference.inDays / 30).floor()} month${(difference.inDays / 30).floor() > 1 ? 's' : ''} ago';
+  } else if (difference.inDays > 0) {
+    return '${difference.inDays} day${difference.inDays > 1 ? 's' : ''} ago';
+  } else if (difference.inHours > 0) {
+    return '${difference.inHours} hour${difference.inHours > 1 ? 's' : ''} ago';
+  } else if (difference.inMinutes > 0) {
+    return '${difference.inMinutes} minute${difference.inMinutes > 1 ? 's' : ''} ago';
+  } else {
+    return 'Just now';
+  }
+}
+
 }

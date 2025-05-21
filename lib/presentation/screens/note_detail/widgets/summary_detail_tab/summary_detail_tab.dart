@@ -32,7 +32,7 @@ class _SummaryDetailTabState extends State<SummaryDetailTab>
   void _loadSummaryContent() {
     context
         .read<NoteDetailBloc>()
-        .add(NoteDetailInitialFetchDataSummaryNoteEvent(noteId: widget.noteId));
+        .add(NoteDetailInitialFetchDataSummaryNoteEvent(noteId: widget.noteId, permission: widget.permission));
   }
 
   void _resetSummary() {
@@ -43,7 +43,7 @@ class _SummaryDetailTabState extends State<SummaryDetailTab>
       return;
     }
     context.read<NoteDetailBloc>().add(
-          NoteDetailCreateSummaryTextEvent(noteId: widget.noteId),
+          NoteDetailCreateSummaryTextEvent(noteId: widget.noteId, permission: widget.permission),
         );
   }
 
@@ -125,7 +125,24 @@ class _SummaryDetailTabState extends State<SummaryDetailTab>
                     if (summaryText == null || summaryText.isEmpty)
                       SizedBox(
                         height: THelperFunctions.screenHeight(context) * 0.6,
-                        child: const Center(child: LoadingSpinkit.loadingPage),
+                        child: widget.permission == 'read' 
+                          ? Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.lock_outline, size: 48, color: Colors.grey),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    'Summary note has not been created yet. Please contact the owner to create.',
+                                    textAlign: TextAlign.center,
+                                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          : const Center(child: LoadingSpinkit.loadingPage),
                       )
                     else
                       GestureDetector(
@@ -139,7 +156,7 @@ class _SummaryDetailTabState extends State<SummaryDetailTab>
                   ],
                 ),
               ),
-              if (summaryText != null)
+              if (summaryText != null && widget.permission != 'read')
                 Positioned(
                   right: 16,
                   bottom: 16,

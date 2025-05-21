@@ -4,8 +4,11 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:think_flow/data/repositories/auth_repo.dart';
 import 'package:think_flow/data/repositories/note_repo.dart';
+import 'package:think_flow/data/repositories/noti_repo.dart';
 import 'package:think_flow/data/repositories/user_repo.dart';
 import 'package:think_flow/presentation/router/router_imports.dart';
+import 'package:think_flow/presentation/screens/audio_summary/bloc/audio_summary_bloc.dart';
+import 'package:think_flow/presentation/screens/audio_transcript/bloc/audio_transcript_bloc.dart';
 import 'package:think_flow/presentation/screens/home/bloc/home_bloc.dart';
 import 'package:think_flow/presentation/screens/home/widgets/home_share_note/bloc/home_share_note_bloc.dart';
 import 'package:think_flow/presentation/screens/login/bloc/login_bloc.dart';
@@ -13,6 +16,8 @@ import 'package:think_flow/presentation/screens/note_archived/bloc/note_archived
 import 'package:think_flow/presentation/screens/note_detail/bloc/note_detail_bloc.dart';
 import 'package:think_flow/presentation/screens/note_share/bloc/note_share_bloc.dart';
 import 'package:think_flow/presentation/screens/notes/bloc/notes_bloc.dart';
+import 'package:think_flow/presentation/screens/notification/bloc/notification_bloc.dart';
+import 'package:think_flow/presentation/screens/password_configuration/bloc/password_configuration_bloc.dart';
 import 'package:think_flow/presentation/screens/profile/bloc/profile_bloc.dart';
 import 'package:think_flow/presentation/screens/settings/bloc/settings_bloc.dart';
 import 'package:think_flow/presentation/screens/signup/bloc/signup_bloc.dart';
@@ -31,10 +36,12 @@ class App extends StatelessWidget {
     final AuthRepo authRepo = AuthRepo();
     final UserRepo userRepo = UserRepo();
     final NoteRepo noteRepo = NoteRepo();
+    final NotificationRepo notificationRepo = NotificationRepo();
 
     final LoginBloc loginBloc = LoginBloc(authRepo);
     final SignupBloc signupBloc = SignupBloc(authRepo);
     final VerifyEmailBloc verifyEmailBloc = VerifyEmailBloc(authRepo);
+    final PasswordConfigurationBloc passwordConfigurationBloc = PasswordConfigurationBloc(authRepo);
     final SettingsBloc settingsBloc = SettingsBloc(authRepo, userRepo);
     final HomeBloc homeBloc = HomeBloc(noteRepo);
     final NotesBloc notesBloc = NotesBloc(noteRepo);
@@ -44,6 +51,9 @@ class App extends StatelessWidget {
     final HomeShareNoteBloc homeShareNoteBloc = HomeShareNoteBloc(noteRepo);
     final ProfileBloc profileBloc = ProfileBloc(userRepo);
     final TextSummaryBloc textSummaryBloc = TextSummaryBloc(noteRepo);
+    final AudioSummaryBloc audioSummaryBloc = AudioSummaryBloc(noteRepo);
+    final AudioTranscriptBloc audioTranscriptBloc = AudioTranscriptBloc(noteRepo);
+    final NotificationBloc notificationBloc = NotificationBloc(notificationRepo);
     return MultiBlocProvider(
       providers: [
         // Login
@@ -52,6 +62,8 @@ class App extends StatelessWidget {
         BlocProvider(create: (context) => signupBloc),
         // Verify mail
         BlocProvider(create: (context) => verifyEmailBloc),
+        // Password configuration
+        BlocProvider(create: (context) => passwordConfigurationBloc),
         // Settings
         BlocProvider(create: (context) => settingsBloc),
         // Home
@@ -70,6 +82,12 @@ class App extends StatelessWidget {
         BlocProvider(create: (context) => profileBloc),
         // Text summary
         BlocProvider(create: (context) => textSummaryBloc),
+        // Audio summary
+        BlocProvider(create: (context) => audioSummaryBloc),
+        // Audio transcript
+        BlocProvider(create: (context) => audioTranscriptBloc),
+        // Notification
+        BlocProvider(create: (context) => notificationBloc),
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,

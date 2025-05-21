@@ -16,7 +16,9 @@ class THomeAppBar extends StatelessWidget {
       this.centerAppbar = false,
       this.showBackArrow = false,
       this.centerTitle = false,
-      this.showIconFilter = false});
+      this.showIconFilter = false,
+      this.actionButtonOnPressed,
+      });
 
   final bool iconSecurityActionAppbar;
   final bool showActionButtonAppbar;
@@ -24,6 +26,7 @@ class THomeAppBar extends StatelessWidget {
   final bool showBackArrow;
   final bool centerTitle;
   final bool showIconFilter;
+  final VoidCallback? actionButtonOnPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +58,7 @@ class THomeAppBar extends StatelessWidget {
               TActionAppbarIcon(
                 icon: iconSecurityActionAppbar ? Icons.security : Iconsax.notification5,
                 iconColor: TColors.primary,
-                onPressed: () {},
+                onPressed: actionButtonOnPressed ?? () {},
               ),
               if (showIconFilter)
                 TActionAppbarIcon(

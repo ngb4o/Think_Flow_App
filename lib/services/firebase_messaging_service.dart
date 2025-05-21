@@ -1,5 +1,6 @@
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:think_flow/data/data_sources/remote/api_endpoint_urls.dart';
 import 'package:think_flow/services/local_notifications_service.dart';
 import 'package:think_flow/data/data_sources/remote/api_client.dart';
 import 'dart:io' show Platform;
@@ -110,7 +111,7 @@ class FirebaseMessagingService {
   Future<void> _registerFCMToken(String token) async {
     try {
       final response = await _apiClient.postRequest(
-        path: '/notification/v1/notifications/fcm-token',
+        path: ApiEndpointUrls.registerFcmToken,
         body: {
           'token': token,
           'device_id': _deviceId ?? 'unknown-device',
