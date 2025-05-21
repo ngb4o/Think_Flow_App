@@ -9,6 +9,7 @@ import 'package:think_flow/data/models/note_model.dart';
 import 'package:think_flow/data/models/text_note_model.dart';
 import 'package:think_flow/data/repositories/note_repo.dart';
 
+import '../../../../data/models/list_audio_note_model.dart';
 import '../../../../data/models/note_member_model.dart';
 
 part 'note_detail_event.dart';
@@ -23,32 +24,36 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
     on<NoteTextDetailInitialFetchDataEvent>(noteTextDetailInitialFetchDataEvent);
 
     // ==================== AUDIO NOTE FEATURE ====================
-    on<NoteAudioDetailInitialFetchDataEvent>(noteAudioDetailInitialFetchDataEvent);
+    on<NoteDetailInitialFetchDataListAudioEvent>(noteDetailInitialFetchDataListAudioEvent);
 
     // ==================== NOTE MEMBER FEATURE ====================
     on<NoteDetailInitialFetchDataMemberEvent>(noteDetailInitialFetchDataMemberEvent);
 
     // ==================== NOTE UPDATE FEATURE ====================
-    on<NoteClickButtonUpdateEvent>(noteClickButtonUpdateEvent);
+    on<NoteDetailClickButtonUpdateTitleEvent>(noteClickButtonUpdateEvent);
 
     // ==================== TEXT NOTE UPDATE FEATURE ====================
-    on<NoteClickButtonUpdateTextEvent>(noteClickButtonUpdateTextEvent);
+    on<NoteDetailClickButtonUpdateTextEvent>(noteClickButtonUpdateTextEvent);
 
     // ==================== AUDIO NOTE CREATE/DELETE FEATURE ====================
-    on<NoteClickButtonCreateAudioEvent>(noteClickButtonCreateAudioEvent);
-    on<NoteClickButtonDeleteAudioEvent>(noteClickButtonDeleteAudioEvent);
+    on<NoteDetailClickButtonCreateAudioEvent>(noteClickButtonCreateAudioEvent);
+    on<NoteDetailClickButtonDeleteAudioEvent>(noteClickButtonDeleteAudioEvent);
 
     // ==================== SUMMARY NOTE FEATURE ====================
-    on<NoteInitialFetchDataSummaryNoteEvent>(noteInitialFetchDataSummaryNoteEvent);
-    on<NoteClickButtonUpdateSummaryNoteEvent>(noteClickButtonUpdateSummaryNoteEvent);
-    on<NoteDetailCreateSummaryNoteEvent>(noteDetailCreateSummaryNoteEvent);
+    on<NoteDetailInitialFetchDataSummaryNoteEvent>(noteInitialFetchDataSummaryNoteEvent);
+    on<NoteDetailClickButtonUpdateSummaryTextEvent>(noteClickButtonUpdateSummaryNoteEvent);
+    on<NoteDetailCreateSummaryTextEvent>(noteDetailCreateSummaryNoteEvent);
 
     // ==================== MINDMAP NOTE FEATURE ====================
-    on<NoteInitialFetchDataMindmapEvent>(noteInitialFetchDataMindmapEvent);
+    on<NoteDetailInitialFetchDataMindmapEvent>(noteInitialFetchDataMindmapEvent);
     on<NoteDetailCreateMindmapEvent>(noteDetailCreateMindmapEvent);
     on<NoteDetailUpdateMindmapEvent>(noteDetailUpdateMindmapEvent);
 
     on<NoteDetaiClickButtonNavigationToSummaryTextEvent>(noteDetaiClickButtonNavigationToSummaryTextEvent);
+
+    on<NoteDetaiClickButtonNavigationToAudioSummaryTextEvent>(noteDetaiClickButtonNavigationToAudioSummaryTextEvent);
+
+    on<NoteDetaiClickButtonNavigationToAudioTranscriptTextEvent>(noteDetaiClickButtonNavigationToAudioTranscriptTextEvent);
   }
 
   // ==================== TEXT NOTE FEATURE ====================
@@ -70,20 +75,20 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
   }
 
   // ==================== AUDIO NOTE FEATURE ====================
-  FutureOr<void> noteAudioDetailInitialFetchDataEvent(
-      NoteAudioDetailInitialFetchDataEvent event, Emitter<NoteDetailState> emit) async {
-    emit(NoteAudioDetailLoadingState());
+  FutureOr<void> noteDetailInitialFetchDataListAudioEvent(
+      NoteDetailInitialFetchDataListAudioEvent event, Emitter<NoteDetailState> emit) async {
+    emit(NoteListAudioDetailLoadingState());
     try {
       var noteAudioDetailData = await noteRepo.getListAudioNote(event.noteId);
       if (noteAudioDetailData.data != null) {
-        emit(NoteAudioDetailSuccessState(audioNoteModel: noteAudioDetailData));
+        emit(NoteListAudioDetailSuccessState(listAudioNoteModel: noteAudioDetailData));
       }
     } on ApiException catch (e) {
-      emit(NoteAudioDetailErrorState());
-      emit(NoteAudioDetailErrorActionState(message: e.message));
+      emit(NoteListAudioDetailErrorState());
+      emit(NoteListAudioDetailErrorActionState(message: e.message));
     } catch (e) {
-      emit(NoteAudioDetailErrorState());
-      emit(NoteAudioDetailErrorActionState(message: 'An unexpected error occurred'));
+      emit(NoteListAudioDetailErrorState());
+      emit(NoteListAudioDetailErrorActionState(message: 'An unexpected error occurred'));
     }
   }
 
@@ -106,7 +111,7 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
   }
 
   // ==================== NOTE UPDATE FEATURE ====================
-  FutureOr<void> noteClickButtonUpdateEvent(NoteClickButtonUpdateEvent event, Emitter<NoteDetailState> emit) async {
+  FutureOr<void> noteClickButtonUpdateEvent(NoteDetailClickButtonUpdateTitleEvent event, Emitter<NoteDetailState> emit) async {
     emit(NoteUpdateDetailLoadingState());
     try {
       var noteUpdateData = await noteRepo.updateNote(event.noteId, event.title);
@@ -123,7 +128,7 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
 
   // ==================== TEXT NOTE UPDATE FEATURE ====================
   FutureOr<void> noteClickButtonUpdateTextEvent(
-      NoteClickButtonUpdateTextEvent event, Emitter<NoteDetailState> emit) async {
+      NoteDetailClickButtonUpdateTextEvent event, Emitter<NoteDetailState> emit) async {
     emit(NoteUpdateTextDetailLoadingState());
     try {
       var noteUpdateTextData = await noteRepo.updateTextNote(event.noteId, event.content);
@@ -139,7 +144,7 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
 
   // ==================== AUDIO NOTE CREATE FEATURE ====================
   FutureOr<void> noteClickButtonCreateAudioEvent(
-      NoteClickButtonCreateAudioEvent event, Emitter<NoteDetailState> emit) async {
+      NoteDetailClickButtonCreateAudioEvent event, Emitter<NoteDetailState> emit) async {
     emit(NotesCreateAudioDetailLoadingState());
     try {
       var createAudioData = await noteRepo.createAudiNote(event.id, event.audioFile);
@@ -155,7 +160,7 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
 
   // ==================== AUDIO NOTE DELETE FEATURE ====================
   FutureOr<void> noteClickButtonDeleteAudioEvent(
-      NoteClickButtonDeleteAudioEvent event, Emitter<NoteDetailState> emit) async {
+      NoteDetailClickButtonDeleteAudioEvent event, Emitter<NoteDetailState> emit) async {
     emit(NoteDeleteAudioLoadingState());
     try {
       var createAudioData = await noteRepo.deleteAudio(event.audioId);
@@ -171,13 +176,13 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
 
   // ==================== SUMMARY NOTE FEATURE ====================
   FutureOr<void> noteInitialFetchDataSummaryNoteEvent(
-      NoteInitialFetchDataSummaryNoteEvent event, Emitter<NoteDetailState> emit) async {
+      NoteDetailInitialFetchDataSummaryNoteEvent event, Emitter<NoteDetailState> emit) async {
     emit(NoteSummaryLoadingState());
     try {
       var noteData = await noteRepo.getNote(event.noteId);
       if (noteData.data?.summary == null) {
         // If summary is empty, create a new one
-        add(NoteDetailCreateSummaryNoteEvent(noteId: event.noteId));
+        add(NoteDetailCreateSummaryTextEvent(noteId: event.noteId));
       } else {
         emit(NoteSummarySuccessState(noteModel: noteData));
       }
@@ -191,14 +196,14 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
   }
 
   FutureOr<void> noteDetailCreateSummaryNoteEvent(
-      NoteDetailCreateSummaryNoteEvent event, Emitter<NoteDetailState> emit) async {
+      NoteDetailCreateSummaryTextEvent event, Emitter<NoteDetailState> emit) async {
     emit(NoteDetailCreateSummaryNoteLoadingState());
     try {
       var createSummaryData = await noteRepo.createSummaryNote(event.noteId);
       if (createSummaryData.data != null) {
         emit(NoteDetailCreateSummaryNoteSuccessActionState());
 
-        add(NoteInitialFetchDataSummaryNoteEvent(noteId: event.noteId));
+        add(NoteDetailInitialFetchDataSummaryNoteEvent(noteId: event.noteId));
       }
     } on ApiException catch (e) {
       emit(NoteDetailCreateSummaryNoteErrorActionState(message: e.message));
@@ -208,7 +213,7 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
   }
 
   FutureOr<void> noteClickButtonUpdateSummaryNoteEvent(
-      NoteClickButtonUpdateSummaryNoteEvent event, Emitter<NoteDetailState> emit) async {
+      NoteDetailClickButtonUpdateSummaryTextEvent event, Emitter<NoteDetailState> emit) async {
     emit(NoteUpdateSummaryDetailLoadingState());
     try {
       var noteUpdateSummaryData = await noteRepo.updateSummaryNote(event.noteId, event.summaryText);
@@ -224,7 +229,7 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
 
   // ==================== MINDMAP NOTE FEATURE ====================
   FutureOr<void> noteInitialFetchDataMindmapEvent(
-      NoteInitialFetchDataMindmapEvent event, Emitter<NoteDetailState> emit) async {
+      NoteDetailInitialFetchDataMindmapEvent event, Emitter<NoteDetailState> emit) async {
     emit(NoteMindmapLoadingState());
     try {
       var noteData = await noteRepo.getNote(event.noteId);
@@ -251,7 +256,7 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
       if (createMindmapData.data != null) {
         emit(NoteCreateMindmapSuccessActionState());
         // Reload the mindmap data after creating
-        add(NoteInitialFetchDataMindmapEvent(noteId: event.noteId));
+        add(NoteDetailInitialFetchDataMindmapEvent(noteId: event.noteId));
       }
     } on ApiException catch (e) {
       emit(NoteCreateMindmapErrorActionState(message: e.message));
@@ -268,7 +273,7 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
       if (updateMindmapData.data != null) {
         emit(NoteUpdateMindmapSuccessActionState());
         // Reload the mindmap data after updating
-        add(NoteInitialFetchDataMindmapEvent(noteId: event.mindmapId));
+        add(NoteDetailInitialFetchDataMindmapEvent(noteId: event.mindmapId));
       }
     } on ApiException catch (e) {
       emit(NoteUpdateMindmapErrorActionState(message: e.message));
@@ -280,5 +285,15 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
   FutureOr<void> noteDetaiClickButtonNavigationToSummaryTextEvent(
       NoteDetaiClickButtonNavigationToSummaryTextEvent event, Emitter<NoteDetailState> emit) {
     emit(NoteDetailNavigationToSummaryTextPageActionState());
+  }
+
+  FutureOr<void> noteDetaiClickButtonNavigationToAudioSummaryTextEvent(
+      NoteDetaiClickButtonNavigationToAudioSummaryTextEvent event, Emitter<NoteDetailState> emit) {
+    emit(NoteDetailNavigationToAudioSummaryTextPageActionState(audioId: event.audioId, permission: event.permission));
+  }
+
+  FutureOr<void> noteDetaiClickButtonNavigationToAudioTranscriptTextEvent(
+      NoteDetaiClickButtonNavigationToAudioTranscriptTextEvent event, Emitter<NoteDetailState> emit) {
+    emit(NoteDetailNavigationToAudioTranscriptionTextPageActionState(audioId: event.audioId, permission: event.permission));
   }
 }

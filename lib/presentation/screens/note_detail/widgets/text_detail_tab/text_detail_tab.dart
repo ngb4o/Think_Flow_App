@@ -67,7 +67,7 @@ class _TextDetailTabState extends State<TextDetailTab>
     final content = Utils.convertDeltaToContent(delta);
 
     context.read<NoteDetailBloc>().add(
-          NoteClickButtonUpdateTextEvent(
+          NoteDetailClickButtonUpdateTextEvent(
             noteId: textId,
             content: content,
           ),

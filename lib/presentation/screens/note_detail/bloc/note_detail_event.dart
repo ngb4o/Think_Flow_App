@@ -19,70 +19,70 @@ class NoteDetailInitialFetchDataMemberEvent extends NoteDetailEvent {
 }
 
 // ==================== AUDIO NOTE FEATURE ====================
-class NoteAudioDetailInitialFetchDataEvent extends NoteDetailEvent {
+class NoteDetailInitialFetchDataListAudioEvent extends NoteDetailEvent {
   final String noteId;
 
-  NoteAudioDetailInitialFetchDataEvent({required this.noteId});
+  NoteDetailInitialFetchDataListAudioEvent({required this.noteId});
 }
 
 // ==================== SUMMARY FEATURE ====================
-class NoteInitialFetchDataSummaryNoteEvent extends NoteDetailEvent {
+class NoteDetailInitialFetchDataSummaryNoteEvent extends NoteDetailEvent {
   final String noteId;
 
-  NoteInitialFetchDataSummaryNoteEvent({required this.noteId});
+  NoteDetailInitialFetchDataSummaryNoteEvent({required this.noteId});
 }
 
 // ==================== MINDMAP FEATURE ====================
-class NoteInitialFetchDataMindmapEvent extends NoteDetailEvent {
+class NoteDetailInitialFetchDataMindmapEvent extends NoteDetailEvent {
   final String noteId;
 
-  NoteInitialFetchDataMindmapEvent({required this.noteId});
+  NoteDetailInitialFetchDataMindmapEvent({required this.noteId});
 }
 
 // ==================== NOTE UPDATE FEATURE ====================
-class NoteClickButtonUpdateEvent extends NoteDetailEvent {
+class NoteDetailClickButtonUpdateTitleEvent extends NoteDetailEvent {
   final String noteId;
   final String title;
 
-  NoteClickButtonUpdateEvent({required this.noteId, required this.title});
+  NoteDetailClickButtonUpdateTitleEvent({required this.noteId, required this.title});
 }
 
 // ==================== TEXT NOTE UPDATE FEATURE ====================
-class NoteClickButtonUpdateTextEvent extends NoteDetailEvent {
+class NoteDetailClickButtonUpdateTextEvent extends NoteDetailEvent {
   final String noteId;
   final Map<String, dynamic> content;
 
-  NoteClickButtonUpdateTextEvent({required this.noteId, required this.content});
+  NoteDetailClickButtonUpdateTextEvent({required this.noteId, required this.content});
 }
 
 // ==================== AUDIO NOTE CREATE FEATURE ====================
-class NoteClickButtonCreateAudioEvent extends NoteDetailEvent {
+class NoteDetailClickButtonCreateAudioEvent extends NoteDetailEvent {
   final String id;
   final File audioFile;
 
-  NoteClickButtonCreateAudioEvent({required this.id, required this.audioFile});
+  NoteDetailClickButtonCreateAudioEvent({required this.id, required this.audioFile});
 }
 
 // ==================== AUDIO NOTE DELETE FEATURE ====================
-class NoteClickButtonDeleteAudioEvent extends NoteDetailEvent {
+class NoteDetailClickButtonDeleteAudioEvent extends NoteDetailEvent {
   final String audioId;
 
-  NoteClickButtonDeleteAudioEvent({required this.audioId});
+  NoteDetailClickButtonDeleteAudioEvent({required this.audioId});
 }
 
 // ==================== SUMMARY UPDATE FEATURE ====================
-class NoteClickButtonUpdateSummaryNoteEvent extends NoteDetailEvent {
+class NoteDetailClickButtonUpdateSummaryTextEvent extends NoteDetailEvent {
   final String noteId;
   final String summaryText;
 
-  NoteClickButtonUpdateSummaryNoteEvent({required this.noteId, required this.summaryText});
+  NoteDetailClickButtonUpdateSummaryTextEvent({required this.noteId, required this.summaryText});
 }
 
 // ==================== SUMMARY CREATE FEATURE ====================
-class NoteDetailCreateSummaryNoteEvent extends NoteDetailEvent {
+class NoteDetailCreateSummaryTextEvent extends NoteDetailEvent {
   final String noteId;
 
-  NoteDetailCreateSummaryNoteEvent({required this.noteId});
+  NoteDetailCreateSummaryTextEvent({required this.noteId});
 }
 
 // ==================== MINDMAP CREATE FEATURE ====================
@@ -104,4 +104,18 @@ class NoteDetaiClickButtonNavigationToSummaryTextEvent extends NoteDetailEvent {
   final String textId;
 
   NoteDetaiClickButtonNavigationToSummaryTextEvent({required this.textId});
+}
+
+class NoteDetaiClickButtonNavigationToAudioSummaryTextEvent extends NoteDetailEvent {
+  final String audioId;
+  final String permission;
+
+  NoteDetaiClickButtonNavigationToAudioSummaryTextEvent({required this.audioId, required this.permission});
+}
+
+class NoteDetaiClickButtonNavigationToAudioTranscriptTextEvent extends NoteDetailEvent {
+  final String audioId;
+  final String permission;
+
+  NoteDetaiClickButtonNavigationToAudioTranscriptTextEvent({required this.audioId, required this.permission});
 }

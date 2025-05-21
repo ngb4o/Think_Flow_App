@@ -45,9 +45,7 @@ class TextSummaryBloc extends Bloc<TextSummaryEvent, TextSummaryState> {
       final textData = await noteRepo.createSummaryText(event.textId);
       if (textData.data != null) {
         emit(TextSummaryCreateTextSuccessState());
-        if (event.noteId != null) {
-          add(TextSummaryInitialFetchDataEvent(noteId: event.noteId!));
-        }
+        add(TextSummaryInitialFetchDataEvent(noteId: event.noteId!));
       }
     } on ApiException catch (e) {
       emit(TextSummaryCreateTextErrorActionState(message: e.message));

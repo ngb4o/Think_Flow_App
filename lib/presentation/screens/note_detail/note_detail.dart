@@ -49,7 +49,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
       TLoaders.errorSnackBar(context, title: 'Error', message: 'You do not have permission to edit this note');
       return;
     }
-    context.read<NoteDetailBloc>().add(NoteClickButtonUpdateEvent(noteId: noteId, title: title));
+    context.read<NoteDetailBloc>().add(NoteDetailClickButtonUpdateTitleEvent(noteId: noteId, title: title));
   }
 
   void shareNoteBottomSheet(String noteId) {

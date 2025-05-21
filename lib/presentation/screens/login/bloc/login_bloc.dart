@@ -50,7 +50,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       if (loginData.data != null) {
         emit(LoginSuccessState());
         emit(LoginSuccessActionState());
-        await FirebaseMessagingService.instance().registerPendingToken();
       }
     } on ApiException catch (e) {
       emit(LoginErrorState());

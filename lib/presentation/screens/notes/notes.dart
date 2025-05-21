@@ -66,7 +66,7 @@ class _NotesPageState extends State<NotesPage> with SingleTickerProviderStateMix
               else
                 IconButton(
                   onPressed: () => _createNote(titleController.text.trim()),
-                  icon: Icon(Iconsax.tick_square4, color: TColors.primary),
+                  icon: Icon(Iconsax.tick_square4),
                 ),
             ],
           ),

@@ -43,7 +43,7 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
       // Fetch mindmap data
       context
           .read<NoteDetailBloc>()
-          .add(NoteInitialFetchDataMindmapEvent(noteId: widget.noteId));
+          .add(NoteDetailInitialFetchDataMindmapEvent(noteId: widget.noteId));
     });
   }
 
@@ -472,7 +472,7 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
                   onPressed: () {
                     context
                         .read<NoteDetailBloc>()
-                        .add(NoteInitialFetchDataMindmapEvent(noteId: widget.noteId));
+                        .add(NoteDetailInitialFetchDataMindmapEvent(noteId: widget.noteId));
                   },
                   icon: const Icon(Iconsax.refresh),
                   label: const Text('Reload'),

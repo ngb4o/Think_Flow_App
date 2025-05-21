@@ -27,6 +27,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter/gestures.dart';
 
 import '../../../../common/widgets/warning/t_warning_popup.dart';
+import '../../../../data/models/audio_note_model.dart';
 import '../../../../data/models/text_note_model.dart';
 import '../../../../data/models/note_model.dart';
 import '../../../../services/text_recognizer_service.dart';
@@ -36,7 +37,7 @@ import '../../../../utils/utils.dart';
 import '../../notes/widgets/audio_notes/widgets/recording_list_item.dart';
 import '../../notes/widgets/audio_notes/widgets/recording_controls.dart';
 import '../bloc/note_detail_bloc.dart';
-import 'package:think_flow/data/models/audio_note_model.dart';
+import 'package:think_flow/data/models/list_audio_note_model.dart';
 
 part 'text_detail_tab/text_detail_tab.dart';
 part 'audio_detail_tab/audio_detail_tab.dart';

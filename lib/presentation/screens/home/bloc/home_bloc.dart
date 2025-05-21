@@ -26,7 +26,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<HomeClickButtonDeleteNoteEvent>(homeClickButtonDeleteNoteEvent);
     on<HomeClickButtonNavigationToArchivedPageEvent>(homeClickButtonNavigationToArchivedPageEvent);
     on<HomeClickButtonArchiveNoteEvent>(homeClickButtonArchiveNoteEvent);
+    on<HomeClickButtonNavigationToNotificationPageEvent>(homeClickButtonNavigationToNotificationPageEvent);
   }
+
 
   FutureOr<void> homeInitialFetchDataEvent(HomeInitialFetchDataEvent event, Emitter<HomeState> emit) async {
     emit(HomeLoadingState());
@@ -122,5 +124,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } catch (e) {
       emit(HomeDeleteNoteErrorActionState(message: 'An unexpected error occurred'));
     }
+  }
+
+ FutureOr<void> homeClickButtonNavigationToNotificationPageEvent(
+      HomeClickButtonNavigationToNotificationPageEvent event, Emitter<HomeState> emit) {
+    emit(HomeNavigationToNotificationPageState());
   }
 }

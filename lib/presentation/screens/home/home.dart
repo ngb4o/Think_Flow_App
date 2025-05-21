@@ -128,6 +128,8 @@ class _HomeScreenState extends State<HomeScreen> {
           context.read<HomeBloc>().add(HomeInitialFetchDataEvent());
         } else if(state is HomeArchiveNoteErrorActionState) {
           TLoaders.errorSnackBar(context, title: 'Note archived failed', message: state.message);
+        } else if (state is HomeNavigationToNotificationPageState) {
+          AutoRouter.of(context).push(NotificationScreenRoute());
         }
       },
       builder: (context, state) {
@@ -149,7 +151,9 @@ class _HomeScreenState extends State<HomeScreen> {
               body: Column(
                 children: [
                   // Appbar
-                  THomeAppBar(),
+                  THomeAppBar(
+                    actionButtonOnPressed: () => context.read<HomeBloc>().add(HomeClickButtonNavigationToNotificationPageEvent()),
+                  ),
 
                   // Body
                   Expanded(

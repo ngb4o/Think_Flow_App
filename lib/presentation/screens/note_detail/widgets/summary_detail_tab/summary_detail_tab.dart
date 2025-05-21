@@ -32,7 +32,7 @@ class _SummaryDetailTabState extends State<SummaryDetailTab>
   void _loadSummaryContent() {
     context
         .read<NoteDetailBloc>()
-        .add(NoteInitialFetchDataSummaryNoteEvent(noteId: widget.noteId));
+        .add(NoteDetailInitialFetchDataSummaryNoteEvent(noteId: widget.noteId));
   }
 
   void _resetSummary() {
@@ -43,7 +43,7 @@ class _SummaryDetailTabState extends State<SummaryDetailTab>
       return;
     }
     context.read<NoteDetailBloc>().add(
-          NoteDetailCreateSummaryNoteEvent(noteId: widget.noteId),
+          NoteDetailCreateSummaryTextEvent(noteId: widget.noteId),
         );
   }
 
@@ -71,7 +71,7 @@ class _SummaryDetailTabState extends State<SummaryDetailTab>
     }
 
     context.read<NoteDetailBloc>().add(
-          NoteClickButtonUpdateSummaryNoteEvent(
+          NoteDetailClickButtonUpdateSummaryTextEvent(
             noteId: textId,
             summaryText: _summaryController.text,
           ),

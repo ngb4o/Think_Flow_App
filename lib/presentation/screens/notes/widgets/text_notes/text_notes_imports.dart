@@ -7,7 +7,6 @@ import 'package:iconsax/iconsax.dart';
 
 import '../../../../../services/text_recognizer_service.dart';
 import '../../../../../utils/constants/sizes.dart';
-import '../../../../../utils/helpers/helper_functions.dart';
 import '../../../../../utils/popups/loaders.dart';
 import '../../../../../utils/utils.dart';
 import '../../bloc/notes_bloc.dart';

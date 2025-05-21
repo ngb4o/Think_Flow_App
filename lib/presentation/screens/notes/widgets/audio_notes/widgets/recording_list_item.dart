@@ -6,27 +6,29 @@ class RecordingListItem extends StatelessWidget {
   final String name;
   final String duration;
   final bool isPlaying;
+  final bool showMore;
   final VoidCallback onPlayPause;
   final VoidCallback onDelete;
+  final VoidCallback? onMore;
 
   const RecordingListItem({
     Key? key,
     required this.name,
     required this.duration,
     required this.isPlaying,
+    this.showMore = false,
     required this.onPlayPause,
     required this.onDelete,
+    this.onMore,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      horizontalTitleGap: TSizes.spaceBtwItems,
-      minLeadingWidth: 0,
+      contentPadding: EdgeInsets.zero,
       leading: Icon(Iconsax.microphone),
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             name,
@@ -43,17 +45,32 @@ class RecordingListItem extends StatelessWidget {
       ),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          IconButton(
-            icon: Icon(isPlaying ? Iconsax.pause : Iconsax.play),
-            onPressed: onPlayPause,
+          GestureDetector(
+            onTap: onPlayPause,
+            child: Icon(
+              isPlaying ? Iconsax.pause : Iconsax.play,
+            ),
           ),
-          IconButton(
-            icon: const Icon(Iconsax.trash),
-            onPressed: onDelete,
+          if (showMore) ...[
+            SizedBox(width: TSizes.md),
+            GestureDetector(
+              onTap: onMore,
+              child: Icon(
+                Icons.auto_awesome_sharp,
+              ),
+            ),
+          ],
+          SizedBox(width: TSizes.md),
+          GestureDetector(
+            onTap: onDelete,
+            child: Icon(
+              Iconsax.trash,
+            ),
           ),
         ],
       ),
     );
   }
-} 
+}
