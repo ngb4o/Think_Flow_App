@@ -27,7 +27,7 @@ class OnboardingNextButton extends StatelessWidget {
               onPressed: () {
                 bloc.add(OnboardingNextPageEvent(context: context));
               },
-              child: state.currentPageIndex == 2
+              child: state.currentPageIndex == 3
                   ? const Padding(
                       padding: EdgeInsets.symmetric(horizontal: TSizes.md),
                       child: Row(

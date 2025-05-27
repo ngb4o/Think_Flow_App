@@ -45,7 +45,7 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
   ) {
     if (state is OnboardingSuccessState) {
       final currentState = state as OnboardingSuccessState;
-      if (currentState.currentPageIndex == 2) {
+      if (currentState.currentPageIndex == 3) {
         Utils.setIsFirstTime(false);
         AutoRouter.of(event.context).replace(LoginScreenRoute());
       }
@@ -63,9 +63,9 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
   ) {
     if (state is OnboardingSuccessState) {
       final currentState = state as OnboardingSuccessState;
-      currentState.pageController.jumpToPage(2);
+      currentState.pageController.jumpToPage(3);
       emit(OnboardingSuccessState(
-        currentPageIndex: 2,
+        currentPageIndex: 3,
         pageController: currentState.pageController,
       ));
     }

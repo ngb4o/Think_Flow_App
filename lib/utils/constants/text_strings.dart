@@ -9,16 +9,20 @@ class TTexts {
   static const String tContinue = "Continue";
 
 // -- OnBoarding Texts
-  static const String onBoardingTitle1 = "Record, Capture & Type";
-  static const String onBoardingTitle2 = "Smart Summarization";
-  static const String onBoardingTitle3 = "Effective Study Support";
+  static const String onBoardingTitle1 = "Smart Notes";
+  static const String onBoardingTitle2 = "Transcribe voice notes";
+  static const String onBoardingTitle3 = "Summary & Mindmap";
+  static const String onBoardingTitle4 = "Share notes easily";
 
   static const String onBoardingSubTitle1 =
-      "Easily record lectures, capture documents, or type notes anytime, anywhere!";
+      "Take notes effortlessly with a clean, user-friendly interface designed for clarity and comfort.";
   static const String onBoardingSubTitle2 =
-      "AI-powered summarization for quick, concise, and easy-to-understand content!";
+      "Record audio and automatically convert speech into accurate text — perfect for quick capturing.";
   static const String onBoardingSubTitle3 =
-      "Store important information and enhance your learning with a powerful study tool!";
+      "Use AI to generate summaries and transform notes into visual mind maps.";
+
+  static const String onBoardingSubTitle4 =
+      "Easily share your notes and collaborate with friends or teammates anytime, anywhere.";
 
   // -- Authentication Forms
   static const String firstName = "First Name";

@@ -167,5 +167,8 @@ class Assets {
   static const String reviewsReviewProfileImage2 = 'assets/images/reviews/review_profile_image_2.jpeg';
   static const String reviewsReviewProfileImage3 = 'assets/images/reviews/review_profile_image_3.jpeg';
   static const String animationOnboarding1 = 'assets/images/animations/onboarding.json';
+  static const String animationOnboarding2 = 'assets/images/animations/onboarding2.json';
+  static const String animationOnboarding3 = 'assets/images/animations/onboarding3.json';
+  static const String animationOnboarding4 = 'assets/images/animations/onboarding4.json';
 
 }

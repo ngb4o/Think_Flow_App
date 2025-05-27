@@ -54,18 +54,28 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       isLottie: true,
                     ),
 
-                    // OnBoardingPage2
+                    // OnBoardingPage4
                     OnboardingPage(
-                      image: TImages.onBoardingImage1,
+                      image: Assets.animationOnboarding4,
                       title: TTexts.onBoardingTitle2,
                       subTitle: TTexts.onBoardingSubTitle2,
+                      isLottie: true,
+                    ),
+
+                    // OnBoardingPage2
+                    OnboardingPage(
+                      image: Assets.animationOnboarding2,
+                      title: TTexts.onBoardingTitle3,
+                      subTitle: TTexts.onBoardingSubTitle3,
+                      isLottie: true,
                     ),
 
                     // OnBoardingPage3
                     OnboardingPage(
-                      image: TImages.onBoardingImage3,
-                      title: TTexts.onBoardingTitle3,
-                      subTitle: TTexts.onBoardingSubTitle3,
+                      image: Assets.animationOnboarding3,
+                      title: TTexts.onBoardingTitle4,
+                      subTitle: TTexts.onBoardingSubTitle4,
+                      isLottie: true,
                     ),
                   ],
                 ),

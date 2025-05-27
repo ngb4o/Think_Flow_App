@@ -23,11 +23,11 @@ class OnboardingPage extends StatelessWidget {
               ? Lottie.asset(
                   image,
                   width: THelperFunctions.screenWidth(context),
-                  height: THelperFunctions.screenHeight(context) * 0.65,
+                  height: THelperFunctions.screenHeight(context) * 0.7,
                 )
               : Image(
                   width: THelperFunctions.screenWidth(context),
-                  height: THelperFunctions.screenHeight(context) * 0.65,
+                  height: THelperFunctions.screenHeight(context) * 0.7,
                   image: AssetImage(image),
                 ),
 

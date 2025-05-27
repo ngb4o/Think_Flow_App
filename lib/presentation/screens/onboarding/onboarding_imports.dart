@@ -5,7 +5,6 @@ import 'package:think_flow/generated/assets.dart';
 import 'package:think_flow/presentation/screens/onboarding/bloc/onboarding_bloc.dart';
 import 'package:think_flow/presentation/screens/onboarding/widgets/widget_imports.dart';
 
-import '../../../utils/constants/image_strings.dart';
 import '../../../utils/constants/text_strings.dart';
 
 part 'onboarding.dart';

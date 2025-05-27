@@ -20,7 +20,7 @@ class OnboardingDotNavigation extends StatelessWidget {
               onDotClicked: (index) {
                 bloc.add(OnboardingUpdatePageEvent(index: index));
               },
-              count: 3,
+              count: 4,
               effect: ExpandingDotsEffect(
                 activeDotColor: dark ? TColors.primary : TColors.primary,
                 dotHeight: 9,
