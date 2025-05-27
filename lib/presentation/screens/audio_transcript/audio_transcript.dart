@@ -171,7 +171,7 @@ class _AudioTranscriptScreenState extends State<AudioTranscriptScreen> {
             ),
             body: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [Center(child: LoadingSpinkit.loadingPage)],
+              children: [Center(child: TLoadingSpinkit.loadingPage)],
             ),
           );
         }
@@ -194,7 +194,6 @@ class _AudioTranscriptScreenState extends State<AudioTranscriptScreen> {
                           padding: const EdgeInsets.only(
                             left: TSizes.defaultSpace,
                             right: TSizes.defaultSpace,
-                            bottom: TSizes.defaultSpace,
                           ),
                           child: Stack(
                             children: [
@@ -210,7 +209,7 @@ class _AudioTranscriptScreenState extends State<AudioTranscriptScreen> {
                                             }
                                           },
                                           child: Center(
-                                            child: TEmpty(subTitle: 'Tap to edit the transcript'),
+                                            child: TEmptyWidget(subTitle: 'Tap to edit the transcript'),
                                           ),
                                         )
                                         : SingleChildScrollView(
@@ -218,7 +217,7 @@ class _AudioTranscriptScreenState extends State<AudioTranscriptScreen> {
                                               onTap: widget.permission == 'read'
                                                   ? null
                                                   : _enterEditMode,
-                                              child: Utils.buildSummaryText(context, transcriptContent),
+                                              child: Text(transcriptContent, style: Theme.of(context).textTheme.bodyMedium),
                                             ),
                                           ),
                                   ),
@@ -261,7 +260,7 @@ class _AudioTranscriptScreenState extends State<AudioTranscriptScreen> {
                               Positioned(
                                 bottom: 10,
                                 right: 0,
-                                child: LoadingSpinkit.loadingButton,
+                                child: TLoadingSpinkit.loadingButton,
                               )
                             else
                               Positioned(
@@ -272,7 +271,7 @@ class _AudioTranscriptScreenState extends State<AudioTranscriptScreen> {
                                     _updateTranscript(_cachedAudioNoteModel!.data!.transcript!.id.toString());
                                   },
                                   child: state is AudioTranscriptUpdateTextLoadingState
-                                      ? LoadingSpinkit.loadingButton
+                                      ? TLoadingSpinkit.loadingButton
                                       : Container(
                                           decoration: BoxDecoration(
                                             color: TColors.primary,

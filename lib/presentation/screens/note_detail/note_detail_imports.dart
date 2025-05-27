@@ -10,7 +10,7 @@ import 'package:think_flow/utils/constants/sizes.dart';
 import 'package:think_flow/utils/popups/loaders.dart';
 
 import '../../../../common/widgets/appbar/appbar.dart';
-import '../../../../common/widgets/loading/loading.dart';
+import '../../../common/widgets/loading/loading.dart';
 import '../../../common/widgets/keep_alive_wrapper.dart';
 import '../../../common/widgets/profile/t_circular_image.dart';
 import '../../../utils/constants/image_strings.dart';

@@ -62,7 +62,7 @@ class _NotesPageState extends State<NotesPage> with SingleTickerProviderStateMix
             title: Text('Notes'),
             actions: [
               if (state is NotesCreateLoadingState)
-                LoadingSpinkit.loadingButton
+                TLoadingSpinkit.loadingButton
               else
                 IconButton(
                   onPressed: () => _createNote(titleController.text.trim()),

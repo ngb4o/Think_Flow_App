@@ -133,184 +133,168 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       },
       builder: (context, state) {
-        switch (state.runtimeType) {
-          case HomeLoadingState:
-            return Scaffold(
-              body: Column(
-                children: [
-                  THomeAppBar(),
-                  const Expanded(
-                    child: Center(child: LoadingSpinkit.loadingPage),
-                  ),
-                ],
-              ),
-            );
-          case HomeSuccessState:
-            final notes = state as HomeSuccessState;
-            return Scaffold(
-              body: Column(
-                children: [
-                  // Appbar
-                  THomeAppBar(
-                    actionButtonOnPressed: () => context.read<HomeBloc>().add(HomeClickButtonNavigationToNotificationPageEvent()),
-                  ),
+        if (state is HomeLoadingState) {
+          return Scaffold(
+            body: Column(
+              children: [
+                THomeAppBar(),
+                const Expanded(
+                  child: Center(child: TLoadingSpinkit.loadingPage),
+                ),
+              ],
+            ),
+          );
+        } else if (state is HomeSuccessState) {
+          final notes = state;
+          return Scaffold(
+            body: Column(
+              children: [
+                // Appbar
+                THomeAppBar(
+                  actionButtonOnPressed: () => context.read<HomeBloc>().add(HomeClickButtonNavigationToNotificationPageEvent()),
+                ),
 
-                  // Body
-                  Expanded(
-                    child: RefreshIndicator(
-                      onRefresh: () async {
-                        context.read<HomeBloc>().add(HomeInitialFetchDataEvent());
-                      },
-                      child: notes.noteModel.data.isEmpty
-                          ? Center(
-                              child: TEmpty(
-                                subTitle: 'Create your first note to get started',
-                              ),
-                            )
-                          : ListView.builder(
-                              controller: _scrollController,
-                              padding: EdgeInsets.all(TSizes.defaultSpace),
-                              itemCount: notes.noteModel.data.length,
-                              itemBuilder: (context, index) {
-                                final note = notes.noteModel.data[index];
-                                return GestureDetector(
-                                  onTap: () => context.read<HomeBloc>().add(HomeClickNavigationToNoteDetailPageEvent(
-                                        noteId: note.id,
-                                        title: note.title,
-                                        createAt: note.createdAt,
-                                        permission: note.permission,
-                                        ownerName: '${note.user.firstName} ${note.user.lastName}'
-                                      )),
-                                  child: Padding(
-                                    padding: EdgeInsets.only(bottom: TSizes.spaceBtwItems),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
-                                        border: Border.all(color: TColors.grey, width: 1),
-                                        color: TColors.white,
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: TColors.primary.withOpacity(0.5),
-                                            blurRadius: 8,
-                                            offset: const Offset(0, 2),
-                                          ),
-                                        ]
-                                      ),
-                                      padding: EdgeInsets.all(TSizes.spaceBtwItems),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                child: Text(
-                                                  note.title,
-                                                  style: Theme.of(context).textTheme.titleMedium,
-                                                  overflow: TextOverflow.ellipsis,
-                                                  maxLines: 1,
-                                                ),
+                // Body
+                Expanded(
+                  child: RefreshIndicator(
+                    onRefresh: () async {
+                      context.read<HomeBloc>().add(HomeInitialFetchDataEvent());
+                    },
+                    child: notes.noteModel.data.isEmpty
+                        ? TEmptyWidget(
+                          title: 'You don\'t have any notes yet.',
+                          subTitle: 'Create your first note to get started',
+                        )
+                        : ListView.builder(
+                            controller: _scrollController,
+                            padding: EdgeInsets.all(TSizes.defaultSpace),
+                            itemCount: notes.noteModel.data.length,
+                            itemBuilder: (context, index) {
+                              final note = notes.noteModel.data[index];
+                              return GestureDetector(
+                                onTap: () => context.read<HomeBloc>().add(HomeClickNavigationToNoteDetailPageEvent(
+                                      noteId: note.id,
+                                      title: note.title,
+                                      createAt: note.createdAt,
+                                      permission: note.permission,
+                                      ownerName: '${note.user.firstName} ${note.user.lastName}'
+                                    )),
+                                child: Padding(
+                                  padding: EdgeInsets.only(bottom: TSizes.spaceBtwItems),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(color: TColors.grey, width: 1),
+                                      color: TColors.white,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: TColors.primary.withOpacity(0.5),
+                                          blurRadius: 8,
+                                          offset: const Offset(0, 2),
+                                        ),
+                                      ]
+                                    ),
+                                    padding: EdgeInsets.all(TSizes.spaceBtwItems),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                note.title,
+                                                style: Theme.of(context).textTheme.titleMedium,
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 1,
                                               ),
-                                              if (state is HomeDeleteNoteLoadingState)
-                                                LoadingSpinkit.loadingButton
-                                              else
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    deleteNoteWarningPopup(note.id);
-                                                  },
-                                                  child: Icon(Iconsax.trash, size: 20,),
-                                                ),
-                                            ],
-                                          ),
-                                          SizedBox(height: TSizes.lg),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                note.createdAt,
-                                                style: Theme.of(context).textTheme.bodySmall,
-                                              ),
+                                            ),
+                                            if (state is HomeDeleteNoteLoadingState)
+                                              TLoadingSpinkit.loadingButton
+                                            else
                                               GestureDetector(
-                                                onTap: () => _showNoteActionsBottomSheet(note.id),
-                                                child: Icon(Iconsax.more, size: 25),
+                                                onTap: () {
+                                                  deleteNoteWarningPopup(note.id);
+                                                },
+                                                child: Icon(Iconsax.trash, size: 20,),
                                               ),
-                                            ],
-                                          )
-                                        ],
-                                      ),
+                                          ],
+                                        ),
+                                        SizedBox(height: TSizes.lg),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              note.createdAt,
+                                              style: Theme.of(context).textTheme.bodySmall,
+                                            ),
+                                            GestureDetector(
+                                              onTap: () => _showNoteActionsBottomSheet(note.id),
+                                              child: Icon(Iconsax.more, size: 25),
+                                            ),
+                                          ],
+                                        )
+                                      ],
                                     ),
                                   ),
-                                );
-                              },
-                            ),
-                    ),
+                                ),
+                              );
+                            },
+                          ),
                   ),
-                ],
-              ),
-              floatingActionButton: Container(
-                height: 50,
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                child: SpeedDial(
-                  icon: Iconsax.note_favorite5,
-                  activeIcon: Iconsax.close_square,
-                  iconTheme: IconThemeData(size: 40),
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                  spacing: 5,
-                  spaceBetweenChildren: 5,
-                  children: [
-                    SpeedDialChild(
-                      child: Icon(Iconsax.archive_23),
-                      label: 'Archived',
-                      onTap: () {
-                        context.read<HomeBloc>().add(HomeClickButtonNavigationToArchivedPageEvent());
-                      },
-                    ),
-                    SpeedDialChild(
-                      child: Icon(Iconsax.share),
-                      label: 'Share with me',
-                      onTap: () {
-                        context.read<HomeBloc>().add(HomeClickButtonNavigationToShareNotePageEvent());
-                      },
-                    ),
-                    SpeedDialChild(
-                      child: Icon(Iconsax.note_21),
-                      label: 'Notes',
-                      onTap: () {
-                        context.read<HomeBloc>().add(HomeClickButtonNavigationToCreateNotesPageEvent());
-                      },
+                ),
+              ],
+            ),
+            floatingActionButton: Container(
+              height: 50,
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
                     ),
                   ],
                 ),
-              ),
-            );
-          case HomeErrorState:
-            return Scaffold(
-              body: Column(
+              child: SpeedDial(
+                icon: Iconsax.note_favorite5,
+                activeIcon: Iconsax.close_square,
+                iconTheme: IconThemeData(size: 40),
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                spacing: 5,
+                spaceBetweenChildren: 5,
                 children: [
-                  THomeAppBar(),
-                  Expanded(
-                    child: Center(
-                      child: TEmpty(
-                        subTitle: 'Create your first note to get started',
-                      ),
-                    ),
+                  SpeedDialChild(
+                    child: Icon(Iconsax.archive_23),
+                    label: 'Archived',
+                    onTap: () {
+                      context.read<HomeBloc>().add(HomeClickButtonNavigationToArchivedPageEvent());
+                    },
+                  ),
+                  SpeedDialChild(
+                    child: Icon(Iconsax.share),
+                    label: 'Share with me',
+                    onTap: () {
+                      context.read<HomeBloc>().add(HomeClickButtonNavigationToShareNotePageEvent());
+                    },
+                  ),
+                  SpeedDialChild(
+                    child: Icon(Iconsax.note_21),
+                    label: 'Notes',
+                    onTap: () {
+                      context.read<HomeBloc>().add(HomeClickButtonNavigationToCreateNotesPageEvent());
+                    },
                   ),
                 ],
               ),
-            );
-          default:
-            return const SizedBox();
+            ),
+          );
+        } else if (state is HomeErrorState) {
+          return TErrorWidget(subError: state.message);
         }
+        return const SizedBox();
       },
     );
   }

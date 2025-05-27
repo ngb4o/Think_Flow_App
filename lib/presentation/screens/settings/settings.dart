@@ -43,7 +43,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       },
       builder: (context, state) {
         if (state is SettingLoadingState) {
-          return LoadingSpinkit.loadingPage;
+          return TLoadingSpinkit.loadingPage;
         } else if (state is SettingSuccessState) {
           var profileData = state.userModel.data;
           return Scaffold(
@@ -139,7 +139,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         // Logout Button
                         const SizedBox(height: TSizes.spaceBtwSections),
                         if (state is SettingLogoutLoadingState)
-                          LoadingSpinkit.loadingButton
+                          TLoadingSpinkit.loadingButton
                         else
                           SizedBox(
                             width: double.infinity,
@@ -156,7 +156,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           );
         } else if (state is SettingErrorState) {
-          return Scaffold(body: Center(child: Text('Error')));
+          return TErrorWidget(subError: state.message,);
         }
         return SizedBox();
       },

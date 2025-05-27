@@ -29,12 +29,15 @@ class _AudioNotesPageState extends State<AudioNotesPage> {
 
   Future<String?> _convertM4aToMp3(String m4aPath) async {
     try {
-      final Directory appDocumentsDir = await getApplicationDocumentsDirectory();
-      final String mp3Path = p.join(appDocumentsDir.path, 'recording_${DateTime.now().millisecondsSinceEpoch}.mp3');
-      
-      final session = await FFmpegKit.execute('-i $m4aPath -c:a libmp3lame -q:a 2 $mp3Path');
+      final Directory appDocumentsDir =
+          await getApplicationDocumentsDirectory();
+      final String mp3Path = p.join(appDocumentsDir.path,
+          'recording_${DateTime.now().millisecondsSinceEpoch}.mp3');
+
+      final session = await FFmpegKit.execute(
+          '-i $m4aPath -c:a libmp3lame -q:a 2 $mp3Path');
       final returnCode = await session.getReturnCode();
-      
+
       if (returnCode?.isValueSuccess() ?? false) {
         // Delete the original M4A file
         final m4aFile = File(m4aPath);
@@ -84,8 +87,10 @@ class _AudioNotesPageState extends State<AudioNotesPage> {
 
   Future<void> _loadRecordings() async {
     try {
-      final Directory appDocumentsDir = await getApplicationDocumentsDirectory();
-      final List<FileSystemEntity> files = await appDocumentsDir.list().toList();
+      final Directory appDocumentsDir =
+          await getApplicationDocumentsDirectory();
+      final List<FileSystemEntity> files =
+          await appDocumentsDir.list().toList();
 
       final List<AudioRecording> loadedRecordings = [];
 
@@ -95,7 +100,8 @@ class _AudioNotesPageState extends State<AudioNotesPage> {
           if (!fileExists) continue;
 
           try {
-            final estimatedDuration = await AudioUtils.estimateAudioDuration(file.path);
+            final estimatedDuration =
+                await AudioUtils.estimateAudioDuration(file.path);
 
             loadedRecordings.add(AudioRecording(
               path: file.path,
@@ -141,8 +147,10 @@ class _AudioNotesPageState extends State<AudioNotesPage> {
         return;
       }
 
-      final Directory appDocumentsDir = await getApplicationDocumentsDirectory();
-      final String filePath = p.join(appDocumentsDir.path, 'recording_${DateTime.now().millisecondsSinceEpoch}.m4a');
+      final Directory appDocumentsDir =
+          await getApplicationDocumentsDirectory();
+      final String filePath = p.join(appDocumentsDir.path,
+          'recording_${DateTime.now().millisecondsSinceEpoch}.m4a');
 
       // Start recording with RecorderController
       await recorderController.record();
@@ -235,7 +243,7 @@ class _AudioNotesPageState extends State<AudioNotesPage> {
       await recorderController.stop();
       String? filePath = await audioRecorder.stop();
       recordingTimer?.cancel();
-      
+
       if (mounted && filePath != null) {
         // Convert M4A to MP3
         final mp3Path = await _convertM4aToMp3(filePath);
@@ -374,7 +382,7 @@ class _AudioNotesPageState extends State<AudioNotesPage> {
       try {
         await tempPlayer.setFilePath(file.path!);
         final duration = tempPlayer.duration;
-        
+
         setState(() {
           recordings.add(AudioRecording(
             path: file.path!,
@@ -415,9 +423,11 @@ class _AudioNotesPageState extends State<AudioNotesPage> {
                 );
           }
         } else if (state is NotesCreateAudioSuccessActionState) {
-          TLoaders.successSnackBar(context, title: 'Audio uploaded successfully');
+          TLoaders.successSnackBar(context,
+              title: 'Audio uploaded successfully');
         } else if (state is NotesCreateAudioErrorActionState) {
-          TLoaders.successSnackBar(context, title: 'Error uploaded audio', message: state.message);
+          TLoaders.successSnackBar(context,
+              title: 'Error uploaded audio', message: state.message);
         }
       },
       builder: (context, state) {
@@ -435,9 +445,7 @@ class _AudioNotesPageState extends State<AudioNotesPage> {
                 ],
               ),
               if (recordings.isEmpty)
-                Expanded(
-                  child: Center(child: TEmpty(subTitle: 'Tap microphone to start recording')),
-                ),
+                TEmptyWidget(title: 'Tap microphone to start recording'),
               Expanded(
                 child: ListView.builder(
                   itemCount: recordings.length,
@@ -455,7 +463,8 @@ class _AudioNotesPageState extends State<AudioNotesPage> {
               ),
             ],
           ),
-          floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
           floatingActionButton: isRecording
               ? RecordingControls(
                   isRecording: isRecording,
@@ -491,12 +500,18 @@ class _AudioNotesPageState extends State<AudioNotesPage> {
                       onPlayPause: () => _playRecording(currentlyPlayingIndex!),
                       onSeek: _seekTo,
                       onBackward: () {
-                        final newPosition = currentPosition - const Duration(seconds: 15);
-                        _seekTo(newPosition.isNegative ? Duration.zero : newPosition);
+                        final newPosition =
+                            currentPosition - const Duration(seconds: 15);
+                        _seekTo(newPosition.isNegative
+                            ? Duration.zero
+                            : newPosition);
                       },
                       onForward: () {
-                        final newPosition = currentPosition + const Duration(seconds: 15);
-                        _seekTo(newPosition > totalDuration ? totalDuration : newPosition);
+                        final newPosition =
+                            currentPosition + const Duration(seconds: 15);
+                        _seekTo(newPosition > totalDuration
+                            ? totalDuration
+                            : newPosition);
                       },
                     )
                   : AvatarGlow(

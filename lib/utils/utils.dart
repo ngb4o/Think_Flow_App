@@ -285,34 +285,39 @@ class Utils {
       children: lines.map((line) {
         if (line.isEmpty) return const SizedBox(height: 8);
 
-        // Check the level of the line and replace numbers with bullets
-        if (line.startsWith(RegExp(r'^\d+\.\s'))) {
-          // Main level (1., 2., etc.)
-          final content = line.replaceFirst(RegExp(r'^\d+\.\s'), '• ');
+        // Check if line starts with numbers and dots
+        final numberPattern = RegExp(r'^(\d+\.)+\s');
+        final match = numberPattern.firstMatch(line);
+
+        if (match != null) {
+          // Count the number of dots to determine the level
+          final dots = match.group(0)!.split('.').length - 1;
+
+          // Determine the symbol based on level
+          String symbol;
+          if (dots == 1) {
+            symbol = '• '; // Level 1: bullet point
+          } else if (dots == 2) {
+            symbol = '- '; // Level 2: dash
+          } else {
+            symbol = '+ '; // Level 3 and deeper: plus
+          }
+
+          final content = line.replaceFirst(numberPattern, symbol);
+
           return Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: Text(
-              content,
-              style:
-                  Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 15),
+            padding: EdgeInsets.only(
+              left: dots == 1 ? 0 : (dots - 1) * 16.0,
+              bottom: 8,
             ),
-          );
-        } else if (line.startsWith(RegExp(r'^\d+\.\d+\.\s'))) {
-          // Sub level (1.1., 2.1., etc.)
-          final content = line.replaceFirst(RegExp(r'^\d+\.\d+\.\s'), '- ');
-          return Padding(
-            padding: const EdgeInsets.only(left: 16, bottom: 8),
-            child: Text(content, style: Theme.of(context).textTheme.bodyMedium),
-          );
-        } else if (line.startsWith(RegExp(r'^\d+\.\d+\.\d+\.\s'))) {
-          // Sub-sub level (1.1.1., etc.)
-          final content =
-              line.replaceFirst(RegExp(r'^\d+\.\d+\.\d+\.\s'), '- ');
-          return Padding(
-            padding: const EdgeInsets.only(left: 16, bottom: 8),
             child: Text(
               content,
-              style: Theme.of(context).textTheme.bodyMedium,
+              style: dots == 1
+                  ? Theme.of(context)
+                      .textTheme
+                      .bodyLarge
+                      ?.copyWith(fontSize: 15)
+                  : Theme.of(context).textTheme.bodyMedium,
             ),
           );
         } else {
@@ -330,24 +335,23 @@ class Utils {
   }
 
   static String getTimeAgo(DateTime? dateTime) {
-  if (dateTime == null) return '';
+    if (dateTime == null) return '';
 
-  final now = DateTime.now();
-  final difference = now.difference(dateTime);
+    final now = DateTime.now();
+    final difference = now.difference(dateTime);
 
-  if (difference.inDays > 365) {
-    return '${(difference.inDays / 365).floor()} year${(difference.inDays / 365).floor() > 1 ? 's' : ''} ago';
-  } else if (difference.inDays > 30) {
-    return '${(difference.inDays / 30).floor()} month${(difference.inDays / 30).floor() > 1 ? 's' : ''} ago';
-  } else if (difference.inDays > 0) {
-    return '${difference.inDays} day${difference.inDays > 1 ? 's' : ''} ago';
-  } else if (difference.inHours > 0) {
-    return '${difference.inHours} hour${difference.inHours > 1 ? 's' : ''} ago';
-  } else if (difference.inMinutes > 0) {
-    return '${difference.inMinutes} minute${difference.inMinutes > 1 ? 's' : ''} ago';
-  } else {
-    return 'Just now';
+    if (difference.inDays > 365) {
+      return '${(difference.inDays / 365).floor()} year${(difference.inDays / 365).floor() > 1 ? 's' : ''} ago';
+    } else if (difference.inDays > 30) {
+      return '${(difference.inDays / 30).floor()} month${(difference.inDays / 30).floor() > 1 ? 's' : ''} ago';
+    } else if (difference.inDays > 0) {
+      return '${difference.inDays} day${difference.inDays > 1 ? 's' : ''} ago';
+    } else if (difference.inHours > 0) {
+      return '${difference.inHours} hour${difference.inHours > 1 ? 's' : ''} ago';
+    } else if (difference.inMinutes > 0) {
+      return '${difference.inMinutes} minute${difference.inMinutes > 1 ? 's' : ''} ago';
+    } else {
+      return 'Just now';
+    }
   }
-}
-
 }

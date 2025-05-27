@@ -27,9 +27,8 @@ class _AudioSummaryScreenState extends State<AudioSummaryScreen> {
   @override
   void initState() {
     super.initState();
-    context
-        .read<AudioSummaryBloc>()
-        .add(AudioSummaryInitialFetchDataAudioEvent(audioId: widget.audioId, permission: widget.permission));
+    context.read<AudioSummaryBloc>().add(AudioSummaryInitialFetchDataAudioEvent(
+        audioId: widget.audioId, permission: widget.permission));
 
     audioPlayer.positionStream.listen((position) {
       if (mounted) {
@@ -62,7 +61,7 @@ class _AudioSummaryScreenState extends State<AudioSummaryScreen> {
         await audioPlayer.setUrl(url);
         currentAudioUrl = url;
       }
-      
+
       if (audioPlayer.playing) {
         await audioPlayer.pause();
       } else {
@@ -99,7 +98,8 @@ class _AudioSummaryScreenState extends State<AudioSummaryScreen> {
     if (widget.permission == 'read') {
       TLoaders.errorSnackBar(context,
           title: 'Error',
-          message: 'You do not have permission to edit this note. Please contact the owner to update permissions.');
+          message:
+              'You do not have permission to edit this note. Please contact the owner to update permissions.');
       return;
     }
     if (_cachedAudioNoteModel?.data?.id == null) {
@@ -119,7 +119,8 @@ class _AudioSummaryScreenState extends State<AudioSummaryScreen> {
     if (widget.permission == 'read') {
       TLoaders.errorSnackBar(context,
           title: 'Error',
-          message: 'You do not have permission to edit this note. Please contact the owner to update permissions.');
+          message:
+              'You do not have permission to edit this note. Please contact the owner to update permissions.');
       return;
     }
     if (_cachedAudioNoteModel?.data?.summary?.summaryText != null) {
@@ -135,7 +136,8 @@ class _AudioSummaryScreenState extends State<AudioSummaryScreen> {
     if (widget.permission == 'read') {
       TLoaders.errorSnackBar(context,
           title: 'Error',
-          message: 'You do not have permission to edit this note. Please contact the owner to update permissions.');
+          message:
+              'You do not have permission to edit this note. Please contact the owner to update permissions.');
       return;
     }
     if (_cachedAudioNoteModel?.data?.summary?.id == null) {
@@ -184,25 +186,26 @@ class _AudioSummaryScreenState extends State<AudioSummaryScreen> {
             _cachedAudioNoteModel = null;
             _summaryController.clear();
           });
-          context
-              .read<AudioSummaryBloc>()
-              .add(AudioSummaryInitialFetchDataAudioEvent(audioId: widget.audioId, permission: widget.permission));
+          context.read<AudioSummaryBloc>().add(
+              AudioSummaryInitialFetchDataAudioEvent(
+                  audioId: widget.audioId, permission: widget.permission));
         }
       },
       builder: (context, state) {
-        if (state is AudioSummaryLoadingState || state is AudioSummaryCreateSummaryTextLoadingState || state is AudioSummaryUpdateTextSummaryLoadingState) {
+        if (state is AudioSummaryLoadingState ||
+            state is AudioSummaryCreateSummaryTextLoadingState ||
+            state is AudioSummaryUpdateTextSummaryLoadingState) {
           return Scaffold(
-            appBar: TAppbar(
-              showBackArrow: true,
-              title: Text('Audio Summary'),
-              centerTitle: true,
-            ),
-            body: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [Center(child: LoadingSpinkit.loadingPage)],
-            ),
-          );
-        } 
+              appBar: TAppbar(
+                showBackArrow: true,
+                title: Text('Audio Summary'),
+                centerTitle: true,
+              ),
+              body: TCreateWidget(
+                title: 'Creating summary audio',
+                subTitle: 'You will receive a notification once it\'s done.',
+              ));
+        }
         if (state is AudioSummarySuccessState) {
           _cachedAudioNoteModel = state.audioNoteModel;
           final summaryText = _cachedAudioNoteModel?.data?.summary?.summaryText;
@@ -229,27 +232,23 @@ class _AudioSummaryScreenState extends State<AudioSummaryScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Expanded(
-                                    child: summaryText == null || summaryText.isEmpty
+                                    child: summaryText == null ||
+                                            summaryText.isEmpty
                                         ? SizedBox(
-                                            height: THelperFunctions.screenHeight(context) * 0.6,
+                                            height:
+                                                THelperFunctions.screenHeight(
+                                                        context) *
+                                                    0.6,
                                             child: widget.permission == 'read'
-                                                ? Center(
-                                                    child: Column(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      children: [
-                                                        Icon(Icons.lock_outline, size: 48, color: Colors.grey),
-                                                        const SizedBox(height: 16),
-                                                        Text(
-                                                          'Audio summary has not been created yet. Please contact the owner to create.',
-                                                          textAlign: TextAlign.center,
-                                                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                                            color: Colors.grey,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
+                                                ? TCreateWidget(
+                                                    title:
+                                                        'Creating summary audio',
+                                                    subTitle:
+                                                        'You will receive a notification once it\'s done.',
                                                   )
-                                                : const Center(child: LoadingSpinkit.loadingPage),
+                                                : const Center(
+                                                    child: TLoadingSpinkit
+                                                        .loadingPage),
                                           )
                                         : SingleChildScrollView(
                                             child: GestureDetector(
@@ -257,15 +256,18 @@ class _AudioSummaryScreenState extends State<AudioSummaryScreen> {
                                                   ? null
                                                   : _enterEditMode,
                                               child: Padding(
-                                                padding: const EdgeInsets.all(TSizes.sm),
-                                                child: Utils.buildSummaryText(context, summaryText),
+                                                padding: const EdgeInsets.all(
+                                                    TSizes.sm),
+                                                child: Utils.buildSummaryText(
+                                                    context, summaryText),
                                               ),
                                             ),
                                           ),
                                   ),
                                 ],
                               ),
-                              if (summaryText != null && widget.permission != 'read')
+                              if (summaryText != null &&
+                                  widget.permission != 'read')
                                 Positioned(
                                   right: 0,
                                   bottom: 0,
@@ -284,10 +286,12 @@ class _AudioSummaryScreenState extends State<AudioSummaryScreen> {
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        if (state is AudioSummaryCreateSummaryTextLoadingState)
+                                        if (state
+                                            is AudioSummaryCreateSummaryTextLoadingState)
                                           Padding(
-                                            padding: const EdgeInsets.all(TSizes.sm),
-                                            child: LoadingSpinkit.loadingButton,
+                                            padding:
+                                                const EdgeInsets.all(TSizes.sm),
+                                            child: TLoadingSpinkit.loadingButton,
                                           )
                                         else
                                           IconButton(
@@ -326,17 +330,20 @@ class _AudioSummaryScreenState extends State<AudioSummaryScreen> {
                                         disabledBorder: InputBorder.none,
                                         contentPadding: EdgeInsets.zero,
                                       ),
-                                      style: Theme.of(context).textTheme.titleSmall,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleSmall,
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                            if (state is AudioSummaryCreateSummaryTextLoadingState)
+                            if (state
+                                is AudioSummaryCreateSummaryTextLoadingState)
                               Positioned(
                                 bottom: 10,
                                 right: 0,
-                                child: LoadingSpinkit.loadingButton,
+                                child: TLoadingSpinkit.loadingButton,
                               )
                             else
                               Positioned(
@@ -344,17 +351,22 @@ class _AudioSummaryScreenState extends State<AudioSummaryScreen> {
                                 right: TSizes.defaultSpace,
                                 child: GestureDetector(
                                   onTap: () {
-                                    _updateSummary(_cachedAudioNoteModel!.data!.summary!.id.toString());
+                                    _updateSummary(_cachedAudioNoteModel!
+                                        .data!.summary!.id
+                                        .toString());
                                   },
-                                  child: state is AudioSummaryUpdateTextSummaryLoadingState
-                                      ? LoadingSpinkit.loadingButton
+                                  child: state
+                                          is AudioSummaryUpdateTextSummaryLoadingState
+                                      ? TLoadingSpinkit.loadingButton
                                       : Container(
                                           decoration: BoxDecoration(
                                             color: TColors.primary,
-                                            borderRadius: BorderRadius.circular(20),
+                                            borderRadius:
+                                                BorderRadius.circular(20),
                                           ),
                                           padding: EdgeInsets.symmetric(
-                                              horizontal: TSizes.md, vertical: TSizes.sm),
+                                              horizontal: TSizes.md,
+                                              vertical: TSizes.sm),
                                           child: Text(
                                             'Save',
                                             style: Theme.of(context)

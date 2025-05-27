@@ -15,8 +15,7 @@ void main() async {
   await localNotificationsService.init();
 
   final firebaseMessagingService = FirebaseMessagingService.instance();
-  await firebaseMessagingService.init(
-      localNotificationsService: localNotificationsService);
+  await firebaseMessagingService.init(localNotificationsService: localNotificationsService);
 
   runApp(App());
 }

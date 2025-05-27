@@ -87,7 +87,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
             showBackArrow: true,
             actions: [
               if (state is NoteUpdateDetailLoadingState)
-                LoadingSpinkit.loadingButton
+                TLoadingSpinkit.loadingButton
               else if (widget.permission != 'read') ...[
                 if (widget.permission != 'write')
                   IconButton(

@@ -1,11 +1,9 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:math';
 
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:think_flow/data/data_sources/remote/api_exception.dart';
-import 'package:think_flow/data/models/audio_note_model.dart';
 import 'package:think_flow/data/models/note_model.dart';
 import 'package:think_flow/data/models/text_note_model.dart';
 import 'package:think_flow/data/repositories/note_repo.dart';

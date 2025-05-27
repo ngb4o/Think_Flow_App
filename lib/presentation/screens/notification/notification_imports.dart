@@ -10,7 +10,7 @@ import 'package:think_flow/utils/constants/colors.dart';
 import 'package:think_flow/utils/constants/sizes.dart';
 import 'package:think_flow/utils/utils.dart';
 
-import '../../../common/widgets/empty/t_empty.dart';
+import '../../../common/widgets/empty/empty_widget.dart';
 import '../../../common/widgets/loading/loading.dart';
 import '../../../utils/popups/loaders.dart';
 

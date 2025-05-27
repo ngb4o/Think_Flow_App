@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:think_flow/data/data_sources/remote/api_client.dart';
-import 'package:think_flow/data/models/create_link_note_model.dart';
 import 'package:think_flow/data/models/data_model.dart';
 
 import '../data_sources/remote/api_endpoint_urls.dart';

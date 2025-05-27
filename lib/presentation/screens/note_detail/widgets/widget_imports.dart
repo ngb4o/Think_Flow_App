@@ -8,7 +8,7 @@ import 'package:flutter_quill/flutter_quill.dart' show Document, QuillController
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:mind_map/mind_map.dart';
-import 'package:think_flow/common/widgets/empty/t_empty.dart';
+import 'package:think_flow/common/widgets/empty/empty_widget.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:think_flow/common/widgets/loading/loading.dart';
 import 'package:just_audio/just_audio.dart';
@@ -24,10 +24,9 @@ import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:flutter/gestures.dart';
 
+import '../../../../common/widgets/create/create_widget.dart';
 import '../../../../common/widgets/warning/t_warning_popup.dart';
-import '../../../../data/models/audio_note_model.dart';
 import '../../../../data/models/text_note_model.dart';
 import '../../../../data/models/note_model.dart';
 import '../../../../services/text_recognizer_service.dart';

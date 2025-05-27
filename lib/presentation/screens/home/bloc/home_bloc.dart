@@ -39,10 +39,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       notes = noteData.data;
       emit(HomeSuccessState(noteModel: noteData));
     } on ApiException catch (e) {
-      emit(HomeErrorState());
+      emit(HomeErrorState(message: e.message));
       emit(HomeErrorActionState(message: e.message));
     } catch (e) {
-      emit(HomeErrorState());
+      emit(HomeErrorState(message: 'An unexpected error occurred'));
       emit(HomeErrorActionState(message: 'An unexpected error occurred'));
     }
   }

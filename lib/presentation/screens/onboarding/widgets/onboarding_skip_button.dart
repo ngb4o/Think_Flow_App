@@ -1,9 +1,8 @@
 part of 'widget_imports.dart';
 
 class OnboardingSkippButton extends StatelessWidget {
-  const OnboardingSkippButton({super.key, required this.controller});
-
-  final OnboardingController controller;
+  const OnboardingSkippButton({super.key, required this.bloc});
+  final OnboardingBloc bloc;
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +11,7 @@ class OnboardingSkippButton extends StatelessWidget {
       right: TSizes.defaultSpace,
       child: TextButton(
         onPressed: () {
-          controller.skipPage();
+          bloc.add(OnboardingSkipPageEvent());
         },
         child: Text(
           'Skip',

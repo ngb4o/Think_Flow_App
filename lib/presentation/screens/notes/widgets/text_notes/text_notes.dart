@@ -97,7 +97,7 @@ class _TextNotesPageState extends State<TextNotesPage> {
                   content: content,
                 ),
               );
-          TLoaders.successSnackBar(context, title: 'Create success');
+          TLoaders.successSnackBar(context, title: 'Create note successfully');
         }
       },
       builder: (context, state) {

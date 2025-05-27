@@ -257,7 +257,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                   const SizedBox(height: TSizes.spaceBtwSections),
 
                   if (state is ResendVerifyEmailLoadingState || state is VerifyEmailLoadingState)
-                    LoadingSpinkit.loadingButton
+                    TLoadingSpinkit.loadingButton
                   else
                     SizedBox(
                       width: double.infinity,

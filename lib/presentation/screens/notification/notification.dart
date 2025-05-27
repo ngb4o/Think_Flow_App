@@ -64,7 +64,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 iconTheme: IconThemeData(color: Theme.of(context).primaryColor),
                 centerTitle: true,
               ),
-              body: const Center(child: LoadingSpinkit.loadingPage),
+              body: const Center(child: TLoadingSpinkit.loadingPage),
             );
           case NotificationSuccessState:
             final notifications = state as NotificationSuccessState;
@@ -83,7 +83,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 },
                 child: notifications.notificationModel.data?.isEmpty ?? true
                     ? Center(
-                        child: TEmpty(
+                        child: TEmptyWidget(
                           subTitle: 'No notifications yet',
                         ),
                       )
@@ -181,7 +181,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 iconTheme: IconThemeData(color: Theme.of(context).primaryColor),
               ),
               body: Center(
-                child: TEmpty(
+                child: TEmptyWidget(
                   subTitle: 'Failed to load notifications',
                 ),
               ),

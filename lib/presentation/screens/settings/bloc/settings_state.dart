@@ -15,7 +15,11 @@ class SettingSuccessState extends SettingsState {
   SettingSuccessState({required this.userModel});
 }
 
-class SettingErrorState extends SettingsState {}
+class SettingErrorState extends SettingsState {
+  final String message;
+
+  SettingErrorState({required this.message});
+}
 
 class SettingErrorActionState extends SettingsActionState {
   final String message;

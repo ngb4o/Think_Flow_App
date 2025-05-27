@@ -17,10 +17,12 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   SettingsBloc(this.authRepo, this.userRepo) : super(SettingsInitial()) {
     on<SettingInitialFetchDataEvent>(settingInitialFetchDataEvent);
     on<SettingClickButtonLogoutEvent>(settingLogoutButtonClickEvent);
-    on<SettingClickButtonNavigationToProfilePageEvent>(settingClickButtonNavigationToProfilePageEvent);
+    on<SettingClickButtonNavigationToProfilePageEvent>(
+        settingClickButtonNavigationToProfilePageEvent);
   }
 
-  FutureOr<void> settingInitialFetchDataEvent(SettingInitialFetchDataEvent event, Emitter<SettingsState> emit) async {
+  FutureOr<void> settingInitialFetchDataEvent(
+      SettingInitialFetchDataEvent event, Emitter<SettingsState> emit) async {
     emit(SettingLoadingState());
     try {
       var userData = await userRepo.getUserProfile();
@@ -28,15 +30,16 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
         emit(SettingSuccessState(userModel: userData));
       }
     } on ApiException catch (e) {
-      emit(SettingErrorState());
+      emit(SettingErrorState(message: e.message));
       emit(SettingErrorActionState(message: e.message));
     } catch (e) {
-      emit(SettingErrorState());
+      emit(SettingErrorState(message: 'An unexpected error occurred'));
       emit(SettingErrorActionState(message: 'An unexpected error occurred'));
     }
   }
 
-  FutureOr<void> settingLogoutButtonClickEvent(SettingClickButtonLogoutEvent event, Emitter<SettingsState> emit) async {
+  FutureOr<void> settingLogoutButtonClickEvent(
+      SettingClickButtonLogoutEvent event, Emitter<SettingsState> emit) async {
     emit(SettingLogoutLoadingState());
     try {
       var logoutData = await authRepo.logout();
@@ -45,22 +48,26 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
         emit(SettingLogoutSuccessActionState());
       } else {
         emit(SettingLogoutErrorState());
-        emit(SettingLogoutErrorActionState(message: 'Signup failed. Please try again.'));
+        emit(SettingLogoutErrorActionState(
+            message: 'Signup failed. Please try again.'));
       }
     } on ApiException catch (e) {
       emit(SettingLogoutErrorState());
       emit(SettingLogoutErrorActionState(message: e.message));
     } catch (e) {
       emit(SettingLogoutErrorState());
-      emit(SettingLogoutErrorActionState(message: 'An unexpected error occurred'));
+      emit(SettingLogoutErrorActionState(
+          message: 'An unexpected error occurred'));
     }
   }
 
   FutureOr<void> settingClickButtonNavigationToProfilePageEvent(
-      SettingClickButtonNavigationToProfilePageEvent event, Emitter<SettingsState> emit) async {
+      SettingClickButtonNavigationToProfilePageEvent event,
+      Emitter<SettingsState> emit) async {
     if (state is SettingSuccessState) {
       final currentState = state as SettingSuccessState;
-      emit(SettingNavigationToProfilePageActionState(userModel: currentState.userModel));
+      emit(SettingNavigationToProfilePageActionState(
+          userModel: currentState.userModel));
     }
   }
 }

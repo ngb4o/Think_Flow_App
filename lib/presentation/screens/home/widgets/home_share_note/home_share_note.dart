@@ -279,7 +279,7 @@ class _HomeShareNoteState extends State<HomeShareNote> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             if (state is HomeShareNoteCreateLinkNoteLoadingState)
-                              LoadingSpinkit.loadingButton
+                              TLoadingSpinkit.loadingButton
                             else if (_copiedLink != null)
                               OutlinedButton(
                                 style: ButtonStyle(
@@ -317,7 +317,7 @@ class _HomeShareNoteState extends State<HomeShareNote> {
                                 ),
                               ),
                             if (state is HomeShareNoteShareLinkNoteToEmailLoadingState)
-                              LoadingSpinkit.loadingButton
+                              TLoadingSpinkit.loadingButton
                             else
                               ElevatedButton(
                                 onPressed: () => _shareLinkNoteToEmail(),

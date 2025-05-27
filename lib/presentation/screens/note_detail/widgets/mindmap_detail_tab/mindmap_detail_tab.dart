@@ -41,9 +41,8 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
       _transformationController.value = Matrix4.identity()..scale(_scale);
 
       // Fetch mindmap data
-      context
-          .read<NoteDetailBloc>()
-          .add(NoteDetailInitialFetchDataMindmapEvent(noteId: widget.noteId, permission: widget.permission));
+      context.read<NoteDetailBloc>().add(NoteDetailInitialFetchDataMindmapEvent(
+          noteId: widget.noteId, permission: widget.permission));
     });
   }
 
@@ -142,9 +141,8 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
           message: 'You do not have permission to edit this note');
       return;
     }
-    context
-        .read<NoteDetailBloc>()
-        .add(NoteDetailCreateMindmapEvent(noteId: widget.noteId, permission: widget.permission));
+    context.read<NoteDetailBloc>().add(NoteDetailCreateMindmapEvent(
+        noteId: widget.noteId, permission: widget.permission));
   }
 
   void _showNodeOptions({
@@ -156,7 +154,8 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
     if (widget.permission == 'read') {
       TLoaders.errorSnackBar(context,
           title: 'Error',
-          message: 'You do not have permission to edit this note. Please contact the owner to update permissions.');
+          message:
+              'You do not have permission to edit this note. Please contact the owner to update permissions.');
       return;
     }
     showModalBottomSheet(
@@ -456,7 +455,7 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
       builder: (context, state) {
         if (state is NoteMindmapLoadingState ||
             state is NoteUpdateMindmapLoadingState) {
-          return const Center(child: LoadingSpinkit.loadingPage);
+          return const Center(child: TLoadingSpinkit.loadingPage);
         }
 
         if (state is NoteMindmapErrorState) {
@@ -473,7 +472,8 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
                   onPressed: () {
                     context.read<NoteDetailBloc>().add(
                         NoteDetailInitialFetchDataMindmapEvent(
-                            noteId: widget.noteId, permission: widget.permission));
+                            noteId: widget.noteId,
+                            permission: widget.permission));
                   },
                   icon: const Icon(Iconsax.refresh),
                   label: const Text('Reload'),
@@ -491,21 +491,15 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
         if (_rootNode == null) {
           return Center(
             child: (widget.permission == 'read'
-                ? Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.lock_outline, size: 48, color: Colors.grey),
-                      const SizedBox(height: 16),
-                      Text(
-                        'Mindmap note has not been created yet. Please contact the owner to create.',
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ],
+                ? TEmptyWidget(
+                    title: 'Mindmap note has not been created yet. ',
+                    subTitle: 'Please contact the owner to create.',
                   )
-                : LoadingSpinkit.loadingPage),
+                : TCreateWidget(
+                    title: 'Creating mindmap note.',
+                    subTitle:
+                        'You will receive a notification once it\'s done.',
+                  )),
           );
         }
 
@@ -564,7 +558,7 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
                     if (state is NoteCreateMindmapLoadingState)
                       Padding(
                         padding: const EdgeInsets.all(TSizes.sm),
-                        child: LoadingSpinkit.loadingButton,
+                        child: TLoadingSpinkit.loadingButton,
                       )
                     else if (widget.permission != 'read') ...[
                       IconButton(

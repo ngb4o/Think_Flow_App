@@ -77,7 +77,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
 
                 //Submit Button
                 if (state is PasswordConfigurationForgotPasswordLoadingState)
-                  LoadingSpinkit.loadingButton
+                  TLoadingSpinkit.loadingButton
                 else 
                   SizedBox(
                     width: double.infinity,

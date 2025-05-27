@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:think_flow/data/models/list_note_model.dart';
 
 import '../../../../data/data_sources/remote/api_exception.dart';
 import '../../../../data/models/audio_note_model.dart';

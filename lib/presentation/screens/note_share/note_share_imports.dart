@@ -7,7 +7,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:think_flow/common/widgets/appbar/appbar.dart';
 import 'package:think_flow/common/widgets/loading/loading.dart';
 
-import '../../../common/widgets/empty/t_empty.dart';
+import '../../../common/widgets/empty/empty_widget.dart';
 import '../../../utils/constants/colors.dart';
 import '../../../utils/constants/sizes.dart';
 import '../home/bloc/home_bloc.dart';

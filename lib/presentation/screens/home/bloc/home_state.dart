@@ -15,7 +15,11 @@ class HomeSuccessState extends HomeState {
   HomeSuccessState({required this.noteModel});
 }
 
-class HomeErrorState extends HomeState {}
+class HomeErrorState extends HomeState {
+  final String message;
+
+  HomeErrorState({required this.message});
+}
 
 class HomeErrorActionState extends HomeActionState {
   final String message;
@@ -68,4 +72,3 @@ class HomeNavigationToArchivedPageActionState extends HomeActionState {}
 class HomeLoadMoreLoadingState extends HomeState {}
 
 class HomeNavigationToNotificationPageState extends HomeActionState {}
-

@@ -9,47 +9,79 @@ class OnboardingScreen extends StatefulWidget {
 }
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
-  final OnboardingController onboardingController = OnboardingController();
+  late final OnboardingBloc onboardingBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    onboardingBloc = OnboardingBloc();
+    onboardingBloc.add(OnboardingInitialEvent());
+  }
+
+  @override
+  void dispose() {
+    onboardingBloc.close();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          PageView(
-            controller: onboardingController.pageController,
-            onPageChanged: onboardingController.updatePageIndicator,
-            children: const [
-              // OnBoardingPage1
-              OnboardingPage(
-                image: TImages.onBoardingImage1,
-                title: TTexts.onBoardingTitle1,
-                subTitle: TTexts.onBoardingSubTitle1,
-              ),
+      body: BlocConsumer<OnboardingBloc, OnboardingState>(
+        bloc: onboardingBloc,
+        listenWhen: (previous, current) => current is OnboardingSuccessState,
+        buildWhen: (previous, current) => current is OnboardingSuccessState,
+        listener: (context, state) {
+          if (state is OnboardingSuccessState) {
+            // Handle any side effects here if needed
+          }
+        },
+        builder: (context, state) {
+          if (state is OnboardingSuccessState) {
+            return Stack(
+              children: [
+                PageView(
+                  controller: state.pageController,
+                  onPageChanged: (index) {
+                    onboardingBloc.add(OnboardingUpdatePageEvent(index: index));
+                  },
+                  children: [
+                    // OnBoardingPage1
+                    OnboardingPage(
+                      image: Assets.animationOnboarding1,
+                      title: TTexts.onBoardingTitle1,
+                      subTitle: TTexts.onBoardingSubTitle1,
+                      isLottie: true,
+                    ),
 
-              // OnBoardingPage2
-              OnboardingPage(
-                image: TImages.onBoardingImage2,
-                title: TTexts.onBoardingTitle2,
-                subTitle: TTexts.onBoardingSubTitle2,
-              ),
+                    // OnBoardingPage2
+                    OnboardingPage(
+                      image: TImages.onBoardingImage1,
+                      title: TTexts.onBoardingTitle2,
+                      subTitle: TTexts.onBoardingSubTitle2,
+                    ),
 
-              // OnBoardingPage3
-              OnboardingPage(
-                image: TImages.onBoardingImage3,
-                title: TTexts.onBoardingTitle3,
-                subTitle: TTexts.onBoardingSubTitle3,
-              ),
-            ],
-          ),
-          // Skip Button
-          //  OnboardingSkippButton(controller: onboardingController),
+                    // OnBoardingPage3
+                    OnboardingPage(
+                      image: TImages.onBoardingImage3,
+                      title: TTexts.onBoardingTitle3,
+                      subTitle: TTexts.onBoardingSubTitle3,
+                    ),
+                  ],
+                ),
+                // Skip Button
+                OnboardingSkippButton(bloc: onboardingBloc),
 
-          // Dot Navigation SmoothPageIndicator
-           OnboardingDotNavigation(controller: onboardingController),
+                // Dot Navigation SmoothPageIndicator
+                OnboardingDotNavigation(bloc: onboardingBloc),
 
-          // Button
-          OnboardingNextButton(controller: onboardingController),
-        ],
+                // Button
+                OnboardingNextButton(bloc: onboardingBloc),
+              ],
+            );
+          }
+          return const SizedBox.shrink();
+        },
       ),
     );
   }

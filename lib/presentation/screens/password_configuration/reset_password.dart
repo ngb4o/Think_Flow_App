@@ -132,7 +132,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
                   // Buttons
                   if (state is PasswordConfigurationResetPasswordLoadingState)
-                    LoadingSpinkit.loadingButton
+                    TLoadingSpinkit.loadingButton
                   else
                     SizedBox(
                       width: double.infinity,
@@ -147,7 +147,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
                   // Resend
                   if (state is PasswordConfigurationForgotPasswordLoadingState)
-                    LoadingSpinkit.loadingButton
+                    TLoadingSpinkit.loadingButton
                   else
                     SizedBox(
                       width: double.infinity,

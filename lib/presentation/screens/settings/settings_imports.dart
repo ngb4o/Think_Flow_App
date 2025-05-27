@@ -9,6 +9,7 @@ import 'package:think_flow/utils/popups/loaders.dart';
 import 'package:think_flow/utils/utils.dart';
 import '../../../common/widgets/appbar/appbar.dart';
 import '../../../common/widgets/containers/primary_header_container.dart';
+import '../../../common/widgets/error/error_widget.dart';
 import '../../../common/widgets/loading/loading.dart';
 import '../../../common/widgets/profile/user_profile_tile.dart';
 import '../../../common/widgets/settings/settings_menu_tile.dart';

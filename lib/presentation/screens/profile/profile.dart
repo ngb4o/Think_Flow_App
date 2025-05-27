@@ -62,7 +62,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       },
       builder: (context, state) {
         if (state is ProfileLoadingState) {
-          return Scaffold(body: Center(child: LoadingSpinkit.loadingPage));
+          return Scaffold(body: Center(child: TLoadingSpinkit.loadingPage));
         } else if (state is ProfileSuccessState) {
           final networkImage = state.userModel.data?.avatar?.url;
           final image = networkImage?.isNotEmpty == true ? networkImage! : TImages.user;

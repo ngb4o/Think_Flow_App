@@ -25,16 +25,16 @@ class _TextSummaryScreenState extends State<TextSummaryScreen> {
   @override
   void initState() {
     super.initState();
-    context
-        .read<TextSummaryBloc>()
-        .add(TextSummaryInitialFetchDataEvent(noteId: widget.noteId, permission: widget.permission));
+    context.read<TextSummaryBloc>().add(TextSummaryInitialFetchDataEvent(
+        noteId: widget.noteId, permission: widget.permission));
   }
 
   void _resetSummary() {
     if (widget.permission == 'read') {
       TLoaders.errorSnackBar(context,
           title: 'Error',
-          message: 'You do not have permission to edit this note. Please contact the owner to update permissions.');
+          message:
+              'You do not have permission to edit this note. Please contact the owner to update permissions.');
       return;
     }
     if (_cachedTextNoteModel?.data?.id == null) {
@@ -55,7 +55,8 @@ class _TextSummaryScreenState extends State<TextSummaryScreen> {
     if (widget.permission == 'read') {
       TLoaders.errorSnackBar(context,
           title: 'Error',
-          message: 'You do not have permission to edit this note. Please contact the owner to update permissions.');
+          message:
+              'You do not have permission to edit this note. Please contact the owner to update permissions.');
       return;
     }
     if (_cachedTextNoteModel?.data?.summary?.summaryText != null) {
@@ -71,7 +72,8 @@ class _TextSummaryScreenState extends State<TextSummaryScreen> {
     if (widget.permission == 'read') {
       TLoaders.errorSnackBar(context,
           title: 'Error',
-          message: 'You do not have permission to edit this note. Please contact the owner to update permissions.');
+          message:
+              'You do not have permission to edit this note. Please contact the owner to update permissions.');
       return;
     }
     if (_cachedTextNoteModel?.data?.summary?.id == null) {
@@ -113,9 +115,8 @@ class _TextSummaryScreenState extends State<TextSummaryScreen> {
             _cachedTextNoteModel = null;
             _summaryController.clear();
           });
-          context
-              .read<TextSummaryBloc>()
-              .add(TextSummaryInitialFetchDataEvent(noteId: widget.noteId, permission: widget.permission));
+          context.read<TextSummaryBloc>().add(TextSummaryInitialFetchDataEvent(
+              noteId: widget.noteId, permission: widget.permission));
         }
       },
       builder: (context, state) {
@@ -124,9 +125,9 @@ class _TextSummaryScreenState extends State<TextSummaryScreen> {
             state is TextSummaryUpdateSummaryDetailLoadingState) {
           return Scaffold(
             appBar: TAppbar(showBackArrow: true),
-            body: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [Center(child: LoadingSpinkit.loadingPage)],
+            body: TCreateWidget(
+              title: 'Creating summary text',
+              subTitle: 'You will receive a notification once it\'s done.',
             ),
           );
         }
@@ -166,35 +167,18 @@ class _TextSummaryScreenState extends State<TextSummaryScreen> {
                                                         context) *
                                                     0.6,
                                             child: widget.permission == 'read'
-                                                ? Center(
-                                                    child: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        Icon(Icons.lock_outline,
-                                                            size: 48,
-                                                            color: Colors.grey),
-                                                        const SizedBox(
-                                                            height: 16),
-                                                        Text(
-                                                          'Text summary has not been created yet. Please contact the owner to create.',
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                          style: Theme.of(context)
-                                                              .textTheme
-                                                              .bodyMedium
-                                                              ?.copyWith(
-                                                                color:
-                                                                    Colors.grey,
-                                                              ),
-                                                        ),
-                                                      ],
-                                                    ),
+                                                ? TEmptyWidget(
+                                                    title:
+                                                        'Text summary has not been created yet.',
+                                                    subTitle:
+                                                        'Please contact the owner to create.',
                                                   )
-                                                : const Center(
-                                                    child:
-                                                        LoadingSpinkit.loadingPage),
+                                                : const TCreateWidget(
+                                                    title:
+                                                        'Creating summary text',
+                                                    subTitle:
+                                                        'You will receive a notification once it\'s done.',
+                                                  ),
                                           )
                                         : SingleChildScrollView(
                                             child: GestureDetector(
@@ -211,7 +195,8 @@ class _TextSummaryScreenState extends State<TextSummaryScreen> {
                                   ),
                                 ],
                               ),
-                              if (summaryText != null && widget.permission != 'read')
+                              if (summaryText != null &&
+                                  widget.permission != 'read')
                                 Positioned(
                                   right: 0,
                                   bottom: 0,
@@ -235,7 +220,7 @@ class _TextSummaryScreenState extends State<TextSummaryScreen> {
                                           Padding(
                                             padding:
                                                 const EdgeInsets.all(TSizes.sm),
-                                            child: LoadingSpinkit.loadingButton,
+                                            child: TLoadingSpinkit.loadingButton,
                                           )
                                         else
                                           IconButton(
@@ -291,7 +276,7 @@ class _TextSummaryScreenState extends State<TextSummaryScreen> {
                               Positioned(
                                 bottom: 10,
                                 right: 0,
-                                child: LoadingSpinkit.loadingButton,
+                                child: TLoadingSpinkit.loadingButton,
                               )
                             else
                               Positioned(
@@ -305,7 +290,7 @@ class _TextSummaryScreenState extends State<TextSummaryScreen> {
                                   },
                                   child: state
                                           is TextSummaryUpdateSummaryDetailLoadingState
-                                      ? LoadingSpinkit.loadingButton
+                                      ? TLoadingSpinkit.loadingButton
                                       : Container(
                                           decoration: BoxDecoration(
                                             color: TColors.primary,

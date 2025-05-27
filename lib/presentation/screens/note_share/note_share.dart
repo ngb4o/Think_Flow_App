@@ -50,7 +50,7 @@ class _NoteShareScreenState extends State<NoteShareScreen> {
                 title: Text('Share With Me'),
                 centerTitle: true,
               ),
-              body: const Center(child: LoadingSpinkit.loadingPage),
+              body: const Center(child: TLoadingSpinkit.loadingPage),
             );
           case NoteShareSuccessState:
             final notes = state as NoteShareSuccessState;
@@ -65,11 +65,9 @@ class _NoteShareScreenState extends State<NoteShareScreen> {
                   context.read<NoteShareBloc>().add(NoteShareInitialFetchDataEvent());
                 },
                 child: notes.noteModel.data.isEmpty
-                    ? Center(
-                        child: TEmpty(
-                          subTitle: 'No shared notes yet',
-                        ),
-                      )
+                    ? TEmptyWidget(
+                      title: 'No shared notes yet.',
+                    )
                     : ListView.builder(
                         controller: _scrollController,
                         padding: EdgeInsets.all(TSizes.defaultSpace),
@@ -82,7 +80,7 @@ class _NoteShareScreenState extends State<NoteShareScreen> {
                                   title: note.title,
                                   createAt: note.createdAt,
                                   permission: note.permission,
-                                ownerName: '${note.user.firstName} ${note.user.lastName}'
+                                  ownerName: '${note.user.firstName} ${note.user.lastName}'
                                 )),
                             child: Padding(
                               padding: EdgeInsets.only(bottom: TSizes.spaceBtwItems),
@@ -138,7 +136,7 @@ class _NoteShareScreenState extends State<NoteShareScreen> {
                 centerTitle: true,
               ),
               body: Center(
-                child: TEmpty(
+                child: TEmptyWidget(
                   subTitle: 'No shared notes yet',
                 ),
               ),

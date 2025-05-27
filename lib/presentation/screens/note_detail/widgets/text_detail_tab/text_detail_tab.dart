@@ -159,7 +159,7 @@ class _TextDetailTabState extends State<TextDetailTab>
         if (state is NoteTextDetailLoadingState) {
           _cachedTextNoteModel = null;
           _quillController.document = Document();
-          return const Center(child: LoadingSpinkit.loadingPage);
+          return const Center(child: TLoadingSpinkit.loadingPage);
         }
 
         if (state is NoteTextDetailSuccessState) {
@@ -183,7 +183,7 @@ class _TextDetailTabState extends State<TextDetailTab>
                           children: [
                             SizedBox(height: TSizes.spaceBtwSections * 2),
                             Center(
-                              child: TEmpty(
+                              child: TEmptyWidget(
                                   subTitle: widget.permission == 'read'
                                       ? 'No content available'
                                       : 'Tap anywhere to start editing'),
@@ -317,7 +317,7 @@ class _TextDetailTabState extends State<TextDetailTab>
               Positioned(
                 bottom: 10,
                 right: 0,
-                child: LoadingSpinkit.loadingButton,
+                child: TLoadingSpinkit.loadingButton,
               )
             else
               Positioned(

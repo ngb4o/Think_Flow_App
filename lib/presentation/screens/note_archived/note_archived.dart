@@ -54,7 +54,7 @@ class _NoteArchivedScreenState extends State<NoteArchivedScreen> {
                 title: Text('Archived Note'),
                 centerTitle: true,
               ),
-              body: Center(child: LoadingSpinkit.loadingPage),
+              body: Center(child: TLoadingSpinkit.loadingPage),
             );
           case NoteArchivedSuccessState:
             final noteArchived = state as NoteArchivedSuccessState;
@@ -68,11 +68,9 @@ class _NoteArchivedScreenState extends State<NoteArchivedScreen> {
                 children: [
                   Expanded(
                     child: noteArchived.noteModel.data.isEmpty
-                        ? Center(
-                            child: TEmpty(
-                              subTitle: 'You don\'t have any resources yet.',
-                            ),
-                          )
+                        ? TEmptyWidget(
+                          title: 'You don\'t have any resources yet.',
+                        )
                         : ListView.builder(
                             controller: null,
                             padding: EdgeInsets.all(TSizes.defaultSpace),
@@ -101,7 +99,7 @@ class _NoteArchivedScreenState extends State<NoteArchivedScreen> {
                                             ),
                                           ),
                                           if (state is HomeDeleteNoteLoadingState)
-                                            LoadingSpinkit.loadingButton
+                                            TLoadingSpinkit.loadingButton
                                           else
                                           GestureDetector(
                                             onTap: () {
@@ -123,7 +121,7 @@ class _NoteArchivedScreenState extends State<NoteArchivedScreen> {
                                             style: Theme.of(context).textTheme.bodySmall,
                                           ),
                                           if (state is NoteUnarchiveLoadingState)
-                                            LoadingSpinkit.loadingButton
+                                            TLoadingSpinkit.loadingButton
                                           else
                                             GestureDetector(
                                               onTap: () => _unarchiveNote(note.id),

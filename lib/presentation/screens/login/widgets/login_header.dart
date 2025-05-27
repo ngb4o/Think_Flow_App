@@ -11,10 +11,11 @@ class TLoginHeader extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        SizedBox(height: 50),
         // Image
         const Image(
-          height: 150,
           image: AssetImage(TImages.logo),
+          height: 100,
         ),
 
         // Title

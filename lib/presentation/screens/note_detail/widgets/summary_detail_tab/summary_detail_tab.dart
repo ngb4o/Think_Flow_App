@@ -30,9 +30,9 @@ class _SummaryDetailTabState extends State<SummaryDetailTab>
   }
 
   void _loadSummaryContent() {
-    context
-        .read<NoteDetailBloc>()
-        .add(NoteDetailInitialFetchDataSummaryNoteEvent(noteId: widget.noteId, permission: widget.permission));
+    context.read<NoteDetailBloc>().add(
+        NoteDetailInitialFetchDataSummaryNoteEvent(
+            noteId: widget.noteId, permission: widget.permission));
   }
 
   void _resetSummary() {
@@ -43,7 +43,8 @@ class _SummaryDetailTabState extends State<SummaryDetailTab>
       return;
     }
     context.read<NoteDetailBloc>().add(
-          NoteDetailCreateSummaryTextEvent(noteId: widget.noteId, permission: widget.permission),
+          NoteDetailCreateSummaryTextEvent(
+              noteId: widget.noteId, permission: widget.permission),
         );
   }
 
@@ -106,7 +107,7 @@ class _SummaryDetailTabState extends State<SummaryDetailTab>
       },
       builder: (context, state) {
         if (state is NoteSummaryLoadingState && _cachedNoteModel == null) {
-          return const Center(child: LoadingSpinkit.loadingPage);
+          return const Center(child: TLoadingSpinkit.loadingPage);
         }
 
         if (state is NoteSummarySuccessState) {
@@ -125,24 +126,15 @@ class _SummaryDetailTabState extends State<SummaryDetailTab>
                     if (summaryText == null || summaryText.isEmpty)
                       SizedBox(
                         height: THelperFunctions.screenHeight(context) * 0.6,
-                        child: widget.permission == 'read' 
-                          ? Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.lock_outline, size: 48, color: Colors.grey),
-                                  const SizedBox(height: 16),
-                                  Text(
-                                    'Summary note has not been created yet. Please contact the owner to create.',
-                                    textAlign: TextAlign.center,
-                                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                ],
+                        child: widget.permission == 'read'
+                            ? TEmptyWidget(
+                                title: 'Summary note has not been created yet.',
+                                subTitle: 'Please contact the owner to create.')
+                            : const TCreateWidget(
+                                title: 'Creating summary note',
+                                subTitle:
+                                    'You will receive a notification once it\'s done.',
                               ),
-                            )
-                          : const Center(child: LoadingSpinkit.loadingPage),
                       )
                     else
                       GestureDetector(
@@ -178,7 +170,7 @@ class _SummaryDetailTabState extends State<SummaryDetailTab>
                         if (state is NoteDetailCreateSummaryNoteLoadingState)
                           Padding(
                             padding: const EdgeInsets.all(TSizes.sm),
-                            child: LoadingSpinkit.loadingButton,
+                            child: TLoadingSpinkit.loadingButton,
                           )
                         else
                           IconButton(
@@ -219,7 +211,7 @@ class _SummaryDetailTabState extends State<SummaryDetailTab>
               Positioned(
                 bottom: 10,
                 right: 0,
-                child: LoadingSpinkit.loadingButton,
+                child: TLoadingSpinkit.loadingButton,
               )
             else
               Positioned(

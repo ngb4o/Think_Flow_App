@@ -138,7 +138,7 @@ class _TSignupFormState extends State<TSignupForm> {
 
               // Sign Up Button
               if (state is SignupLoadingState)
-                LoadingSpinkit.loadingButton
+                TLoadingSpinkit.loadingButton
               else
                 SizedBox(
                   width: double.infinity,
