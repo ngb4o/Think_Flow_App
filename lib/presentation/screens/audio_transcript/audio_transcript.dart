@@ -299,6 +299,7 @@ class _AudioTranscriptScreenState extends State<AudioTranscriptScreen> {
                   playbackSpeed: playbackSpeed,
                   availableSpeeds: availableSpeeds,
                   isPlaying: isPlaying,
+                  showIconClose: false,
                   onSpeedChanged: (double speed) async {
                     setState(() {
                       playbackSpeed = speed;

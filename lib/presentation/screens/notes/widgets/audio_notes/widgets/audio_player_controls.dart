@@ -16,6 +16,7 @@ class AudioPlayerControls extends StatefulWidget {
   final Function(Duration) onSeek;
   final VoidCallback onBackward;
   final VoidCallback onForward;
+  final bool showIconClose;
 
   const AudioPlayerControls({
     Key? key,
@@ -31,6 +32,7 @@ class AudioPlayerControls extends StatefulWidget {
     required this.onSeek,
     required this.onBackward,
     required this.onForward,
+    this.showIconClose = true,
   }) : super(key: key);
 
   @override
@@ -94,12 +96,13 @@ class _AudioPlayerControlsState extends State<AudioPlayerControls> {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              IconButton(
+              if(widget.showIconClose) IconButton(
                 icon: const Icon(Iconsax.close_circle, color: TColors.white),
                 onPressed: widget.onClose,
               ),
             ],
           ),
+          SizedBox(height: TSizes.xs),
           Row(
             children: [
               Text(

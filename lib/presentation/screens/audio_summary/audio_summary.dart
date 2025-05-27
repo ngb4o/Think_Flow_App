@@ -224,7 +224,6 @@ class _AudioSummaryScreenState extends State<AudioSummaryScreen> {
                           padding: const EdgeInsets.only(
                             left: TSizes.defaultSpace,
                             right: TSizes.defaultSpace,
-                            bottom: TSizes.defaultSpace,
                           ),
                           child: Stack(
                             children: [
@@ -270,7 +269,7 @@ class _AudioSummaryScreenState extends State<AudioSummaryScreen> {
                                   widget.permission != 'read')
                                 Positioned(
                                   right: 0,
-                                  bottom: 0,
+                                  bottom: 16,
                                   child: Container(
                                     decoration: BoxDecoration(
                                       color: Colors.white,
@@ -387,6 +386,7 @@ class _AudioSummaryScreenState extends State<AudioSummaryScreen> {
                   playbackSpeed: playbackSpeed,
                   availableSpeeds: availableSpeeds,
                   isPlaying: isPlaying,
+                  showIconClose: false,
                   onSpeedChanged: (double speed) async {
                     setState(() {
                       playbackSpeed = speed;
