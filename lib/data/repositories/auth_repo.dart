@@ -1,20 +1,14 @@
 import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
-
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:think_flow/data/data_sources/remote/api_client.dart';
 import 'package:think_flow/data/data_sources/remote/api_endpoint_urls.dart';
-import 'package:think_flow/data/data_sources/remote/api_constant.dart';
 import 'package:think_flow/data/models/data_model.dart';
 import 'package:think_flow/data/data_sources/remote/api_exception.dart';
+import 'package:think_flow/utils/utils.dart';
 
 class AuthRepo extends ApiClient {
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
   AuthRepo();
-
-  Future<void> setCookie(String key, String value) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(key, value);
-  }
 
   // Login with email and password
   Future<DataModel> loginWithEmailAndPassword(
@@ -42,30 +36,45 @@ class AuthRepo extends ApiClient {
   // Login with google
   Future<DataModel> loginWithGoogle() async {
     try {
-      // Launch Google login URL in browser
-      final Uri url =
-          Uri.parse('${ApiConstant.mainUrl}${ApiEndpointUrls.loginWithGoogle}');
-      if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-        throw ApiException(message: 'Could not launch Google login');
+      // Trigger the Google Sign In flow
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      
+      if (googleUser == null) {
+        throw ApiException(message: 'Google sign in was cancelled');
       }
 
-      // Wait for the response from the server
-      final response = await getRequest(path: ApiEndpointUrls.loginWithGoogle);
+      // Get the authentication details
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      
+      print(googleAuth.accessToken);
+        
+      if (googleAuth.accessToken == null) {
+        throw ApiException(message: 'Failed to get access token from Google');
+      }
+
+      // Send the token to your backend
+      final response = await postRequest(
+        path: ApiEndpointUrls.loginWithGoogle,
+        body: {
+          'access_token': googleAuth.accessToken,
+        },
+      );
+
       if (response.statusCode == 200) {
-        final responseData = dataModelFromJson(jsonEncode(response.data));
-        // Save access token cookie
-        if (responseData.data != null &&
-            responseData.data['accessToken'] != null) {
-          await setCookie('accessToken', responseData.data['accessToken']);
-        }
-        return responseData;
+        // The response is the access token string directly
+        final accessToken = response.data.toString();
+        await Utils.saveCookie(accessToken);
+        
+        // Create a DataModel with the access token
+        return DataModel(data: accessToken);
       } else {
-        throw ApiException(message: 'Google login failed');
+        throw ApiException(message: 'Google login failed: ${response.statusCode}');
       }
     } on ApiException {
       rethrow;
     } catch (e) {
-      throw ApiException(message: 'An unexpected error occurred');
+      print(e.toString());
+      throw ApiException(message: e.toString());
     }
   }
 

@@ -50,13 +50,14 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       if (loginData.data != null) {
         emit(LoginSuccessState());
         emit(LoginSuccessActionState());
+        await FirebaseMessagingService.instance().registerPendingToken();
       }
     } on ApiException catch (e) {
       emit(LoginErrorState());
       emit(LoginErrorActionState(message: e.message));
     } catch (e) {
       emit(LoginErrorState());
-      emit(LoginErrorActionState(message: 'An unexpected error occurred'));
+      emit(LoginErrorActionState(message: 'An unexpected error occurred during Google sign in'));
     }
   }
 
