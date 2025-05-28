@@ -136,6 +136,7 @@ class _TextDetailTabState extends State<TextDetailTab>
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = THelperFunctions.isDarkMode(context);
     super.build(context);
     return BlocConsumer<NoteDetailBloc, NoteDetailState>(
       listenWhen: (previous, current) => current is NoteDetailActionState,
@@ -217,7 +218,7 @@ class _TextDetailTabState extends State<TextDetailTab>
                 child: Container(
                   height: 45,
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: isDarkMode ? TColors.darkerGrey : Colors.white,
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
@@ -230,7 +231,7 @@ class _TextDetailTabState extends State<TextDetailTab>
                   child: SpeedDial(
                     icon: Icons.auto_awesome,
                     activeIcon: Iconsax.close_square,
-                    iconTheme: IconThemeData(color: TColors.black, size: 30),
+                    iconTheme: IconThemeData(color: isDarkMode ? TColors.white : TColors.black, size: 30),
                     backgroundColor: Colors.transparent,
                     elevation: 0,
                     spacing: 10,

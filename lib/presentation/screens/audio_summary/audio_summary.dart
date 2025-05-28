@@ -165,6 +165,7 @@ class _AudioSummaryScreenState extends State<AudioSummaryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = THelperFunctions.isDarkMode(context);
     return BlocConsumer<AudioSummaryBloc, AudioSummaryState>(
       buildWhen: (previous, current) => current is! AudioSummaryActionState,
       listenWhen: (previous, current) => current is AudioSummaryActionState,
@@ -272,7 +273,7 @@ class _AudioSummaryScreenState extends State<AudioSummaryScreen> {
                                   bottom: 16,
                                   child: Container(
                                     decoration: BoxDecoration(
-                                      color: Colors.white,
+                                      color: isDarkMode ? TColors.darkerGrey : TColors.white,
                                       borderRadius: BorderRadius.circular(12),
                                       boxShadow: [
                                         BoxShadow(
@@ -294,7 +295,7 @@ class _AudioSummaryScreenState extends State<AudioSummaryScreen> {
                                           )
                                         else
                                           IconButton(
-                                            icon: Icon(Iconsax.refresh),
+                                            icon: Icon(Iconsax.refresh, color: isDarkMode ? TColors.white : TColors.black),
                                             onPressed: _resetSummary,
                                             tooltip: 'Reset Summary',
                                           ),

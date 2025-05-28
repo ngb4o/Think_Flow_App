@@ -99,6 +99,7 @@ class _TextSummaryScreenState extends State<TextSummaryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = THelperFunctions.isDarkMode(context);
     return BlocConsumer<TextSummaryBloc, TextSummaryState>(
       listenWhen: (previous, current) => current is TextSummaryActionState,
       buildWhen: (previous, current) => current is! TextSummaryActionState,
@@ -202,7 +203,7 @@ class _TextSummaryScreenState extends State<TextSummaryScreen> {
                                   bottom: 0,
                                   child: Container(
                                     decoration: BoxDecoration(
-                                      color: Colors.white,
+                                      color: isDarkMode ? TColors.darkerGrey : Colors.white,
                                       borderRadius: BorderRadius.circular(12),
                                       boxShadow: [
                                         BoxShadow(

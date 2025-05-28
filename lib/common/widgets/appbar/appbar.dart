@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:think_flow/utils/helpers/helper_functions.dart';
 
 import '../../../utils/constants/colors.dart';
 import '../../../utils/constants/sizes.dart';
@@ -29,13 +30,14 @@ class TAppbar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = THelperFunctions.isDarkMode(context);
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: paddingTitle),
       child: AppBar(
         automaticallyImplyLeading: false,
         leading: showBackArrow
             ? IconButton(
-                onPressed: () => Navigator.pop(context), icon: Icon(Iconsax.arrow_left, color: colorBackArrow))
+                onPressed: () => Navigator.pop(context), icon: Icon(Iconsax.arrow_left, color:isDarkMode ? TColors.white : TColors.black))
             : leadingIcon != null
                 ? IconButton(onPressed: () => leadingOnPressed, icon: Icon(leadingIcon))
                 : null,

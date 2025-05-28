@@ -58,7 +58,9 @@ class TTabBar extends StatelessWidget implements PreferredSizeWidget {
                 width: fullWidth ? (width ?? MediaQuery.of(context).size.width) / tabs.length : null,
                 padding: fullWidth ? EdgeInsets.zero : const EdgeInsets.symmetric(horizontal: 20),
                 decoration: BoxDecoration(
-                  color: isSelected ? (selectedColor ?? TColors.primary) : (unselectedColor ?? Colors.grey.shade200),
+                  color: isSelected 
+                      ? (selectedColor ?? (dark ? TColors.c6368D1 : TColors.primary))
+                      : (unselectedColor ?? Colors.grey.shade200),
                   borderRadius: BorderRadius.circular(30),
                 ),
                 child: Tab(

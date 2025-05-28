@@ -98,6 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = THelperFunctions.isDarkMode(context);
     return BlocConsumer<HomeBloc, HomeState>(
       listenWhen: (previous, current) => current is HomeActionState,
       buildWhen: (previous, current) => current is! HomeActionState,
@@ -185,10 +186,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(10),
                                       border: Border.all(color: TColors.grey, width: 1),
-                                      color: TColors.white,
+                                      color: isDarkMode ? TColors.darkerGrey : TColors.white,
                                       boxShadow: [
                                         BoxShadow(
-                                          color: TColors.primary.withOpacity(0.5),
+                                          color: isDarkMode ? TColors.darkerGrey : TColors.primary.withOpacity(0.5),
                                           blurRadius: 8,
                                           offset: const Offset(0, 2),
                                         ),
@@ -247,7 +248,7 @@ class _HomeScreenState extends State<HomeScreen> {
             floatingActionButton: Container(
               height: 50,
               decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: isDarkMode ? TColors.darkerGrey : Colors.white,
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(

@@ -34,14 +34,18 @@ class _TLoginFormState extends State<TLoginForm> {
 
   @override
   Widget build(BuildContext context) {
+    final dark = THelperFunctions.isDarkMode(context);
+
     return BlocConsumer<LoginBloc, LoginState>(
-      listenWhen: (previous, current) => current is LoginActionSate || current is LoginSuccessState,
+      listenWhen: (previous, current) =>
+          current is LoginActionSate || current is LoginSuccessState,
       buildWhen: (previous, current) => current is! LoginActionSate,
       listener: (context, state) {
         if (state is LoginSuccessState) {
           rememberMe ? Utils.setIsLoggedIn(true) : Utils.setIsLoggedIn(false);
         } else if (state is LoginErrorActionState) {
-          TLoaders.errorSnackBar(context, title: 'Login failed', message: state.message);
+          TLoaders.errorSnackBar(context,
+              title: 'Login failed', message: state.message);
         } else if (state is LoginNavigationToSignupPageActionState) {
           AutoRouter.of(context).push(SignUpScreenRoute());
         } else if (state is LoginNavigationToForgetPasswordPageActionState) {
@@ -51,15 +55,17 @@ class _TLoginFormState extends State<TLoginForm> {
             const NavigationMenuRoute(),
             predicate: (_) => false,
           );
-        } else if(state is LoginNavigationToVerifyEmailPage) {
-          AutoRouter.of(context).push(VerifyEmailScreenRoute(email: state.email));
+        } else if (state is LoginNavigationToVerifyEmailPage) {
+          AutoRouter.of(context)
+              .push(VerifyEmailScreenRoute(email: state.email));
         }
       },
       builder: (context, state) {
         return Form(
           key: formKey,
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: TSizes.spaceBtwSections),
+            padding:
+                const EdgeInsets.symmetric(vertical: TSizes.spaceBtwSections),
             child: Column(
               children: [
                 // Email
@@ -77,7 +83,8 @@ class _TLoginFormState extends State<TLoginForm> {
                 // Password
                 TextFormField(
                   controller: passwordController,
-                  validator: (value) => TValidator.validateEmptyText('Password', value),
+                  validator: (value) =>
+                      TValidator.validateEmptyText('Password', value),
                   decoration: InputDecoration(
                     prefixIcon: const Icon(Iconsax.password_check),
                     labelText: TTexts.password,
@@ -87,7 +94,8 @@ class _TLoginFormState extends State<TLoginForm> {
                           hidePassword = !hidePassword;
                         });
                       },
-                      icon: Icon(hidePassword ? Iconsax.eye_slash : Iconsax.eye),
+                      icon:
+                          Icon(hidePassword ? Iconsax.eye_slash : Iconsax.eye),
                     ),
                   ),
                   obscureText: hidePassword,
@@ -116,8 +124,10 @@ class _TLoginFormState extends State<TLoginForm> {
 
                     // Forget Password
                     TextButton(
-                      onPressed: () => context.read<LoginBloc>().add(LoginClickButtonNavigationToForgetPasswordPageEvent()),
-                      child: const Text(TTexts.forgetPassword, style: TextStyle(color: TColors.primary)),
+                      onPressed: () => context.read<LoginBloc>().add(
+                          LoginClickButtonNavigationToForgetPasswordPageEvent()),
+                      child: const Text(TTexts.forgetPassword,
+                          style: TextStyle(color: TColors.primary)),
                     ),
                   ],
                 ),
@@ -131,6 +141,14 @@ class _TLoginFormState extends State<TLoginForm> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        backgroundColor: TColors.primary,
+                        elevation: 5,
+                        shadowColor: TColors.primary.withOpacity(0.5),
+                      ),
                       onPressed: _login,
                       child: const Text(TTexts.signIn),
                     ),
@@ -142,7 +160,9 @@ class _TLoginFormState extends State<TLoginForm> {
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton(
-                    onPressed: () => context.read<LoginBloc>().add(LoginClickButtonNavigationToSignupPageEvent()),
+                    onPressed: () => context
+                        .read<LoginBloc>()
+                        .add(LoginClickButtonNavigationToSignupPageEvent()),
                     child: const Text(TTexts.createAccount),
                   ),
                 ),

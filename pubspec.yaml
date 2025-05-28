@@ -1,7 +1,7 @@
 name: think_flow
 description: "A new Flutter project."
 publish_to: 'none'
-version: 1.0.0+1
+version: 1.0.0+2
 
 environment:
   sdk: '>=3.6.2 <4.0.0'
@@ -12,9 +12,6 @@ dependencies:
     sdk: flutter
 
   # Core & Utility
-  http: ^1.2.1
-  intl: ^0.19.0
-  logger: ^2.2.0
   url_launcher: ^6.2.6
   connectivity_plus: ^6.0.3
   shared_preferences: ^2.5.2
@@ -24,7 +21,6 @@ dependencies:
 
   # State Management
   get: ^4.6.6
-  get_storage: ^2.1.1
   bloc: ^9.0.0
   flutter_bloc: ^9.1.0
 
@@ -38,7 +34,6 @@ dependencies:
   auto_route: ^7.8.4
 
   # UI & Animation
-  cupertino_icons: ^1.0.8
   iconsax: ^0.0.8
   flutter_native_splash: ^2.4.0
   lottie: ^3.1.0
@@ -94,7 +89,6 @@ flutter:
     - assets/logos/
     - assets/images/content/
     - assets/images/animations/
-    - assets/icons/payment_methods/
     - assets/images/on_boarding_images/
     - shorebird.yaml
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:think_flow/utils/helpers/helper_functions.dart';
 import '../../../../../../utils/constants/colors.dart';
 import '../../../../../../utils/constants/sizes.dart';
 
@@ -66,10 +67,11 @@ class _AudioPlayerControlsState extends State<AudioPlayerControls> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = THelperFunctions.isDarkMode(context);
     return Container(
       padding: const EdgeInsets.all(TSizes.defaultSpace),
       decoration: BoxDecoration(
-        color: TColors.primary,
+        color: isDarkMode? TColors.c6368D1 :TColors.primary,
         borderRadius: BorderRadius.circular(TSizes.cardRadiusLg),
         boxShadow: [
           BoxShadow(

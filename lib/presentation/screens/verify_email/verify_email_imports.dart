@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:think_flow/presentation/screens/verify_email/bloc/verify_email_bloc.dart';
 import 'package:think_flow/utils/popups/loaders.dart';
 

@@ -6,7 +6,6 @@ class OnboardingNextButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dark = THelperFunctions.isDarkMode(context);
     return BlocBuilder<OnboardingBloc, OnboardingState>(
       bloc: bloc,
       buildWhen: (previous, current) => current is OnboardingSuccessState,
@@ -20,9 +19,9 @@ class OnboardingNextButton extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                backgroundColor: dark ? TColors.primary : TColors.primary,
-                elevation: 6,
-                shadowColor: dark ? TColors.primary.withOpacity(0.5) : TColors.primary.withOpacity(0.5),
+                backgroundColor: TColors.primary,
+                elevation: 5,
+                shadowColor: TColors.primary.withOpacity(0.5) 
               ),
               onPressed: () {
                 bloc.add(OnboardingNextPageEvent(context: context));

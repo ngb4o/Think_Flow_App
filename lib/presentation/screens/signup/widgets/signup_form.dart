@@ -143,6 +143,14 @@ class _TSignupFormState extends State<TSignupForm> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        backgroundColor: TColors.primary,
+                        elevation: 5,
+                        shadowColor: TColors.primary.withOpacity(0.5),
+                      ),
                     onPressed: _signup,
                     child: const Text(TTexts.createAccount),
                   ),

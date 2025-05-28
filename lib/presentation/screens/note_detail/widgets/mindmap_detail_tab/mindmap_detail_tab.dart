@@ -445,7 +445,7 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkTheme = THelperFunctions.isDarkMode(context);
+    final isDarkMode = THelperFunctions.isDarkMode(context);
     return BlocConsumer<NoteDetailBloc, NoteDetailState>(
       listener: (context, state) {
         if (state is NoteMindmapSuccessState) {
@@ -542,7 +542,7 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
               bottom: 16,
               child: Container(
                 decoration: BoxDecoration(
-                  color: isDarkTheme ? TColors.darkerGrey : Colors.white,
+                  color: isDarkMode ? TColors.darkerGrey : Colors.white,
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
@@ -562,7 +562,10 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
                       )
                     else if (widget.permission != 'read') ...[
                       IconButton(
-                        icon: Icon(Iconsax.refresh),
+                        icon: Icon(
+                          Iconsax.refresh,
+                          color: isDarkMode ? TColors.white : TColors.black,
+                        ),
                         onPressed: _resetMindmap,
                         tooltip: 'Zoom in',
                       ),
@@ -573,7 +576,10 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
                       ),
                     ],
                     IconButton(
-                      icon: const Icon(Iconsax.search_zoom_out),
+                      icon: Icon(
+                        Iconsax.search_zoom_out,
+                        color: isDarkMode ? TColors.white : TColors.black,
+                      ),
                       onPressed: _zoomOut,
                       tooltip: 'Zoom out',
                     ),
@@ -585,6 +591,7 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
                     IconButton(
                       icon: Icon(
                         Iconsax.search_zoom_in_1,
+                        color: isDarkMode ? TColors.white : TColors.black,
                       ),
                       onPressed: _zoomIn,
                       tooltip: 'Zoom in',

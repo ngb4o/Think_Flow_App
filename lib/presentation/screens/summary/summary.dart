@@ -15,6 +15,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = THelperFunctions.isDarkMode(context);
     return DefaultTabController(
       length: 3,
       child: Scaffold(
@@ -72,7 +73,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
                     currentTab = value;
                   });
                 },
-                selectedColor: TColors.primary,
+                selectedColor: isDarkMode ? TColors.c6368D1 : TColors.primary,
                 unselectedColor: Colors.grey.shade200,
                 selectedTextColor: Colors.white,
                 unselectedTextColor: Colors.black,

@@ -87,6 +87,7 @@ class _SummaryDetailTabState extends State<SummaryDetailTab>
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = THelperFunctions.isDarkMode(context);
     super.build(context);
     return BlocConsumer<NoteDetailBloc, NoteDetailState>(
       listenWhen: (previous, current) => current is NoteDetailActionState,
@@ -154,7 +155,7 @@ class _SummaryDetailTabState extends State<SummaryDetailTab>
                   bottom: 16,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: isDarkMode ? TColors.darkerGrey : Colors.white,
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
@@ -174,7 +175,7 @@ class _SummaryDetailTabState extends State<SummaryDetailTab>
                           )
                         else
                           IconButton(
-                            icon: Icon(Iconsax.refresh),
+                            icon: Icon(Iconsax.refresh, color: isDarkMode ? TColors.white : TColors.black,),
                             onPressed: _resetSummary,
                             tooltip: 'Reset Summary',
                           ),

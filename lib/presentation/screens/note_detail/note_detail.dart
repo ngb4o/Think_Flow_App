@@ -66,6 +66,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = THelperFunctions.isDarkMode(context);
     return BlocConsumer<NoteDetailBloc, NoteDetailState>(
       listenWhen: (previous, current) => current is NoteDetailActionState,
       buildWhen: (previous, current) => current is! NoteDetailActionState,
@@ -190,7 +191,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                         currentTabIndex = value;
                       });
                     },
-                    selectedColor: TColors.primary,
+                    selectedColor: isDarkMode ? TColors.c6368D1 : TColors.primary,
                     unselectedColor: Colors.grey.shade200,
                     selectedTextColor: Colors.white,
                     unselectedTextColor: Colors.black,

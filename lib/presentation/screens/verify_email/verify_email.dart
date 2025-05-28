@@ -85,8 +85,9 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
               IconButton(
                 onPressed: () => _navigationToLoginPage(),
                 icon: const Icon(
-                  CupertinoIcons.clear,
+                  Iconsax.close_square,
                   color: TColors.primary,
+                  size: 28,
                 ),
               ),
             ],
