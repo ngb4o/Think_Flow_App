@@ -38,7 +38,7 @@ class HomeClickButtonArchiveNoteEvent extends HomeEvent {
 
   HomeClickButtonArchiveNoteEvent({required this.noteId});
 }
-
 class HomeClickButtonNavigationToArchivedPageEvent extends HomeEvent {}
 
 class HomeClickButtonNavigationToNotificationPageEvent extends HomeEvent {}
+

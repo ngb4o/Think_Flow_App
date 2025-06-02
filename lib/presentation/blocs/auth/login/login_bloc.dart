@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:think_flow/data/data_sources/remote/api_exception.dart';
 import 'package:think_flow/data/repositories/auth_repo.dart';
 
-import '../../../services/firebase_messaging_service.dart';
+import '../../../../services/firebase_messaging_service.dart';
 
 part 'login_event.dart';
 

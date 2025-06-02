@@ -4,7 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:think_flow/data/repositories/auth_repo.dart';
 
-import '../../../data/data_sources/remote/api_exception.dart';
+import '../../../../data/data_sources/remote/api_exception.dart';
 
 part 'signup_event.dart';
 

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:think_flow/presentation/router/router_imports.gr.dart';
-import 'package:think_flow/presentation/blocs/signup/signup_bloc.dart';
+import 'package:think_flow/presentation/blocs/auth/signup/signup_bloc.dart';
 import 'package:think_flow/utils/popups/loaders.dart';
 
 import '../../../../common/widgets/loading/loading.dart';

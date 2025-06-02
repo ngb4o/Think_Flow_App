@@ -66,9 +66,9 @@ class HomeArchiveNoteErrorActionState extends HomeActionState {
 
   HomeArchiveNoteErrorActionState({required this.message});
 }
-
 class HomeNavigationToArchivedPageActionState extends HomeActionState {}
 
 class HomeLoadMoreLoadingState extends HomeState {}
 
 class HomeNavigationToNotificationPageState extends HomeActionState {}
+

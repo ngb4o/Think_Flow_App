@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:think_flow/common/widgets/loading/loading.dart';
-import 'package:think_flow/presentation/blocs/password_configuration/password_configuration_bloc.dart';
+import 'package:think_flow/presentation/blocs/auth/password_configuration/password_configuration_bloc.dart';
 import 'package:think_flow/utils/popups/loaders.dart';
 
 import '../../../utils/constants/colors.dart';
