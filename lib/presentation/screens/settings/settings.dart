@@ -42,7 +42,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         }
       },
       builder: (context, state) {
-        if (state is SettingLoadingState) {
+        if (state is SettingLoadingState || state is SettingLogoutLoadingState) {
           return TLoadingSpinkit.loadingPage;
         } else if (state is SettingSuccessState) {
           var profileData = state.userModel.data;

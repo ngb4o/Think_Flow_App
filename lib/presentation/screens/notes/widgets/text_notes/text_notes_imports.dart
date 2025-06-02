@@ -9,6 +9,6 @@ import '../../../../../services/text_recognizer_service.dart';
 import '../../../../../utils/constants/sizes.dart';
 import '../../../../../utils/popups/loaders.dart';
 import '../../../../../utils/utils.dart';
-import '../../bloc/notes_bloc.dart';
+import '../../../../blocs/note/notes_bloc.dart';
 
 part 'text_notes.dart';

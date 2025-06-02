@@ -12,8 +12,8 @@ import '../../../../common/widgets/profile/t_circular_image.dart';
 import '../../../../utils/constants/image_strings.dart';
 import '../../../../utils/constants/text_strings.dart';
 import '../../../../utils/validators/validation.dart';
-import 'home_share_note/bloc/home_share_note_bloc.dart';
+import '../../../blocs/note_share/home_share_note_bloc.dart';
 
 
-part 'home_share_note/home_share_note.dart';
+part 'share_note/share_note.dart';
 

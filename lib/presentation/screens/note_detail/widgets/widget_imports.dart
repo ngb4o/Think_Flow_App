@@ -33,9 +33,12 @@ import '../../../../services/text_recognizer_service.dart';
 import '../../../../utils/constants/sizes.dart';
 import '../../../../utils/constants/colors.dart';
 import '../../../../utils/utils.dart';
+import '../../../blocs/audio_note_detail/audio_note_detail_bloc.dart';
+import '../../../blocs/mindmap_note_detail/mindmap_note_detail_bloc.dart';
+import '../../../blocs/summary_note_detail/summary_note_detail_bloc.dart';
+import '../../../blocs/text_note_detail/text_note_detail_bloc.dart';
 import '../../notes/widgets/audio_notes/widgets/recording_list_item.dart';
 import '../../notes/widgets/audio_notes/widgets/recording_controls.dart';
-import '../bloc/note_detail_bloc.dart';
 import 'package:think_flow/data/models/list_audio_note_model.dart';
 
 part 'text_detail_tab/text_detail_tab.dart';

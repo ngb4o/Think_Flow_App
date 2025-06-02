@@ -16,6 +16,6 @@ import '../../../common/widgets/appbar/home_appbar.dart';
 import '../../../common/widgets/error/error_widget.dart';
 import '../../../utils/popups/loaders.dart';
 import '../../router/router_imports.gr.dart';
-import 'bloc/home_bloc.dart';
+import '../../blocs/home/home_bloc.dart';
 
 part 'home.dart';

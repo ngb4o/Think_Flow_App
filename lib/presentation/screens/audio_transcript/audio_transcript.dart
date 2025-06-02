@@ -2,7 +2,8 @@ part of 'audio_transcript_imports.dart';
 
 @RoutePage()
 class AudioTranscriptScreen extends StatefulWidget {
-  const AudioTranscriptScreen({super.key, required this.audioId, required this.permission});
+  const AudioTranscriptScreen(
+      {super.key, required this.audioId, required this.permission});
 
   final String audioId;
   final String permission;
@@ -26,9 +27,8 @@ class _AudioTranscriptScreenState extends State<AudioTranscriptScreen> {
   @override
   void initState() {
     super.initState();
-    context
-        .read<AudioTranscriptBloc>()
-        .add(AudioTranscriptInitialFetchDataAudioEvent(audioId: widget.audioId));
+    context.read<AudioTranscriptBloc>().add(
+        AudioTranscriptInitialFetchDataAudioEvent(audioId: widget.audioId));
 
     audioPlayer.positionStream.listen((position) {
       if (mounted) {
@@ -61,7 +61,7 @@ class _AudioTranscriptScreenState extends State<AudioTranscriptScreen> {
         await audioPlayer.setUrl(url);
         currentAudioUrl = url;
       }
-      
+
       if (audioPlayer.playing) {
         await audioPlayer.pause();
       } else {
@@ -162,7 +162,8 @@ class _AudioTranscriptScreenState extends State<AudioTranscriptScreen> {
         }
       },
       builder: (context, state) {
-        if (state is AudioTranscriptLoadingState || state is AudioTranscriptUpdateTextLoadingState) {
+        if (state is AudioTranscriptLoadingState ||
+            state is AudioTranscriptUpdateTextLoadingState) {
           return Scaffold(
             appBar: TAppbar(
               showBackArrow: true,
@@ -178,7 +179,8 @@ class _AudioTranscriptScreenState extends State<AudioTranscriptScreen> {
 
         if (state is AudioTranscriptSuccessState) {
           _cachedAudioNoteModel = state.audioNoteModel;
-          final transcriptContent = _cachedAudioNoteModel?.data?.transcript?.content;
+          final transcriptContent =
+              _cachedAudioNoteModel?.data?.transcript?.content;
 
           return Scaffold(
             appBar: TAppbar(
@@ -201,23 +203,21 @@ class _AudioTranscriptScreenState extends State<AudioTranscriptScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Expanded(
-                                    child: transcriptContent == null || transcriptContent.isEmpty
-                                        ? GestureDetector(
-                                          onTap: () {
-                                            if (widget.permission != 'read') {
-                                              _enterEditMode();
-                                            }
-                                          },
-                                          child: Center(
-                                            child: TEmptyWidget(subTitle: 'Tap to edit the transcript'),
-                                          ),
-                                        )
+                                    child: transcriptContent == null ||
+                                            transcriptContent.isEmpty
+                                        ? TCreateWidget(
+                                            title: 'Creating audio transcript.',
+                                            subTitle: 'You will receive a notification once it\'s done.',
+                                          )
                                         : SingleChildScrollView(
                                             child: GestureDetector(
                                               onTap: widget.permission == 'read'
                                                   ? null
                                                   : _enterEditMode,
-                                              child: Text(transcriptContent, style: Theme.of(context).textTheme.bodyMedium),
+                                              child: Text(transcriptContent,
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyMedium),
                                             ),
                                           ),
                                   ),
@@ -250,7 +250,9 @@ class _AudioTranscriptScreenState extends State<AudioTranscriptScreen> {
                                         disabledBorder: InputBorder.none,
                                         contentPadding: EdgeInsets.zero,
                                       ),
-                                      style: Theme.of(context).textTheme.titleSmall,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleSmall,
                                     ),
                                   ),
                                 ],
@@ -268,17 +270,22 @@ class _AudioTranscriptScreenState extends State<AudioTranscriptScreen> {
                                 right: TSizes.defaultSpace,
                                 child: GestureDetector(
                                   onTap: () {
-                                    _updateTranscript(_cachedAudioNoteModel!.data!.transcript!.id.toString());
+                                    _updateTranscript(_cachedAudioNoteModel!
+                                        .data!.transcript!.id
+                                        .toString());
                                   },
-                                  child: state is AudioTranscriptUpdateTextLoadingState
+                                  child: state
+                                          is AudioTranscriptUpdateTextLoadingState
                                       ? TLoadingSpinkit.loadingButton
                                       : Container(
                                           decoration: BoxDecoration(
                                             color: TColors.primary,
-                                            borderRadius: BorderRadius.circular(20),
+                                            borderRadius:
+                                                BorderRadius.circular(20),
                                           ),
                                           padding: EdgeInsets.symmetric(
-                                              horizontal: TSizes.md, vertical: TSizes.sm),
+                                              horizontal: TSizes.md,
+                                              vertical: TSizes.sm),
                                           child: Text(
                                             'Save',
                                             style: Theme.of(context)

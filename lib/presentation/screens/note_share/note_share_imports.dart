@@ -10,7 +10,7 @@ import 'package:think_flow/common/widgets/loading/loading.dart';
 import '../../../common/widgets/empty/empty_widget.dart';
 import '../../../utils/constants/colors.dart';
 import '../../../utils/constants/sizes.dart';
-import '../home/bloc/home_bloc.dart';
-import 'bloc/note_share_bloc.dart';
+import '../../blocs/home/home_bloc.dart';
+import '../../blocs/note_share_to_me/note_share_bloc.dart';
 
 part 'note_share.dart';

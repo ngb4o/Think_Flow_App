@@ -6,25 +6,29 @@ import 'package:think_flow/data/repositories/auth_repo.dart';
 import 'package:think_flow/data/repositories/note_repo.dart';
 import 'package:think_flow/data/repositories/noti_repo.dart';
 import 'package:think_flow/data/repositories/user_repo.dart';
+import 'package:think_flow/presentation/blocs/audio_note_detail/audio_note_detail_bloc.dart';
+import 'package:think_flow/presentation/blocs/mindmap_note_detail/mindmap_note_detail_bloc.dart';
+import 'package:think_flow/presentation/blocs/summary_note_detail/summary_note_detail_bloc.dart';
+import 'package:think_flow/presentation/blocs/text_note_detail/text_note_detail_bloc.dart';
 import 'package:think_flow/presentation/router/router_imports.dart';
-import 'package:think_flow/presentation/screens/audio_summary/bloc/audio_summary_bloc.dart';
-import 'package:think_flow/presentation/screens/audio_transcript/bloc/audio_transcript_bloc.dart';
-import 'package:think_flow/presentation/screens/home/bloc/home_bloc.dart';
-import 'package:think_flow/presentation/screens/home/widgets/home_share_note/bloc/home_share_note_bloc.dart';
-import 'package:think_flow/presentation/screens/login/bloc/login_bloc.dart';
-import 'package:think_flow/presentation/screens/note_archived/bloc/note_archived_bloc.dart';
+import 'package:think_flow/presentation/blocs/audio_summary/audio_summary_bloc.dart';
+import 'package:think_flow/presentation/blocs/audio_transcrip/audio_transcript_bloc.dart';
+import 'package:think_flow/presentation/blocs/home/home_bloc.dart';
+import 'package:think_flow/presentation/blocs/note_share/home_share_note_bloc.dart';
+import 'package:think_flow/presentation/blocs/login/login_bloc.dart';
+import 'package:think_flow/presentation/blocs/note_archived/note_archived_bloc.dart';
 import 'package:think_flow/presentation/screens/note_detail/bloc/note_detail_bloc.dart';
-import 'package:think_flow/presentation/screens/note_share/bloc/note_share_bloc.dart';
-import 'package:think_flow/presentation/screens/notes/bloc/notes_bloc.dart';
-import 'package:think_flow/presentation/screens/notification/bloc/notification_bloc.dart';
-import 'package:think_flow/presentation/screens/password_configuration/bloc/password_configuration_bloc.dart';
-import 'package:think_flow/presentation/screens/profile/bloc/profile_bloc.dart';
-import 'package:think_flow/presentation/screens/settings/bloc/settings_bloc.dart';
-import 'package:think_flow/presentation/screens/signup/bloc/signup_bloc.dart';
-import 'package:think_flow/presentation/screens/verify_email/bloc/verify_email_bloc.dart';
+import 'package:think_flow/presentation/blocs/note_share_to_me/note_share_bloc.dart';
+import 'package:think_flow/presentation/blocs/note/notes_bloc.dart';
+import 'package:think_flow/presentation/blocs/notification/notification_bloc.dart';
+import 'package:think_flow/presentation/blocs/password_configuration/password_configuration_bloc.dart';
+import 'package:think_flow/presentation/blocs/profile/profile_bloc.dart';
+import 'package:think_flow/presentation/blocs/settings/settings_bloc.dart';
+import 'package:think_flow/presentation/blocs/signup/signup_bloc.dart';
+import 'package:think_flow/presentation/blocs/verify_email/verify_email_bloc.dart';
 import 'package:think_flow/utils/theme/theme.dart';
 
-import 'presentation/screens/text_summary/bloc/bloc/text_summary_bloc.dart';
+import 'presentation/blocs/text_summary/text_summary_bloc.dart';
 
 class App extends StatelessWidget {
   App({super.key});
@@ -54,6 +58,10 @@ class App extends StatelessWidget {
     final AudioSummaryBloc audioSummaryBloc = AudioSummaryBloc(noteRepo);
     final AudioTranscriptBloc audioTranscriptBloc = AudioTranscriptBloc(noteRepo);
     final NotificationBloc notificationBloc = NotificationBloc(notificationRepo);
+    final TextNoteDetailBloc textNoteDetailBloc = TextNoteDetailBloc(noteRepo);
+    final AudioNoteDetailBloc audioNoteDetailBloc = AudioNoteDetailBloc(noteRepo);
+    final SummaryNoteDetailBloc summaryNoteDetailBloc = SummaryNoteDetailBloc(noteRepo);
+    final MindmapNoteDetailBloc  mindmapNoteDetailBloc = MindmapNoteDetailBloc(noteRepo);
     return MultiBlocProvider(
       providers: [
         // Login
@@ -88,6 +96,14 @@ class App extends StatelessWidget {
         BlocProvider(create: (context) => audioTranscriptBloc),
         // Notification
         BlocProvider(create: (context) => notificationBloc),
+        // Text note detail
+        BlocProvider(create: (context) => textNoteDetailBloc),
+        // Audio note detail
+        BlocProvider(create: (context) => audioNoteDetailBloc),
+        // Summary note detail
+        BlocProvider(create: (context) => summaryNoteDetailBloc),
+        // Mindmap note detail        
+        BlocProvider(create: (context) => mindmapNoteDetailBloc),
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,

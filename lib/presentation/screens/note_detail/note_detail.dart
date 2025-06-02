@@ -162,8 +162,14 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                             SizedBox(width: TSizes.xs),
                             TCircularImage(
                                 image: TImages.user, height: 30, width: 30),
-                            Text(' ${widget.ownerName}',
-                                style: Theme.of(context).textTheme.bodySmall),
+                            Expanded(
+                              child: Text(
+                                ' ${widget.ownerName}',
+                                style: Theme.of(context).textTheme.bodySmall,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
                           ],
                         ),
                       ],
@@ -191,7 +197,8 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                         currentTabIndex = value;
                       });
                     },
-                    selectedColor: isDarkMode ? TColors.c6368D1 : TColors.primary,
+                    selectedColor:
+                        isDarkMode ? TColors.c6368D1 : TColors.primary,
                     unselectedColor: Colors.grey.shade200,
                     selectedTextColor: Colors.white,
                     unselectedTextColor: Colors.black,

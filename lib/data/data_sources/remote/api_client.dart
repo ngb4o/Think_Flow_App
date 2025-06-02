@@ -164,13 +164,14 @@ class ApiClient {
   // DELETE REQUEST
   Future<Response> deleteRequest({
     required String path,
+    dynamic body,
     BuildContext? context,
   }) async {
     try {
       debugPrint('🚀 ========== API REQUEST ========= 🚀');
       debugPrint('Request url: ${baseOptions.baseUrl + path}');
 
-      var response = await dio.delete(path);
+      var response = await dio.delete(path, data: body);
 
       debugPrint('🔥 ========== API RESPONSE ========= 🔥');
       debugPrint('Status code: ${response.statusCode.toString()}');

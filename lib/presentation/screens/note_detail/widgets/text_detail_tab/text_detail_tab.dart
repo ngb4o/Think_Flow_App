@@ -35,8 +35,8 @@ class _TextDetailTabState extends State<TextDetailTab>
 
   void _loadTextContent() {
     context
-        .read<NoteDetailBloc>()
-        .add(NoteTextDetailInitialFetchDataEvent(noteId: widget.noteId));
+        .read<TextNoteDetailBloc>()
+        .add(TextNoteDetailInitialFetchDataEvent(noteId: widget.noteId));
   }
 
   void _enterEditMode() {
@@ -66,8 +66,8 @@ class _TextDetailTabState extends State<TextDetailTab>
     final delta = _quillController.document.toDelta().toJson();
     final content = Utils.convertDeltaToContent(delta);
 
-    context.read<NoteDetailBloc>().add(
-          NoteDetailClickButtonUpdateTextEvent(
+    context.read<TextNoteDetailBloc>().add(
+          TextNoteDetailUpdateEvent(
             noteId: textId,
             content: content,
           ),
@@ -138,32 +138,32 @@ class _TextDetailTabState extends State<TextDetailTab>
   Widget build(BuildContext context) {
     final isDarkMode = THelperFunctions.isDarkMode(context);
     super.build(context);
-    return BlocConsumer<NoteDetailBloc, NoteDetailState>(
-      listenWhen: (previous, current) => current is NoteDetailActionState,
-      buildWhen: (previous, current) => current is! NoteDetailActionState,
+    return BlocConsumer<TextNoteDetailBloc, TextNoteDetailState>(
+      listenWhen: (previous, current) => current is TextNoteDetailActionState,
+      buildWhen: (previous, current) => current is! TextNoteDetailActionState,
       listener: (context, state) {
-        if (state is NoteUpdateTextDetailSuccessActionSate) {
+        if (state is TextNoteDetailUpdateSuccessActionState) {
           setState(() {
             _isEditing = false;
             _cachedTextNoteModel = null;
             _quillController.document = Document();
           });
           _loadTextContent();
-        } else if (state is NoteUpdateDetailErrorActionState) {
+        } else if (state is TextNoteDetailErrorActionState) {
           TLoaders.errorSnackBar(context,
               title: 'Error', message: state.message);
-        } else if (state is NoteDetailNavigationToSummaryTextPageActionState) {
+        } else if (state is TextNoteDetailNavigationToSummaryActionState) {
           AutoRouter.of(context).push(TextSummaryScreenRoute(noteId: widget.noteId, permission: widget.permission, titleSummary: widget.titleNote));
         }
       },
       builder: (context, state) {
-        if (state is NoteTextDetailLoadingState) {
+        if (state is TextNoteDetailLoadingState) {
           _cachedTextNoteModel = null;
           _quillController.document = Document();
           return const Center(child: TLoadingSpinkit.loadingPage);
         }
 
-        if (state is NoteTextDetailSuccessState) {
+        if (state is TextNoteDetailSuccessState) {
           _cachedTextNoteModel = state.textNoteModel;
         }
 
@@ -240,7 +240,7 @@ class _TextDetailTabState extends State<TextDetailTab>
                         child: Icon(Iconsax.flash_1),
                         label: 'Summary text',
                         onTap: () {
-                          context.read<NoteDetailBloc>().add(NoteDetaiClickButtonNavigationToSummaryTextEvent(textId: _cachedTextNoteModel!.data!.id.toString()));
+                          context.read<TextNoteDetailBloc>().add(TextNoteDetailNavigationToSummaryEvent(textId: _cachedTextNoteModel!.data!.id.toString(), permission: widget.permission));
                         },
                       ),
                     ],
@@ -314,7 +314,7 @@ class _TextDetailTabState extends State<TextDetailTab>
                 ),
               ),
             ),
-            if (state is NoteUpdateTextDetailLoadingState)
+            if (state is TextNoteDetailUpdateLoadingState)
               Positioned(
                 bottom: 10,
                 right: 0,

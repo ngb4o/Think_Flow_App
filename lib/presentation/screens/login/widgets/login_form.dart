@@ -34,7 +34,7 @@ class _TLoginFormState extends State<TLoginForm> {
 
   @override
   Widget build(BuildContext context) {
-    final dark = THelperFunctions.isDarkMode(context);
+    THelperFunctions.isDarkMode(context);
 
     return BlocConsumer<LoginBloc, LoginState>(
       listenWhen: (previous, current) =>

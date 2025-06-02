@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:think_flow/common/widgets/appbar/appbar.dart';
-import 'package:think_flow/presentation/screens/audio_summary/bloc/audio_summary_bloc.dart';
+import 'package:think_flow/presentation/blocs/audio_summary/audio_summary_bloc.dart';
 import 'package:think_flow/utils/constants/sizes.dart';
 
 import '../../../common/widgets/create/create_widget.dart';

@@ -1,8 +1,7 @@
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:think_flow/data/data_sources/remote/api_endpoint_urls.dart';
 import 'package:think_flow/services/local_notifications_service.dart';
-import 'package:think_flow/data/data_sources/remote/api_client.dart';
+import 'package:think_flow/data/repositories/noti_repo.dart';
 import 'dart:io' show Platform;
 import 'package:think_flow/utils/utils.dart';
 
@@ -18,7 +17,7 @@ class FirebaseMessagingService {
 
   // Reference to local notifications service for displaying notifications
   LocalNotificationsService? _localNotificationsService;
-  final _apiClient = ApiClient();
+  final _notificationRepo = NotificationRepo();
   String? _pendingFCMToken;
   String? _deviceId;
 
@@ -99,33 +98,73 @@ class FirebaseMessagingService {
     });
   }
 
+  Future<void> _registerFCMToken(String token) async {
+    try {
+      // Check if token is already registered
+      final registeredToken = await Utils.getRegisteredFCMToken();
+      if (registeredToken == token) {
+        print('FCM token already registered with same value');
+        return;
+      }
+
+      final response = await _notificationRepo.registerFCMToken(
+        token: token,
+        deviceId: _deviceId ?? 'unknown-device',
+      );
+      print('FCM token registered successfully: ${response.data}');
+      
+      // Save the registered token
+      await Utils.setFCMTokenRegistered(token);
+    } catch (e) {
+      // Check if error is due to duplicate token
+      if (e.toString().contains('Duplicate entry')) {
+        print('FCM token already registered');
+        // Save the token even if it's a duplicate
+        await Utils.setFCMTokenRegistered(token);
+      } else {
+        print('Error registering FCM token: $e');
+      }
+    }
+  }
+
   /// Register pending FCM token after user login
   Future<void> registerPendingToken() async {
     if (_pendingFCMToken != null) {
       print('Registering pending FCM token after login');
       await _registerFCMToken(_pendingFCMToken!);
       _pendingFCMToken = null;
+    } else {
+      // If no pending token, get current token and register it
+      final token = await FirebaseMessaging.instance.getToken();
+      if (token != null) {
+        print('Registering current FCM token after login');
+        await _registerFCMToken(token);
+      }
     }
   }
 
-  Future<void> _registerFCMToken(String token) async {
+  Future<void> deleteFCMToken() async {
     try {
-      final response = await _apiClient.postRequest(
-        path: ApiEndpointUrls.registerFcmToken,
-        body: {
-          'token': token,
-          'device_id': _deviceId ?? 'unknown-device',
-          'platform': Platform.isAndroid ? 'android' : 'ios',
-        },
-      );
-      print('FCM token registered successfully: ${response.data}');
-    } catch (e) {
-      // Check if error is due to duplicate token
-      if (e.toString().contains('Duplicate entry')) {
-        print('FCM token already registered');
-      } else {
-        print('Error registering FCM token: $e');
+      // Get current FCM token
+      final token = await FirebaseMessaging.instance.getToken();
+      if (token == null) {
+        print('No FCM token available to delete');
+        return;
       }
+
+      final response = await _notificationRepo.deleteFCMToken(
+        token: token,
+        deviceId: _deviceId ?? 'unknown-device',
+      );
+      print('FCM token deleted successfully: ${response.data}');
+      
+      // Clear the saved token
+      await Utils.clearFCMToken();
+      
+      // Store current token as pending for next login
+      _pendingFCMToken = token;
+    } catch (e) {
+      print('Error deleting FCM token: $e');
     }
   }
 

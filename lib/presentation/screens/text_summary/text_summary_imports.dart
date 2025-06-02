@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:think_flow/data/models/text_note_model.dart';
-import 'package:think_flow/presentation/screens/text_summary/bloc/bloc/text_summary_bloc.dart';
+import 'package:think_flow/presentation/blocs/text_summary/text_summary_bloc.dart';
 import 'package:think_flow/utils/constants/colors.dart';
 import 'package:think_flow/utils/constants/sizes.dart';
 import 'package:think_flow/utils/helpers/helper_functions.dart';

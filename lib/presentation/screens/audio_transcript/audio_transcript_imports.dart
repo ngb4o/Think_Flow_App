@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:think_flow/common/widgets/appbar/appbar.dart';
-import 'package:think_flow/common/widgets/empty/empty_widget.dart';
-import 'package:think_flow/presentation/screens/audio_transcript/bloc/audio_transcript_bloc.dart';
+import 'package:think_flow/common/widgets/create/create_widget.dart';
+import 'package:think_flow/presentation/blocs/audio_transcrip/audio_transcript_bloc.dart';
 import 'package:think_flow/utils/constants/sizes.dart';
 
 import '../../../common/widgets/loading/loading.dart';

@@ -3,7 +3,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
-import 'package:think_flow/presentation/screens/onboarding/bloc/onboarding_bloc.dart';
+import 'package:think_flow/presentation/blocs/onboarding/onboarding_bloc.dart';
 
 import '../../../../utils/constants/colors.dart';
 import '../../../../utils/constants/sizes.dart';

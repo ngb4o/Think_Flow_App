@@ -33,8 +33,8 @@ class _AudioDetailTabState extends State<AudioDetailTab> {
     super.initState();
     _initRecorder();
     context
-        .read<NoteDetailBloc>()
-        .add(NoteDetailInitialFetchDataListAudioEvent(noteId: widget.noteId));
+        .read<AudioNoteDetailBloc>()
+        .add(AudioNoteDetailInitialFetchDataEvent(noteId: widget.noteId));
 
     audioPlayer.positionStream.listen((position) {
       if (mounted) {
@@ -193,8 +193,8 @@ class _AudioDetailTabState extends State<AudioDetailTab> {
       String? filePath = await audioRecorder.stop();
       recordingTimer?.cancel();
       if (mounted && filePath != null) {
-        context.read<NoteDetailBloc>().add(
-              NoteDetailClickButtonCreateAudioEvent(
+        context.read<AudioNoteDetailBloc>().add(
+              AudioNoteDetailCreateEvent(
                 id: widget.noteId,
                 audioFile: File(filePath),
               ),
@@ -312,8 +312,8 @@ class _AudioDetailTabState extends State<AudioDetailTab> {
 
         setState(() {
           context
-              .read<NoteDetailBloc>()
-              .add(NoteDetailClickButtonCreateAudioEvent(
+              .read<AudioNoteDetailBloc>()
+              .add(AudioNoteDetailCreateEvent(
                 id: widget.noteId,
                 audioFile: File(file.path!),
               ));
@@ -339,8 +339,8 @@ class _AudioDetailTabState extends State<AudioDetailTab> {
           'Are you sure you want to delete this audio? This action cannot be undone.',
       onConfirm: () {
         context
-            .read<NoteDetailBloc>()
-            .add(NoteDetailClickButtonDeleteAudioEvent(audioId: audioId));
+            .read<AudioNoteDetailBloc>()
+            .add(AudioNoteDetailDeleteEvent(audioId: audioId));
       },
     );
   }
@@ -360,8 +360,8 @@ class _AudioDetailTabState extends State<AudioDetailTab> {
                 onTap: () {
                   Navigator.pop(context);
                   setState(() {});
-                  context.read<NoteDetailBloc>().add(
-                      NoteDetaiClickButtonNavigationToAudioTranscriptTextEvent(
+                  context.read<AudioNoteDetailBloc>().add(
+                      AudioNoteDetailNavigationToTranscriptEvent(
                           audioId: audioId, permission: widget.permission));
                 },
               ),
@@ -372,8 +372,8 @@ class _AudioDetailTabState extends State<AudioDetailTab> {
                 onTap: () {
                   Navigator.pop(context);
                   setState(() {});
-                  context.read<NoteDetailBloc>().add(
-                      NoteDetaiClickButtonNavigationToAudioSummaryTextEvent(
+                  context.read<AudioNoteDetailBloc>().add(
+                      AudioNoteDetailNavigationToSummaryEvent(
                           audioId: audioId, permission: widget.permission));
                 },
               ),
@@ -395,42 +395,40 @@ class _AudioDetailTabState extends State<AudioDetailTab> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<NoteDetailBloc, NoteDetailState>(
-      listenWhen: (previous, current) => current is NoteDetailActionState,
-      buildWhen: (previous, current) => current is! NoteDetailActionState,
+    return BlocConsumer<AudioNoteDetailBloc, AudioNoteDetailState>(
+      listenWhen: (previous, current) => current is AudioNoteDetailActionState,
+      buildWhen: (previous, current) => current is! AudioNoteDetailActionState,
       listener: (context, state) {
-        if (state is NotesCreateAudioDetailSuccessActionState) {
-          context.read<NoteDetailBloc>().add(
-              NoteDetailInitialFetchDataListAudioEvent(noteId: widget.noteId));
+        if (state is AudioNoteDetailCreateSuccessActionState) {
+          context.read<AudioNoteDetailBloc>().add(
+              AudioNoteDetailInitialFetchDataEvent(noteId: widget.noteId));
           TLoaders.successSnackBar(context,
               title: 'Audio uploaded successfully');
-        } else if (state is NotesCreateAudioDetailErrorActionState) {
+        } else if (state is AudioNoteDetailCreateErrorActionState) {
           TLoaders.errorSnackBar(context,
               title: 'Error uploaded audio', message: state.message);
-        } else if (state is NoteDeleteAudioSuccessState) {
+        } else if (state is AudioNoteDetailDeleteSuccessActionState) {
           TLoaders.successSnackBar(context, title: 'Delete audio successfully');
-          context.read<NoteDetailBloc>().add(
-              NoteDetailInitialFetchDataListAudioEvent(noteId: widget.noteId));
-        } else if (state is NoteAudioDetailErrorActionState) {
+          context.read<AudioNoteDetailBloc>().add(
+              AudioNoteDetailInitialFetchDataEvent(noteId: widget.noteId));
+        } else if (state is AudioNoteDetailErrorActionState) {
           TLoaders.errorSnackBar(context,
               title: 'Error', message: state.message);
-        } else if (state
-            is NoteDetailNavigationToAudioTranscriptionTextPageActionState) {
+        } else if (state is AudioNoteDetailNavigationToTranscriptActionState) {
           AutoRouter.of(context).push(AudioTranscriptScreenRoute(
               audioId: state.audioId, permission: state.permission));
-        } else if (state
-            is NoteDetailNavigationToAudioSummaryTextPageActionState) {
+        } else if (state is AudioNoteDetailNavigationToSummaryActionState) {
           AutoRouter.of(context).push(AudioSummaryScreenRoute(
               audioId: state.audioId, permission: state.permission));
         }
       },
       builder: (context, state) {
-        if (state is NoteListAudioDetailLoadingState &&
+        if (state is AudioNoteDetailLoadingState &&
             _cachedAudioNoteModel == null) {
           return const Center(child: TLoadingSpinkit.loadingPage);
         }
 
-        if (state is NoteListAudioDetailSuccessState) {
+        if (state is AudioNoteDetailSuccessState) {
           _cachedAudioNoteModel = state.listAudioNoteModel;
         }
 

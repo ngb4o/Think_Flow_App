@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io' show Platform;
 
 import 'package:think_flow/data/data_sources/remote/api_client.dart';
 import 'package:think_flow/data/models/data_model.dart';
@@ -39,6 +40,62 @@ class NotificationRepo extends ApiClient {
         return responseData;
       } else {
         throw ApiException(message: 'Accept share note failed');
+      }
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      throw ApiException(message: 'An unexpected error occurred');
+    }
+  }
+
+  // Register FCM token
+  Future<DataModel> registerFCMToken({
+    required String token,
+    required String deviceId,
+  }) async {
+    try {
+      final response = await postRequest(
+        path: ApiEndpointUrls.registerFcmToken,
+        body: {
+          'token': token,
+          'device_id': deviceId,
+          'platform': Platform.isAndroid ? 'android' : 'ios',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = dataModelFromJson(jsonEncode(response.data));
+        return responseData;
+      } else {
+        throw ApiException(message: 'Failed to register FCM token');
+      }
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      throw ApiException(message: 'An unexpected error occurred');
+    }
+  }
+
+  // Delete FCM token
+  Future<DataModel> deleteFCMToken({
+    required String token,
+    required String deviceId,
+  }) async {
+    try {
+      final response = await deleteRequest(
+        path: ApiEndpointUrls.registerFcmToken,
+        body: {
+          'token': token,
+          'device_id': deviceId,
+          'platform': Platform.isAndroid ? 'android' : 'ios',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = dataModelFromJson(jsonEncode(response.data));
+        return responseData;
+      } else {
+        throw ApiException(message: 'Failed to delete FCM token');
       }
     } on ApiException {
       rethrow;

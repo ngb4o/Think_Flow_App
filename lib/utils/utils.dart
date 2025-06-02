@@ -172,6 +172,21 @@ class Utils {
     await prefs.setBool('isFirstTime', isFirstTime);
   }
 
+  static Future<void> setFCMTokenRegistered(String token) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('fcm_token', token);
+  }
+
+  static Future<String?> getRegisteredFCMToken() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('fcm_token');
+  }
+
+  static Future<void> clearFCMToken() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('fcm_token');
+  }
+
   static Delta convertProseMirrorToDelta(List<TextContent>? content) {
     if (content == null || content.isEmpty) return Delta()..insert('\n');
 

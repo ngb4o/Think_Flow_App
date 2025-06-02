@@ -2,7 +2,7 @@ import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:think_flow/presentation/screens/navigation_menu/bloc/navigation_menu_bloc.dart';
+import 'package:think_flow/presentation/blocs/navigation_menu/navigation_menu_bloc.dart';
 import 'package:think_flow/utils/constants/colors.dart';
 import 'package:think_flow/utils/helpers/helper_functions.dart';
 

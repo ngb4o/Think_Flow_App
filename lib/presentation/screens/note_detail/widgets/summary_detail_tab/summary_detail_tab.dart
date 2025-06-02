@@ -30,8 +30,8 @@ class _SummaryDetailTabState extends State<SummaryDetailTab>
   }
 
   void _loadSummaryContent() {
-    context.read<NoteDetailBloc>().add(
-        NoteDetailInitialFetchDataSummaryNoteEvent(
+    context.read<SummaryNoteDetailBloc>().add(
+        SummaryNoteDetailInitialFetchDataEvent(
             noteId: widget.noteId, permission: widget.permission));
   }
 
@@ -42,8 +42,8 @@ class _SummaryDetailTabState extends State<SummaryDetailTab>
           message: 'You do not have permission to edit this note');
       return;
     }
-    context.read<NoteDetailBloc>().add(
-          NoteDetailCreateSummaryTextEvent(
+    context.read<SummaryNoteDetailBloc>().add(
+          SummaryNoteDetailCreateEvent(
               noteId: widget.noteId, permission: widget.permission),
         );
   }
@@ -71,8 +71,8 @@ class _SummaryDetailTabState extends State<SummaryDetailTab>
       return;
     }
 
-    context.read<NoteDetailBloc>().add(
-          NoteDetailClickButtonUpdateSummaryTextEvent(
+    context.read<SummaryNoteDetailBloc>().add(
+          SummaryNoteDetailUpdateEvent(
             noteId: textId,
             summaryText: _summaryController.text,
           ),
@@ -89,29 +89,29 @@ class _SummaryDetailTabState extends State<SummaryDetailTab>
   Widget build(BuildContext context) {
     final isDarkMode = THelperFunctions.isDarkMode(context);
     super.build(context);
-    return BlocConsumer<NoteDetailBloc, NoteDetailState>(
-      listenWhen: (previous, current) => current is NoteDetailActionState,
-      buildWhen: (previous, current) => current is! NoteDetailActionState,
+    return BlocConsumer<SummaryNoteDetailBloc, SummaryNoteDetailState>(
+      listenWhen: (previous, current) => current is SummaryNoteDetailActionState,
+      buildWhen: (previous, current) => current is! SummaryNoteDetailActionState,
       listener: (context, state) {
-        if (state is NoteUpdateSummaryDetailSuccessActionState) {
+        if (state is SummaryNoteDetailUpdateSuccessActionState) {
           setState(() {
             _isEditing = false;
           });
           _loadSummaryContent();
-        } else if (state is NoteUpdateDetailErrorActionState) {
+        } else if (state is SummaryNoteDetailErrorActionState) {
           TLoaders.errorSnackBar(context,
               title: 'Error', message: state.message);
-        } else if (state is NoteDetailCreateSummaryNoteErrorActionState) {
+        } else if (state is SummaryNoteDetailCreateErrorActionState) {
           TLoaders.errorSnackBar(context,
               title: 'Error', message: state.message);
         }
       },
       builder: (context, state) {
-        if (state is NoteSummaryLoadingState && _cachedNoteModel == null) {
+        if (state is SummaryNoteDetailLoadingState && _cachedNoteModel == null) {
           return const Center(child: TLoadingSpinkit.loadingPage);
         }
 
-        if (state is NoteSummarySuccessState) {
+        if (state is SummaryNoteDetailSuccessState) {
           _cachedNoteModel = state.noteModel;
         }
 
@@ -168,7 +168,7 @@ class _SummaryDetailTabState extends State<SummaryDetailTab>
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        if (state is NoteDetailCreateSummaryNoteLoadingState)
+                        if (state is SummaryNoteDetailCreateLoadingState)
                           Padding(
                             padding: const EdgeInsets.all(TSizes.sm),
                             child: TLoadingSpinkit.loadingButton,
@@ -207,8 +207,8 @@ class _SummaryDetailTabState extends State<SummaryDetailTab>
                 style: Theme.of(context).textTheme.titleSmall,
               ),
             ),
-            if (state is NoteUpdateSummaryDetailLoadingState ||
-                state is NoteDetailCreateSummaryNoteLoadingState)
+            if (state is SummaryNoteDetailUpdateLoadingState ||
+                state is SummaryNoteDetailCreateLoadingState)
               Positioned(
                 bottom: 10,
                 right: 0,
