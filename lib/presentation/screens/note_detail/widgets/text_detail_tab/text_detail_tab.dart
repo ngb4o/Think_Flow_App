@@ -94,7 +94,8 @@ class _TextDetailTabState extends State<TextDetailTab>
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) => Container(
-        padding: const EdgeInsets.all(TSizes.defaultSpace),
+        padding: const EdgeInsets.symmetric(
+            horizontal: TSizes.sm, vertical: TSizes.defaultSpace),
         decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
@@ -111,7 +112,10 @@ class _TextDetailTabState extends State<TextDetailTab>
                 _processImage(ImageSource.camera);
               },
             ),
-            const Divider(),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: TSizes.sm),
+              child: const Divider(),
+            ),
             ListTile(
               leading: const Icon(Iconsax.gallery, size: 25),
               title: Text('Choose from gallery',
@@ -153,7 +157,10 @@ class _TextDetailTabState extends State<TextDetailTab>
           TLoaders.errorSnackBar(context,
               title: 'Error', message: state.message);
         } else if (state is TextNoteDetailNavigationToSummaryActionState) {
-          AutoRouter.of(context).push(TextSummaryScreenRoute(noteId: widget.noteId, permission: widget.permission, titleSummary: widget.titleNote));
+          AutoRouter.of(context).push(TextSummaryScreenRoute(
+              noteId: widget.noteId,
+              permission: widget.permission,
+              titleSummary: widget.titleNote));
         }
       },
       builder: (context, state) {
@@ -161,191 +168,167 @@ class _TextDetailTabState extends State<TextDetailTab>
           _cachedTextNoteModel = null;
           _quillController.document = Document();
           return const Center(child: TLoadingSpinkit.loadingPage);
-        }
-
-        if (state is TextNoteDetailSuccessState) {
+        } else if (state is TextNoteDetailSuccessState) {
           _cachedTextNoteModel = state.textNoteModel;
-        }
+          final textContent = _cachedTextNoteModel?.data?.textContent;
 
-        final textContent = _cachedTextNoteModel?.data?.textContent;
-
-        if (!_isEditing) {
-          return Stack(
-            children: [
-              SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (textContent == null || textContent.isEmpty)
-                      GestureDetector(
-                        onTap:
-                            widget.permission == 'read' ? null : _enterEditMode,
-                        child: Column(
-                          children: [
-                            SizedBox(height: TSizes.spaceBtwSections * 2),
-                            Center(
-                              child: TEmptyWidget(
-                                  subTitle: widget.permission == 'read'
-                                      ? 'No content available'
-                                      : 'Tap anywhere to start editing'),
-                            ),
-                          ],
+          if (!_isEditing) {
+            return Stack(
+              children: [
+                SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (textContent == null || textContent.isEmpty)
+                        GestureDetector(
+                          onTap: widget.permission == 'read'
+                              ? null
+                              : _enterEditMode,
+                          child: Column(
+                            children: [
+                              SizedBox(height: TSizes.spaceBtwSections * 2),
+                              Center(
+                                child: TEmptyWidget(
+                                    subTitle: widget.permission == 'read'
+                                        ? 'No content available'
+                                        : 'Tap anywhere to start editing'),
+                              ),
+                            ],
+                          ),
+                        )
+                      else
+                        GestureDetector(
+                          onTap: widget.permission == 'read'
+                              ? null
+                              : _enterEditMode,
+                          child: html.Html(
+                            data: Utils.convertProseMirrorToHtml(textContent),
+                            style: {
+                              'p': html.Style(
+                                margin: html.Margins.zero,
+                                padding: html.HtmlPaddings.zero,
+                              ),
+                              'body': html.Style(
+                                fontSize: html.FontSize(15),
+                              ),
+                            },
+                          ),
                         ),
-                      )
-                    else
-                      GestureDetector(
-                        onTap:
-                            widget.permission == 'read' ? null : _enterEditMode,
-                        child: html.Html(
-                          data: Utils.convertProseMirrorToHtml(textContent),
-                          style: {
-                            'p': html.Style(
-                              margin: html.Margins.zero,
-                              padding: html.HtmlPaddings.zero,
-                            ),
-                            'body': html.Style(
-                              fontSize: html.FontSize(15),
-                            ),
+                    ],
+                  ),
+                ),
+                Positioned(
+                  right: 16,
+                  bottom: 16,
+                  child: Container(
+                    height: 45,
+                    decoration: BoxDecoration(
+                      color: isDarkMode ? TColors.darkerGrey : Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: SpeedDial(
+                      icon: Icons.auto_awesome,
+                      activeIcon: Iconsax.close_square,
+                      iconTheme: IconThemeData(
+                          color: isDarkMode ? TColors.white : TColors.black,
+                          size: 30),
+                      backgroundColor: Colors.transparent,
+                      elevation: 0,
+                      spacing: 10,
+                      children: [
+                        SpeedDialChild(
+                          child: Icon(Iconsax.flash_1),
+                          label: 'Summary text',
+                          onTap: () {
+                            context.read<TextNoteDetailBloc>().add(
+                                TextNoteDetailNavigationToSummaryEvent(
+                                    textId: _cachedTextNoteModel!.data!.id
+                                        .toString(),
+                                    permission: widget.permission));
                           },
                         ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            );
+          }
+
+          return Stack(
+            children: [
+              Padding(
+                padding:
+                    const EdgeInsets.only(top: TSizes.spaceBtwSections * 2),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      QuillEditor.basic(
+                        controller: _quillController,
+                        config: QuillEditorConfig(),
                       ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
               Positioned(
-                right: 16,
-                bottom: 16,
+                top: 0,
+                left: 0,
+                right: 0,
                 child: Container(
-                  height: 45,
                   decoration: BoxDecoration(
-                    color: isDarkMode ? TColors.darkerGrey : Colors.white,
-                    borderRadius: BorderRadius.circular(12),
+                    color: Theme.of(context).scaffoldBackgroundColor,
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.1),
-                        blurRadius: 8,
+                        blurRadius: 4,
                         offset: const Offset(0, 2),
                       ),
                     ],
                   ),
-                  child: SpeedDial(
-                    icon: Icons.auto_awesome,
-                    activeIcon: Iconsax.close_square,
-                    iconTheme: IconThemeData(color: isDarkMode ? TColors.white : TColors.black, size: 30),
-                    backgroundColor: Colors.transparent,
-                    elevation: 0,
-                    spacing: 10,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      SpeedDialChild(
-                        child: Icon(Iconsax.flash_1),
-                        label: 'Summary text',
-                        onTap: () {
-                          context.read<TextNoteDetailBloc>().add(TextNoteDetailNavigationToSummaryEvent(textId: _cachedTextNoteModel!.data!.id.toString(), permission: widget.permission));
-                        },
+                      Expanded(
+                        child: TQuillToolBar(quillController: _quillController),
+                      ),
+                      IconButton(
+                        icon: const Icon(Iconsax.gallery_import4),
+                        onPressed: () => importImageBottomSheet(),
                       ),
                     ],
                   ),
                 ),
               ),
-            ],
-          );
-        }
-
-        return Stack(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: TSizes.spaceBtwSections * 2),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    QuillEditor.basic(
-                      controller: _quillController,
-                      config: QuillEditorConfig(),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: QuillSimpleToolbar(
-                        controller: _quillController,
-                        config: QuillSimpleToolbarConfig(
-                          color: Colors.transparent,
-                          multiRowsDisplay: false,
-                          showAlignmentButtons: true,
-                          showFontFamily: false,
-                          showFontSize: false,
-                          showInlineCode: false,
-                          showColorButton: false,
-                          showBackgroundColorButton: false,
-                          showClearFormat: false,
-                          showListCheck: false,
-                          showCodeBlock: false,
-                          showIndent: false,
-                          showSearchButton: false,
-                          showSubscript: false,
-                          showSuperscript: false,
-                        ),
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Iconsax.gallery_import4),
-                      onPressed: () => importImageBottomSheet(),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            if (state is TextNoteDetailUpdateLoadingState)
-              Positioned(
-                bottom: 10,
-                right: 0,
-                child: TLoadingSpinkit.loadingButton,
-              )
-            else
-              Positioned(
-                bottom: 10,
-                right: 0,
-                child: GestureDetector(
-                  onTap: () =>
-                      _updateText(_cachedTextNoteModel!.data!.id.toString()),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: TColors.primary,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    padding: EdgeInsets.symmetric(
-                        horizontal: TSizes.md, vertical: TSizes.sm),
-                    child: Text(
-                      'Save',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyLarge!
-                          .copyWith(color: TColors.white),
-                    ),
+              if (state is TextNoteDetailUpdateLoadingState)
+                Positioned(
+                  bottom: 10,
+                  right: 0,
+                  child: TLoadingSpinkit.loadingButton,
+                )
+              else
+                Positioned(
+                  bottom: 10,
+                  right: 0,
+                  child: GestureDetector(
+                    onTap: () =>
+                        _updateText(_cachedTextNoteModel!.data!.id.toString()),
+                    child: TTextSaveButton(),
                   ),
                 ),
-              ),
-          ],
-        );
+            ],
+          );
+        } else if (state is TextNoteDetailErrorState) {
+          return TErrorWidget(subError: state.message);
+        }
+        return const SizedBox();
       },
     );
   }

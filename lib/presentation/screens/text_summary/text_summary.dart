@@ -203,7 +203,9 @@ class _TextSummaryScreenState extends State<TextSummaryScreen> {
                                   bottom: 0,
                                   child: Container(
                                     decoration: BoxDecoration(
-                                      color: isDarkMode ? TColors.darkerGrey : Colors.white,
+                                      color: isDarkMode
+                                          ? TColors.darkerGrey
+                                          : Colors.white,
                                       borderRadius: BorderRadius.circular(12),
                                       boxShadow: [
                                         BoxShadow(
@@ -221,7 +223,8 @@ class _TextSummaryScreenState extends State<TextSummaryScreen> {
                                           Padding(
                                             padding:
                                                 const EdgeInsets.all(TSizes.sm),
-                                            child: TLoadingSpinkit.loadingButton,
+                                            child:
+                                                TLoadingSpinkit.loadingButton,
                                           )
                                         else
                                           IconButton(
@@ -284,32 +287,15 @@ class _TextSummaryScreenState extends State<TextSummaryScreen> {
                                 bottom: TSizes.defaultSpace,
                                 right: TSizes.defaultSpace,
                                 child: GestureDetector(
-                                  onTap: () {
-                                    _updateSummary(_cachedTextNoteModel!
-                                        .data!.summary!.id
-                                        .toString());
-                                  },
-                                  child: state
-                                          is TextSummaryUpdateSummaryDetailLoadingState
-                                      ? TLoadingSpinkit.loadingButton
-                                      : Container(
-                                          decoration: BoxDecoration(
-                                            color: TColors.primary,
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                          ),
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: TSizes.md,
-                                              vertical: TSizes.sm),
-                                          child: Text(
-                                            'Save',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyLarge!
-                                                .copyWith(color: TColors.white),
-                                          ),
-                                        ),
-                                ),
+                                    onTap: () {
+                                      _updateSummary(_cachedTextNoteModel!
+                                          .data!.summary!.id
+                                          .toString());
+                                    },
+                                    child: state
+                                            is TextSummaryUpdateSummaryDetailLoadingState
+                                        ? TLoadingSpinkit.loadingButton
+                                        : TTextSaveButton()),
                               ),
                           ],
                         ),

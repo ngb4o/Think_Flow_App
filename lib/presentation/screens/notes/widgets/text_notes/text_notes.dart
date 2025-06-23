@@ -1,6 +1,5 @@
 part of 'text_notes_imports.dart';
 
-
 @RoutePage()
 class TextNotesPage extends StatefulWidget {
   const TextNotesPage({super.key});
@@ -19,13 +18,14 @@ class _TextNotesPageState extends State<TextNotesPage> {
       if (recognizedText != null) {
         final doc = _quillController.document;
         _quillController.document.insert(doc.length - 1, recognizedText + '\n');
-        setState(() {}); 
+        setState(() {});
       }
     } catch (e) {
-      TLoaders.errorSnackBar(context, title: 'Error', message: 'Failed to process image');
+      TLoaders.errorSnackBar(context,
+          title: 'Error', message: 'Failed to process image');
     }
   }
-  
+
   void importImageBottomSheet() {
     showModalBottomSheet(
       context: context,
@@ -42,7 +42,8 @@ class _TextNotesPageState extends State<TextNotesPage> {
           children: [
             ListTile(
               leading: const Icon(Iconsax.camera, size: 25),
-              title: Text('Take photo', style: Theme.of(context).textTheme.bodyLarge),
+              title: Text('Take photo',
+                  style: Theme.of(context).textTheme.bodyLarge),
               onTap: () {
                 Navigator.pop(context);
                 _processImage(ImageSource.camera);
@@ -51,7 +52,8 @@ class _TextNotesPageState extends State<TextNotesPage> {
             const Divider(),
             ListTile(
               leading: const Icon(Iconsax.gallery, size: 25),
-              title: Text('Choose from gallery', style: Theme.of(context).textTheme.bodyLarge),
+              title: Text('Choose from gallery',
+                  style: Theme.of(context).textTheme.bodyLarge),
               onTap: () {
                 Navigator.pop(context);
                 _processImage(ImageSource.gallery);
@@ -138,30 +140,8 @@ class _TextNotesPageState extends State<TextNotesPage> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Expanded(
-                        child: QuillSimpleToolbar(
-                          controller: _quillController,
-                          config: QuillSimpleToolbarConfig(
-                            color: Colors.transparent,
-                            multiRowsDisplay: false,
-                            showAlignmentButtons: true,
-                            showFontFamily: false,
-                            showFontSize: false,
-                            showInlineCode: false,
-                            showColorButton: false,
-                            showBackgroundColorButton: false,
-                            showClearFormat: false,
-                            showListCheck: false,
-                            showCodeBlock: false,
-                            showIndent: false,
-                            showSearchButton: false,
-                            showSubscript: false,
-                            showSuperscript: false,
-                            showBoldButton: true,
-                            showItalicButton: true,
-                            showUnderLineButton: true,
-                          ),
-                        ),
-                      ),
+                          child:
+                              TQuillToolBar(quillController: _quillController)),
                       IconButton(
                         icon: const Icon(Iconsax.gallery_import4),
                         onPressed: () => importImageBottomSheet(),

@@ -50,8 +50,9 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
       _transformationController.value = Matrix4.identity()..scale(_scale);
 
       // Fetch mindmap data
-      context.read<MindmapNoteDetailBloc>().add(MindmapNoteDetailInitialFetchDataEvent(
-          noteId: widget.noteId, permission: widget.permission));
+      context.read<MindmapNoteDetailBloc>().add(
+          MindmapNoteDetailInitialFetchDataEvent(
+              noteId: widget.noteId, permission: widget.permission));
     });
   }
 
@@ -170,8 +171,16 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
     }
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
       builder: (context) {
-        return SafeArea(
+        return Container(
+          padding: const EdgeInsets.symmetric(
+              horizontal: TSizes.sm, vertical: TSizes.defaultSpace),
+          decoration: BoxDecoration(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -185,7 +194,7 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
                 },
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: TSizes.md),
+                padding: const EdgeInsets.symmetric(horizontal: TSizes.sm),
                 child: Divider(),
               ),
               ListTile(
@@ -323,7 +332,7 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
     required VoidCallback onUpdate,
   }) async {
     final controller = TextEditingController(text: node.text);
-    final result = await showDialog<String>(
+    await showDialog<String>(
       context: context,
       builder: (context) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: TSizes.md),
@@ -527,9 +536,7 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
         if (state is MindmapNoteDetailLoadingState ||
             state is MindmapNoteDetailUpdateLoadingState) {
           return const Center(child: TLoadingSpinkit.loadingPage);
-        }
-
-        if (state is MindmapNoteDetailErrorState) {
+        } else if (state is MindmapNoteDetailErrorState) {
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -557,9 +564,7 @@ class _MindmapDetailTabState extends State<MindmapDetailTab> {
               ],
             ),
           );
-        }
-
-        if (_rootNode == null) {
+        } else if (_rootNode == null) {
           return Center(
             child: (widget.permission == 'read'
                 ? TEmptyWidget(

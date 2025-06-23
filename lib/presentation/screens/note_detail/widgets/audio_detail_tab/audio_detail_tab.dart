@@ -426,145 +426,145 @@ class _AudioDetailTabState extends State<AudioDetailTab> {
         if (state is AudioNoteDetailLoadingState &&
             _cachedAudioNoteModel == null) {
           return const Center(child: TLoadingSpinkit.loadingPage);
-        }
-
-        if (state is AudioNoteDetailSuccessState) {
+        } else if (state is AudioNoteDetailSuccessState) {
           _cachedAudioNoteModel = state.listAudioNoteModel;
-        }
+          final audioList = _cachedAudioNoteModel?.data ?? [];
 
-        final audioList = _cachedAudioNoteModel?.data ?? [];
-
-        return Stack(
-          children: [
-            Column(
-              children: [
-                if (widget.permission != 'read')
-                  Padding(
-                    padding: const EdgeInsets.only(top: TSizes.spaceBtwItems),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        GestureDetector(
-                          onTap: () => _uploadFile(),
-                          child: Icon(Iconsax.document_download, size: 30),
-                        )
-                      ],
+          return Stack(
+            children: [
+              Column(
+                children: [
+                  if (widget.permission != 'read')
+                    Padding(
+                      padding: const EdgeInsets.only(top: TSizes.spaceBtwItems),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          GestureDetector(
+                            onTap: () => _uploadFile(),
+                            child: Icon(Iconsax.document_download, size: 30),
+                          )
+                        ],
+                      ),
                     ),
+                  Expanded(
+                    child: audioList.isEmpty
+                        ? Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              TEmptyWidget(
+                                title: widget.permission == 'read'
+                                    ? 'Don\'t have any audio yet.'
+                                    : 'You don\'t have any audio yet.',
+                                subTitle: widget.permission == 'read'
+                                    ? ''
+                                    : 'Tap the microphone icon to start recording.',
+                              ),
+                            ],
+                          )
+                        : ListView.builder(
+                            itemCount: audioList.length,
+                            itemBuilder: (context, index) {
+                              final audio = audioList[index];
+                              return RecordingListItem(
+                                name: 'Audio ${index + 1}',
+                                duration:
+                                    'Create on ${Utils.formatDate(audio.createdAt)}',
+                                isPlaying:
+                                    currentlyPlayingIndex == index && isPlaying,
+                                onPlayPause: () =>
+                                    _playAudio(index, audio.fileUrl ?? ''),
+                                onDelete: widget.permission == 'read'
+                                    ? () {}
+                                    : () => _deleteAudioWarningPopup(audio.id!),
+                                showMore: true,
+                                onMore: () =>
+                                    _showAudioModalBottomSheet(audio.id!),
+                                permission: widget.permission,
+                              );
+                            },
+                          ),
                   ),
-                Expanded(
-                  child: audioList.isEmpty
-                      ? Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            TEmptyWidget(
-                              title: widget.permission == 'read'
-                                  ? 'Don\'t have any audio yet.'
-                                  : 'You don\'t have any audio yet.',
-                              subTitle: widget.permission == 'read'
-                                  ? ''
-                                  : 'Tap the microphone icon to start recording.',
-                            ),
-                          ],
-                        )
-                      : ListView.builder(
-                          itemCount: audioList.length,
-                          itemBuilder: (context, index) {
-                            final audio = audioList[index];
-                            return RecordingListItem(
-                              name: 'Audio ${index + 1}',
-                              duration:
-                                  'Create on ${Utils.formatDate(audio.createdAt)}',
-                              isPlaying:
-                                  currentlyPlayingIndex == index && isPlaying,
-                              onPlayPause: () =>
-                                  _playAudio(index, audio.fileUrl ?? ''),
-                              onDelete: widget.permission == 'read'
-                                  ? () {}
-                                  : () => _deleteAudioWarningPopup(audio.id!),
-                              showMore: true,
-                              onMore: () =>
-                                  _showAudioModalBottomSheet(audio.id!),
-                              permission: widget.permission,
-                            );
-                          },
-                        ),
-                ),
-              ],
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                if (isRecording)
-                  RecordingControls(
-                    isRecording: isRecording,
-                    isPaused: isPaused,
-                    recordingDuration: recordingDuration,
-                    recorderController: recorderController,
-                    onCancel: _cancelRecording,
-                    onStop: _stopRecording,
-                    onPauseResume:
-                        isPaused ? _resumeRecording : _pauseRecording,
-                  )
-                else if (currentlyPlayingIndex != null)
-                  AudioPlayerControls(
-                    fileName: 'Audio ${currentlyPlayingIndex! + 1}',
-                    currentPosition: currentPosition,
-                    totalDuration: totalDuration,
-                    playbackSpeed: playbackSpeed,
-                    availableSpeeds: availableSpeeds,
-                    isPlaying: isPlaying,
-                    onSpeedChanged: (double speed) async {
-                      setState(() {
-                        playbackSpeed = speed;
-                      });
-                      await audioPlayer.setSpeed(speed);
-                    },
-                    onClose: () {
-                      audioPlayer.stop();
-                      setState(() {
-                        currentlyPlayingIndex = null;
-                        isPlaying = false;
-                        currentPosition = Duration.zero;
-                      });
-                    },
-                    onPlayPause: () => _playAudio(currentlyPlayingIndex!,
-                        audioList[currentlyPlayingIndex!].fileUrl ?? ''),
-                    onSeek: _seekTo,
-                    onBackward: () {
-                      final newPosition =
-                          currentPosition - const Duration(seconds: 15);
-                      _seekTo(
-                          newPosition.isNegative ? Duration.zero : newPosition);
-                    },
-                    onForward: () {
-                      final newPosition =
-                          currentPosition + const Duration(seconds: 15);
-                      _seekTo(newPosition > totalDuration
-                          ? totalDuration
-                          : newPosition);
-                    },
-                  )
-                else if (widget.permission != 'read')
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 40),
-                    child: Center(
-                      child: AvatarGlow(
-                        animate: true,
-                        glowColor: TColors.primary,
-                        duration: const Duration(milliseconds: 2000),
-                        repeat: true,
-                        child: FloatingActionButton(
-                          shape: const CircleBorder(),
-                          onPressed: _startRecording,
-                          child: const Icon(Iconsax.microphone),
+                ],
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  if (isRecording)
+                    RecordingControls(
+                      isRecording: isRecording,
+                      isPaused: isPaused,
+                      recordingDuration: recordingDuration,
+                      recorderController: recorderController,
+                      onCancel: _cancelRecording,
+                      onStop: _stopRecording,
+                      onPauseResume:
+                          isPaused ? _resumeRecording : _pauseRecording,
+                    )
+                  else if (currentlyPlayingIndex != null)
+                    AudioPlayerControls(
+                      fileName: 'Audio ${currentlyPlayingIndex! + 1}',
+                      currentPosition: currentPosition,
+                      totalDuration: totalDuration,
+                      playbackSpeed: playbackSpeed,
+                      availableSpeeds: availableSpeeds,
+                      isPlaying: isPlaying,
+                      onSpeedChanged: (double speed) async {
+                        setState(() {
+                          playbackSpeed = speed;
+                        });
+                        await audioPlayer.setSpeed(speed);
+                      },
+                      onClose: () {
+                        audioPlayer.stop();
+                        setState(() {
+                          currentlyPlayingIndex = null;
+                          isPlaying = false;
+                          currentPosition = Duration.zero;
+                        });
+                      },
+                      onPlayPause: () => _playAudio(currentlyPlayingIndex!,
+                          audioList[currentlyPlayingIndex!].fileUrl ?? ''),
+                      onSeek: _seekTo,
+                      onBackward: () {
+                        final newPosition =
+                            currentPosition - const Duration(seconds: 15);
+                        _seekTo(
+                            newPosition.isNegative ? Duration.zero : newPosition);
+                      },
+                      onForward: () {
+                        final newPosition =
+                            currentPosition + const Duration(seconds: 15);
+                        _seekTo(newPosition > totalDuration
+                            ? totalDuration
+                            : newPosition);
+                      },
+                    )
+                  else if (widget.permission != 'read')
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 40),
+                      child: Center(
+                        child: AvatarGlow(
+                          animate: true,
+                          glowColor: TColors.primary,
+                          duration: const Duration(milliseconds: 2000),
+                          repeat: true,
+                          child: FloatingActionButton(
+                            shape: const CircleBorder(),
+                            onPressed: _startRecording,
+                            child: const Icon(Iconsax.microphone),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-              ],
-            )
-          ],
-        );
+                ],
+              )
+            ],
+          );
+        } else if (state is AudioNoteDetailErrorState) {
+          return TErrorWidget(subError: state.message);
+        }
+        return const SizedBox();
       },
     );
   }
